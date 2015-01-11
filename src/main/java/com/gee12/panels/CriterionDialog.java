@@ -1,5 +1,6 @@
 package com.gee12.panels;
 
+import com.gee12.tableModels.DataTableModel;
 import com.gee12.structures.DataField;
 import com.gee12.structures.Project;
 import com.gee12.structures.Criterion;
@@ -13,7 +14,7 @@ import org.apache.poi.ss.util.CellReference;
  *
  * @author Иван
  */
-public class CriterionDialog extends MyJDialog {
+public class CriterionDialog extends MyodalDialog {
     
     public enum ActionType {
         Add,

@@ -1,5 +1,6 @@
 package com.gee12.structures;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -9,21 +10,45 @@ import java.util.List;
 public class Project {
     
     public enum Stages {
-        STAGE1_CHOISE,           // этап инициализации
+        STAGE0_START,
+        STAGE1_CHOISE,         // этап выбора
         STAGE2_COOPERATION,    // этап сотрудничества
         STAGE3_RATING          // этап оценки
     }
     
-    protected Carrier carrier;
+    protected List<Carrier> carriers;
+    protected Carrier curCarrier;
     protected Stage[] stages;
 
-    public Project(Carrier carrier, Stage[] stages) {
-        this.carrier = carrier;
+    ////////////////////////////////////////////////////////////////////////////
+    public Project() {
+        this.carriers = new ArrayList<Carrier>();
+        stages = new Stage[] { new Stage(), new Stage() };
+    }
+    public Project(List<Carrier> carriers, Stage[] stages) {
+        this.carriers = carriers;
         this.stages = stages;
     }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // set
+    public void setCurrentCarrier(Carrier curCarrier) {
+        this.curCarrier = curCarrier;
+    }
+    
+    public void setCurrentCarrier(int i) {
+        if (i < 0 || i > carriers.size()) return;
+        this.curCarrier = carriers.get(i);
+    }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // get
     public Carrier getCarrier() {
-        return carrier;
+        return curCarrier;
+    }
+
+    public List<Carrier> getCarriers() {
+        return carriers;
     }
 
     public Stage[] getStages() {

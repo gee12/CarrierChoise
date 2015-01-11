@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.gee12.panels;
+package com.gee12.groupTableHeader;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,6 +16,7 @@ import javax.swing.JList;
 import javax.swing.JTable;
 import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
+import javax.swing.border.BevelBorder;
 import javax.swing.table.TableCellRenderer;
 
 /**
@@ -27,7 +29,8 @@ public class MultiLineHeaderRenderer extends JList implements TableCellRenderer 
         setOpaque(true);
         setForeground(UIManager.getColor("TableHeader.foreground"));
         setBackground(UIManager.getColor("TableHeader.background"));
-        setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+//        setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+         setBorder(new BevelBorder(BevelBorder.RAISED));
         ListCellRenderer renderer = getCellRenderer();
         ((JLabel) renderer).setHorizontalAlignment(JLabel.CENTER);
         setCellRenderer(renderer);

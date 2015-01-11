@@ -1,27 +1,23 @@
 package com.gee12.panels;
 
-//import java.awt.event.ActionEvent;
-//import java.awt.event.ActionListener;
-//import javax.swing.GroupLayout;
-//import javax.swing.JButton;
 import javax.swing.JDialog;
 
 /**
  *
  * @author Иван
  */
-public class MyJDialog extends JDialog {
+public class MyodalDialog extends JDialog {
     
 //    private JButton okButton;
 //    private JButton cancelButton;
     protected boolean result = false;
  
-    public MyJDialog() {
+    public MyodalDialog() {
         initDialogComponents();
 //        initOkCancelButtons();
     }
     
-    public MyJDialog(String title) {
+    public MyodalDialog(String title) {
         initDialogComponents();
         setTitle(title);
 //        initOkCancelButtons();

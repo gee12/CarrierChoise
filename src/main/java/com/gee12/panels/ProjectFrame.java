@@ -12,7 +12,7 @@ import javax.swing.JDialog;
  *
  * @author Иван
  */
-public class ProjectFrame extends MyJDialog {
+public class ProjectFrame extends MyodalDialog {
 
     protected Project project = null;
     

@@ -3,15 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.gee12.panels;
+package com.gee12.groupTableHeader;
 
 import java.awt.Component;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JTable;
-import javax.swing.ListCellRenderer;
 import static javax.swing.SwingConstants.CENTER;
-import javax.swing.UIManager;
+import javax.swing.border.BevelBorder;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 
@@ -19,12 +17,12 @@ import javax.swing.table.TableCellRenderer;
  *
  * @author Иван
  */
-class RowHeaderRenderer extends JLabel implements TableCellRenderer {
+public class RowHeaderRenderer extends JLabel implements TableCellRenderer {
 
-    RowHeaderRenderer(JTable table) {
+    public RowHeaderRenderer(JTable table) {
       JTableHeader header = table.getTableHeader();
       setOpaque(true);
-      setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+      setBorder(new BevelBorder(BevelBorder.RAISED));//UIManager.getBorder("TableHeader.cellBorder"));
       setHorizontalAlignment(CENTER);
       setForeground(header.getForeground());
       setBackground(header.getBackground());

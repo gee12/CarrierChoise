@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
  *
  * @author Иван
  */
-public class DataFieldDialog extends MyJDialog {
+public class DataFieldDialog extends MyodalDialog {
     
     private final MyButtonGroup actionTypeGroup;
     private ActionType actionType = ActionType.Add;

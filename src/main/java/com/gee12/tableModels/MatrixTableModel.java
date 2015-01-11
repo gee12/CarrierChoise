@@ -1,4 +1,4 @@
-package com.gee12.panels;
+package com.gee12.tableModels;
 
 /**
  *

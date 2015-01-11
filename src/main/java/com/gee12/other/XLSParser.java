@@ -1,7 +1,13 @@
-package com.gee12.structures;
+package com.gee12.other;
 
 
+import com.gee12.structures.Carrier;
+import com.gee12.structures.Criterion;
+import com.gee12.structures.DataField;
+import com.gee12.structures.Matrix;
+import com.gee12.structures.Project;
 import com.gee12.structures.Project.Stages;
+import com.gee12.structures.Stage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,12 +30,15 @@ import org.apache.poi.ss.util.CellReference;
  */
 public class XLSParser {
     
+    public static final String stage1SheetTitle = "1 этап";
     public static final String stage2SheetTitle = "2 этап";
     public static final String stage3SheetTitle = "3 этап";
     
-    public static final String carrierTitle = "Перевозчик";
-    public static final String carrierWeightTitle = "Общий объём услуг, т";
-    public static final String carrierPriceTitle = "Тариф на перевозку, грн";
+    public static final CellReference carrierNameRef = new CellReference(0, 1);
+    public static final CellReference carrierCapacityRef = new CellReference(6, 1);
+    public static final CellReference carrierRepeatRef = new CellReference(6, 2);
+    public static final CellReference carrierMatrixRef = new CellReference(3, 1);
+    public static final int CARRIER_ROWS_NUM = 8;
     
     public static final CellReference baseDataFieldsRef = new CellReference(5, 0);
     public static final CellReference otherDataFieldsRef = new CellReference(5, 3);
@@ -38,6 +47,9 @@ public class XLSParser {
     
     ////////////////////////////////////////////////////////////////////////////
     public static Project readXLSProject(String fileName) {
+        
+        List<Carrier> carriers = null;
+        
         Carrier carrier = null;
         Stage stage2 = null, stage3 = null;
         
@@ -45,17 +57,20 @@ public class XLSParser {
             FileInputStream inputFile = new FileInputStream(new File(fileName));
             HSSFWorkbook workBook = new HSSFWorkbook(inputFile);
             
-            carrier = parseCarrier(workBook.getSheet(stage2SheetTitle));
-            stage2 = new Stage(
-                    parseCriterions(workBook.getSheet(stage2SheetTitle), baseCriterionsRef), 
-                    parseCriterions(workBook.getSheet(stage2SheetTitle), otherCriterionsRef),
-                    parseDataFields(workBook.getSheet(stage2SheetTitle), baseDataFieldsRef), 
-                    parseDataFields(workBook.getSheet(stage2SheetTitle), otherDataFieldsRef));
-            stage3 = new Stage(
-                    parseCriterions(workBook.getSheet(stage3SheetTitle), baseCriterionsRef), 
-                    parseCriterions(workBook.getSheet(stage3SheetTitle), otherCriterionsRef),
-                    parseDataFields(workBook.getSheet(stage3SheetTitle), baseDataFieldsRef), 
-                    parseDataFields(workBook.getSheet(stage3SheetTitle), otherDataFieldsRef));
+            //
+            carriers = readCarriers(workBook.getSheet(stage1SheetTitle));
+//            
+//            //
+//            stage2 = new Stage(
+//                    parseCriterions(workBook.getSheet(stage2SheetTitle), baseCriterionsRef), 
+//                    parseCriterions(workBook.getSheet(stage2SheetTitle), otherCriterionsRef),
+//                    parseDataFields(workBook.getSheet(stage2SheetTitle), baseDataFieldsRef), 
+//                    parseDataFields(workBook.getSheet(stage2SheetTitle), otherDataFieldsRef));
+//            stage3 = new Stage(
+//                    parseCriterions(workBook.getSheet(stage3SheetTitle), baseCriterionsRef), 
+//                    parseCriterions(workBook.getSheet(stage3SheetTitle), otherCriterionsRef),
+//                    parseDataFields(workBook.getSheet(stage3SheetTitle), baseDataFieldsRef), 
+//                    parseDataFields(workBook.getSheet(stage3SheetTitle), otherDataFieldsRef));
             
             inputFile.close();
             workBook.close();
@@ -64,7 +79,7 @@ public class XLSParser {
         }
         
         return new Project(
-                carrier, 
+                carriers, 
                 new Stage[] {stage2, stage3}
         );
     }
@@ -125,35 +140,86 @@ public class XLSParser {
     }
     
     ////////////////////////////////////////////////////////////////////////////
-    public static Carrier parseCarrier(Sheet sheet) {
+    public static List<Carrier> readCarriers(Sheet sheet) {
         if (sheet == null) return null;
         
-        String name = null;
-        double weight = 0, price = 0;
+        List<Carrier> res = new ArrayList<>();
+        for (int shift = 0; (shift + CARRIER_ROWS_NUM) < sheet.getLastRowNum(); shift += CARRIER_ROWS_NUM) {
+            Carrier carrier = parseCarrier(sheet, shift);
+            res.add(carrier);
+        }
         
-        Row titleRow = sheet.getRow(0);
-        Row valuesRow = sheet.getRow(1);
-        if (titleRow != null && valuesRow != null) {
-            Iterator<Cell> cells = titleRow.iterator();
-            while (cells.hasNext()) {
-                Cell cell = cells.next();
-                int cellType = cell.getCellType();
-                if (cellType == Cell.CELL_TYPE_STRING) {
-                    switch (cell.getStringCellValue()) {
-                        case carrierTitle:
-                            name = valuesRow.getCell(cell.getColumnIndex()).getStringCellValue();
-                            break;
-                        case carrierWeightTitle:
-                            weight = valuesRow.getCell(cell.getColumnIndex()).getNumericCellValue();
-                            break;
-                        case carrierPriceTitle:
-                            price = valuesRow.getCell(cell.getColumnIndex()).getNumericCellValue();
-                            break;
-                    }
+        return res;
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    public static Carrier parseCarrier(Sheet sheet, int shift) {
+        if (sheet == null) return null;
+        
+        Cell cell;
+        int cellType;
+        
+        String name = null;
+        cell = sheet.getRow(carrierNameRef.getRow() + shift)
+                .getCell(carrierNameRef.getCol());
+        cellType = cell.getCellType();
+        if (cell != null || cellType == Cell.CELL_TYPE_STRING) {
+            name = cell.getStringCellValue();
+        }
+        
+        double capacity = 0.0;
+        cell = sheet.getRow(carrierCapacityRef.getRow() + shift)
+                .getCell(carrierCapacityRef.getCol());
+        cellType = cell.getCellType();
+        if (cell != null || cellType == Cell.CELL_TYPE_FORMULA) {
+            capacity = cell.getNumericCellValue();
+        }
+        
+        int repeatNum = 0;
+        cell = sheet.getRow(carrierRepeatRef.getRow() + shift)
+                .getCell(carrierRepeatRef.getCol());
+        cellType = cell.getCellType();
+        if (cell != null || cellType == Cell.CELL_TYPE_FORMULA) {
+            repeatNum = (int)cell.getNumericCellValue();
+        }
+        
+        Matrix matrix = new Matrix();
+        for(int i = 0; i < Matrix.DEF_SIZE; i++) {
+            for(int j = 0; j < Matrix.DEF_SIZE; j++) {
+                cell = sheet.getRow(carrierMatrixRef.getRow() + shift + i)
+                        .getCell(carrierMatrixRef.getCol() + j);
+                cellType = cell.getCellType();                
+                if (cell != null/* || cellType == Cell.CELL_TYPE_FORMULA*/) {
+                    matrix.setAt(i, j, cell.getNumericCellValue());
                 }
             }
         }
-        return new Carrier(name, weight, price);
+        
+        return new Carrier(name, capacity, repeatNum, matrix);
+        
+//        Row titleRow = sheet.getRow(0);
+//        Row valuesRow = sheet.getRow(1);
+//        if (titleRow != null && valuesRow != null) {
+//            Iterator<Cell> cells = titleRow.iterator();
+//            while (cells.hasNext()) {
+//                Cell cell = cells.next();
+//                int cellType = cell.getCellType();
+//                if (cellType == Cell.CELL_TYPE_STRING) {
+//                    switch (cell.getStringCellValue()) {
+//                        case carrierTitle:
+//                            name = valuesRow.getCell(cell.getColumnIndex()).getStringCellValue();
+//                            break;
+//                        case carrierWeightTitle:
+//                            weight = valuesRow.getCell(cell.getColumnIndex()).getNumericCellValue();
+//                            break;
+//                        case carrierPriceTitle:
+//                            price = valuesRow.getCell(cell.getColumnIndex()).getNumericCellValue();
+//                            break;
+//                    }
+//                }
+//            }
+//        }
+//        return new Carrier(name, weight, price);
     }
     
     ////////////////////////////////////////////////////////////////////////////

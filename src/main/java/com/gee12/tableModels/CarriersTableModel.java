@@ -1,4 +1,4 @@
-package com.gee12.panels;
+package com.gee12.tableModels;
 
 /**
  *
@@ -9,12 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
-public class CurriersTableModel extends AbstractTableModel {
+public class CarriersTableModel extends AbstractTableModel {
 
     private String[] columnNames = {"Рей\nтинг", "Перевозчик", "Грузо\nподъемн.","Кол-во\nповтор."};
     private List<Carrier> data = null;
     
-    public CurriersTableModel() {
+    public CarriersTableModel() {
         data = new ArrayList<>();
     }
     
@@ -53,7 +53,7 @@ public class CurriersTableModel extends AbstractTableModel {
             case 2:
                 return data.get(row).getCapacity();
             case 3:
-                return data.get(row).getCapacityRepeatNum();
+                return data.get(row).getRepeatNum();
             default:
                 return null;
         }

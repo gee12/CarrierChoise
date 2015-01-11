@@ -1,11 +1,23 @@
 package com.gee12.panels;
 
 import com.gee12.other.SwitchStageListener;
+import com.gee12.other.XLSParser;
+import com.gee12.structures.Carrier;
 import com.gee12.structures.Project;
+import com.gee12.structures.Project.Stages;
+import com.gee12.structures.Stage;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Dimension;
-import javax.swing.GroupLayout;
+import static java.awt.EventQueue.invokeLater;
+import java.util.ArrayList;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JToolBar;
+import javax.swing.UIManager;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -13,90 +25,162 @@ import javax.swing.JPanel;
  */
 public class MainFrame extends JFrame implements SwitchStageListener {
     //
-    private JPanel curPanel;
+    private Stages curStage;
+    JPanel cards;
     private ChoisePanel choisePanel;
+    private CooperatePanel cooperatePanel;
+    private RatingPanel ratingPanel;
     
+    private JButton closeButton;
+    private JButton createButton;
+    private JToolBar toolBar;
+    private JButton openButton;
+    
+    private String projectFileName = null;            
+    private Project curProject = null;
+    
+    ////////////////////////////////////////////////////////////////////////////
     public MainFrame() {
         
-        
         initComponents();
+        
     }
     
+    ////////////////////////////////////////////////////////////////////////////
     public void initComponents() {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setLocationByPlatform(true);
-        setPreferredSize(new Dimension(860,600));
+        setPreferredSize(new Dimension(900,600));
+        setResizable(false);
+
+        // add toolbar and buttons
+        toolBar = new javax.swing.JToolBar();
+        createButton = new javax.swing.JButton();
+        openButton = new javax.swing.JButton();
+        closeButton = new javax.swing.JButton();
+
+        toolBar.setFloatable(false);
+        toolBar.setRollover(true);
+
+        createButton.setText("Создать");
+        createButton.setToolTipText("Создать проект");
+        createButton.setEnabled(true);
+        createButton.setFocusable(false);
+        createButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        createButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        createButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                createButtonActionPerformed(evt);
+            }
+        });
+        toolBar.add(createButton);
+
+        openButton.setText("Открыть");
+        openButton.setToolTipText("Открыть проект");
+        openButton.setFocusable(false);
+        openButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        openButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        openButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openButtonActionPerformed(evt);
+            }
+        });
+        toolBar.add(openButton);
+
+        closeButton.setText("Закрыть");
+        closeButton.setToolTipText("Закрыть проект");
+        closeButton.setEnabled(false);
+        closeButton.setFocusable(false);
+        closeButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        closeButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        closeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                closeButtonActionPerformed(evt);
+            }
+        });
+        toolBar.add(closeButton);        
+        add(toolBar, BorderLayout.PAGE_START);
         
+        // create the panel that contains the "cards".
         choisePanel = new ChoisePanel(this);
-        curPanel = choisePanel;
-        
-        GroupLayout layout = new GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(curPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(curPanel, javax.swing.GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
+        cooperatePanel = new CooperatePanel(this);
+        ratingPanel = new RatingPanel(this);
+        cards = new JPanel(new CardLayout());
+        cards.add(new JPanel(), Project.Stages.STAGE0_START.toString());
+        cards.add(choisePanel, Project.Stages.STAGE1_CHOISE.toString());
+        cards.add(cooperatePanel, Project.Stages.STAGE2_COOPERATION.toString());
+        cards.add(ratingPanel, Project.Stages.STAGE3_RATING.toString());
+        add(cards, BorderLayout.CENTER);
 
         pack();        
     }
 
+    ////////////////////////////////////////////////////////////////////////////
     @Override
     public void nextStage(Project.Stages stage) {
-        switch(stage) {
-            case STAGE1_CHOISE:
-                switchMainPanel(choisePanel);
-                break;
-            case STAGE2_COOPERATION:
-                
-                break;
-            case STAGE3_RATING:
-                
-                break;
-        }
+        this.curStage = stage;
+        CardLayout cl = (CardLayout)(cards.getLayout());
+        cl.show(cards, stage.toString());
     }
     
-    public void switchMainPanel(JPanel newPanel) {
-        if (curPanel == null || newPanel == null) return;
-//        curPanel.setVisible(false);
-//        newPanel.setVisible(true);
-        curPanel = newPanel;
-    }
-    
-    public static void main(String args[]) {
-//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-//         */
-//        try {
-//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-//                if ("Nimbus".equals(info.getName())) {
-//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-//                    break;
-//                }
-//            }
-//        } catch (ClassNotFoundException ex) {
-//            java.util.logging.Logger.getLogger(MainFrameOld2.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (InstantiationException ex) {
-//            java.util.logging.Logger.getLogger(MainFrameOld2.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (IllegalAccessException ex) {
-//            java.util.logging.Logger.getLogger(MainFrameOld2.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-//            java.util.logging.Logger.getLogger(MainFrameOld2.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        }
-//        //</editor-fold>
-//        //</editor-fold>
+    ////////////////////////////////////////////////////////////////////////////
+    private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        JFileChooser createShooser = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(
+            "Таблицы MS Office (*.xls)", "xls");
+        createShooser.setFileFilter(filter);
+        int returnVal = createShooser.showSaveDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            projectFileName = createShooser.getSelectedFile().getAbsolutePath();
+            curProject = new Project();
+            choisePanel.init(curProject, projectFileName);
+            nextStage(Project.Stages.STAGE1_CHOISE);
+            
+            closeButton.setEnabled(true);
+        }   
+    }                                            
 
-        java.awt.EventQueue.invokeLater(new Runnable() {
+    ////////////////////////////////////////////////////////////////////////////
+    private void openButtonActionPerformed(java.awt.event.ActionEvent evt) {                                           
+        JFileChooser openChooser = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(
+            "Таблицы MS Office (*.xls)", "xls");
+        openChooser.setFileFilter(filter);
+        int returnVal = openChooser.showOpenDialog(this);
+        if(returnVal == JFileChooser.APPROVE_OPTION) {
+            projectFileName = openChooser.getSelectedFile().getAbsolutePath();
+            curProject = XLSParser.readXLSProject(projectFileName);
+            choisePanel.init(curProject, projectFileName);
+            nextStage(Project.Stages.STAGE1_CHOISE);
+            
+            closeButton.setEnabled(true);
+        }
+    }                                          
+
+    ////////////////////////////////////////////////////////////////////////////
+    private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {                                            
+        nextStage(Project.Stages.STAGE0_START);
+            projectFileName = null;
+            curProject = null;
+            
+            closeButton.setEnabled(false);
+    }     
+    
+    ////////////////////////////////////////////////////////////////////////////
+    public static void main(String args[]) {
+        //
+        try {
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        //
+        invokeLater(new Runnable() {
             public void run() {
                 new MainFrame().setVisible(true);
             }

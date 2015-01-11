@@ -1,5 +1,6 @@
 package com.gee12.structures;
 
+import com.gee12.other.XLSParser;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.util.CellReference;
 

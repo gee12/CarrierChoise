@@ -1,6 +1,8 @@
 package com.gee12.panels;
 
-import com.gee12.structures.XLSParser;
+import com.gee12.tableModels.CriterionsTableModel;
+import com.gee12.tableModels.DataTableModel;
+import com.gee12.other.XLSParser;
 import com.gee12.structures.DataField;
 import com.gee12.structures.Project;
 import com.gee12.structures.Criterion;

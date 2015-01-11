@@ -8,26 +8,13 @@ public class Carrier {
     
     protected String name;
     protected double capacity;
-    protected int capacityRepeatNum;
+    protected int repeatNum;
     protected Matrix matrix;
 
-//    protected double maxWeight;     // общий объем услуг (тонн)
-//    protected double price;            // стоимость услуг
-    
-//    protected Stock stock;          // подвижной состав
-//    protected int allStock;         // общее кол-во подвижного состава
-//    protected boolean isDocExist;    // наличие док-тов
-//    
-//    protected boolean isInsurance;      // возможность страхования груза
-//    protected boolean isStorage;        // возможность хранения груза
-//    protected boolean loadingUnloading; // Предоставление погрузочно – разгрузочных работ
-//    protected boolean isGPS;            // наличие GPS связи
-//    protected boolean isOperativeChange;    // возм.оперативного изменения условий сделки
-
-    public Carrier(String name, double capacity, int capacityRepeatNum, Matrix matrix) {
+    public Carrier(String name, double capacity, int repNum, Matrix matrix) {
         this.name = name;
         this.capacity = capacity;
-        this.capacityRepeatNum = capacityRepeatNum;
+        this.repeatNum = repNum;
         this.matrix = matrix;
     }
 
@@ -39,20 +26,11 @@ public class Carrier {
         return capacity;
     }
 
-    public int getCapacityRepeatNum() {
-        return capacityRepeatNum;
+    public int getRepeatNum() {
+        return repeatNum;
     }
 
     public Matrix getMatrix() {
         return matrix;
     }
-    
-//    public double getMaxWeight() {
-//        return maxWeight;
-//    }
-
-//    public double getPrice() {
-//        return price;
-//    }
-    
 }

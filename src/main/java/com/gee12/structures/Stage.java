@@ -1,6 +1,7 @@
 package com.gee12.structures;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,6 +15,13 @@ public class Stage {
     protected List<DataField> baseDataFileds;
     protected List<DataField> otherDataFileds;
 
+    public Stage() {
+        this.baseCriterions = new ArrayList<Criterion>();
+        this.otherCriterions = new ArrayList<Criterion>();
+        this.baseDataFileds = new ArrayList<DataField>();
+        this.otherDataFileds = new ArrayList<DataField>();
+    }
+    
     public Stage(List<Criterion> baseCriterions, List<Criterion> otherCriterions, 
             List<DataField> baseDataFileds, List<DataField> otherDataFileds) {
         this.baseCriterions = baseCriterions;

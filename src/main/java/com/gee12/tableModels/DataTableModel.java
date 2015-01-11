@@ -1,29 +1,29 @@
-package com.gee12.panels;
+package com.gee12.tableModels;
 
 /**
  *
  * @author Иван
  */
-import com.gee12.structures.Criterion;
+import com.gee12.structures.DataField;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
-public class CriterionsTableModel extends AbstractTableModel {
+public class DataTableModel extends AbstractTableModel {
 
     private String[] columnNames = {"Наименование", "Значение"};
-    private List<Criterion> data = null;
+    private List<DataField> data = null;
     
-    public CriterionsTableModel() {
+    public DataTableModel() {
         data = new ArrayList<>();
     }
     
-    public void setData(List<Criterion> data) {
+    public void setData(List<DataField> data) {
         this.data = data;
         fireTableDataChanged();
     }
     
-    public void addRow(Criterion obj) {
+    public void addRow(DataField obj) {
         data.add(obj);
         fireTableDataChanged();
     }
