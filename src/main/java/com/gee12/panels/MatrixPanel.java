@@ -31,7 +31,7 @@ import javax.swing.table.TableColumnModel;
  */
 public class MatrixPanel extends JPanel {
 
-    public final static int CELL_WIDTH = 70;
+    public final static int CELL_WIDTH = 80;
     public final static int CELL_HEIGHT = 30;
     
     private final JTable matrixTable;
@@ -101,7 +101,7 @@ public class MatrixPanel extends JPanel {
         viewport.setView(rowHeaderTable);
         viewport.setPreferredSize(rowHeaderTable.getPreferredSize());
         scroll.setRowHeaderView(viewport);
-        scroll.setPreferredSize(new Dimension(386,156));
+        scroll.setPreferredSize(new Dimension(430,156));
 
         add(scroll);
     }

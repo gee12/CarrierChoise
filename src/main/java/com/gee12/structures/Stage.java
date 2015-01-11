@@ -10,40 +10,33 @@ import java.util.List;
  */
 public class Stage {
     
-    protected final List<Criterion> baseCriterions;
-    protected final List<Criterion> otherCriterions;
-    protected List<DataField> baseDataFileds;
-    protected List<DataField> otherDataFileds;
+    protected List<DataField> dataFileds;
+    protected List<Criterion> criterions;
 
     public Stage() {
-        this.baseCriterions = new ArrayList<Criterion>();
-        this.otherCriterions = new ArrayList<Criterion>();
-        this.baseDataFileds = new ArrayList<DataField>();
-        this.otherDataFileds = new ArrayList<DataField>();
+        this.dataFileds = new ArrayList<DataField>();
+        this.criterions = new ArrayList<Criterion>();
     }
     
-    public Stage(List<Criterion> baseCriterions, List<Criterion> otherCriterions, 
-            List<DataField> baseDataFileds, List<DataField> otherDataFileds) {
-        this.baseCriterions = baseCriterions;
-        this.otherCriterions = otherCriterions;
-        this.baseDataFileds = baseDataFileds;
-        this.otherDataFileds = otherDataFileds;
+    public Stage(List<DataField> dataFileds, List<Criterion> criterions) {
+        this.dataFileds = dataFileds;
+        this.criterions = criterions;
     }
 
-    public List<Criterion> getBaseCriterions() {
-        return baseCriterions;
+    public void setCriterions(List<Criterion> criterions) {
+        this.criterions = criterions;
     }
 
-    public List<Criterion> getOtherCriterions() {
-        return otherCriterions;
-    }
-    
-    public List<DataField> getBaseDataFileds() {
-        return baseDataFileds;
+    public void setDataFields(List<DataField> dataFileds) {
+        this.dataFileds = dataFileds;
     }
 
-    public List<DataField> getOtherDataFileds() {
-        return otherDataFileds;
+    public List<Criterion> getCriterions() {
+        return criterions;
     }
-    
+
+    public List<DataField> getDataFields() {
+        return dataFileds;
+    }
+        
 }

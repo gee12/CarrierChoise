@@ -1,5 +1,6 @@
 package com.gee12.structures;
 
+import java.util.List;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.util.CellReference;
 
@@ -9,28 +10,62 @@ import org.apache.poi.ss.util.CellReference;
  */
 public class Criterion {
     
-    public static final Criterion EMPTY = new Criterion("","","","A1","A2");
+    public enum Types {
+        BASE,
+        OTHER
+    }
+    
+    public static final Criterion EMPTY = new Criterion("","","","A1","A2", Types.BASE);
     
     protected String name;
     protected String formula;
     protected String value;
     protected CellReference nameRef;
     protected CellReference valueRef;
-    
-    public Criterion(String name, String formula, String value, Cell nameCell, Cell valueCell) {
+    protected Types type;
+   
+    public Criterion(String name, String formula, String value, Cell nameCell, Cell valueCell, Types type) {
         this.name = name;
         this.formula = formula;
         this.value = value;
         this.nameRef = new CellReference(nameCell);
         this.valueRef = new CellReference(valueCell);
+        this.type = type;
     }
     
-    public Criterion(String name, String formula, String value, String nameRef, String valueRef) {
+    public Criterion(String name, String formula, String value, String nameRef, String valueRef, Types type) {
         this.name = name;
         this.formula = formula;
         this.value = value;
         this.nameRef = new CellReference(nameRef);
         this.valueRef = new CellReference(valueRef);
+        this.type = type;
+    }
+    
+    public static CellReference lastCriterionNameRef(List<Criterion> criterions, Types type) {
+        CellReference lastRef = new CellReference(0, 0);
+        for(Criterion crit : criterions) {
+            if (crit.getType() == type && lastRef.getRow() < crit.getValueRow()) {
+                lastRef = crit.getValueRef();
+            }
+        }
+        return lastRef;
+    }
+
+    public CellReference getNameRef() {
+        return nameRef;
+    }
+
+    public CellReference getValueRef() {
+        return valueRef;
+    }
+
+    public void setType(Types type) {
+        this.type = type;
+    }
+
+    public Types getType() {
+        return type;
     }
 
     public void setFormula(String formula) {

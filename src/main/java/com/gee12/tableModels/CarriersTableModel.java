@@ -4,10 +4,14 @@ package com.gee12.tableModels;
  *
  * @author Иван
  */
+import com.gee12.other.ColumnSorter;
 import com.gee12.structures.Carrier;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 public class CarriersTableModel extends AbstractTableModel {
 
@@ -23,8 +27,12 @@ public class CarriersTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
     
-    public void addRow(Carrier obj) {
-        data.add(obj);
+    public List<Carrier> getData() {
+        return data;
+    }
+    
+    public void addRow(Carrier car) {
+        data.add(car);
         fireTableDataChanged();
     }
 

@@ -1,4 +1,4 @@
-package com.gee12.panels;
+package com.gee12.other;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -13,7 +13,7 @@ import java.awt.geom.Area;
 import java.awt.geom.RoundRectangle2D;
 import javax.swing.border.AbstractBorder;
 
-class BubbleBorder extends AbstractBorder {
+public class BubbleBorder extends AbstractBorder {
 
     private Color color;
     private int thickness = 4;
@@ -26,11 +26,11 @@ class BubbleBorder extends AbstractBorder {
     private boolean left = true;
     RenderingHints hints;
 //
-//    BubbleBorder(Color color) {
+//    public BubbleBorder(Color color) {
 //        new BubbleBorder(color, 4, 8, 7);
 //    }
 
-    BubbleBorder(Color color, int thickness, int radii, int pointerSize) {
+    public BubbleBorder(Color color, int thickness, int radii, int pointerSize) {
         this.thickness = thickness;
         this.radii = radii;
         this.pointerSize = pointerSize;
@@ -48,7 +48,7 @@ class BubbleBorder extends AbstractBorder {
         insets = new Insets(pad, pad, bottomPad, pad);
     }
 
-    BubbleBorder(Color color, int thickness, int radii, int pointerSize, boolean left) {
+    public BubbleBorder(Color color, int thickness, int radii, int pointerSize, boolean left) {
         this(color, thickness, radii, pointerSize);
         this.left = left;
     }

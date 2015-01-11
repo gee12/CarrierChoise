@@ -1,14 +1,15 @@
 package com.gee12.panels;
 
+import static com.gee12.panels.CooperatePanel.dataFieldComparator;
 import com.gee12.tableModels.DataTableModel;
-import com.gee12.structures.DataField;
 import com.gee12.structures.Project;
 import com.gee12.structures.Criterion;
+import com.gee12.structures.DataField;
 import com.gee12.structures.Project.Stages;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.ButtonGroup;
-import org.apache.poi.ss.util.CellReference;
+import java.util.List;
+import javax.swing.JScrollPane;
 
 /**
  *
@@ -22,18 +23,22 @@ public class CriterionDialog extends MyodalDialog {
         Delete
     }
     
-    private final DataTableModel baseDataTM;
-    private final DataTableModel otherDataTM;
+    public static final int NAME_CELL_WIDTH = 570;
+    public static final int VALUE_CELL_WIDTH = 150;
+    public static final int TYPE_CELL_WIDTH = 80;
+    
+    private final DataTableModel dataTM;
     private Project curProject = null;
     private Criterion curCriterion = null;
     private final MyButtonGroup actionTypeGroup;
+    private final MyButtonGroup critTypeGroup;
     private Stages curStage = Stages.STAGE1_CHOISE;
     private ActionType actionType = ActionType.Add;
     
-    public CriterionDialog(Stages stage, Project proj, Criterion crit) {
-        baseDataTM = new DataTableModel();
-        otherDataTM = new DataTableModel();
+    public CriterionDialog(Project proj, Criterion crit, Stages stage) {
+        dataTM = new DataTableModel();
         actionTypeGroup = new MyButtonGroup();
+        critTypeGroup = new MyButtonGroup();
 	//
 	actionTypeGroup.addActionListener(new ActionListener() {
 	    @Override
@@ -44,13 +49,15 @@ public class CriterionDialog extends MyodalDialog {
         
         initComponents();
         initDialogComponents();
-        baseDataTable.getColumnModel().getColumn(1).setMaxWidth(100);
-        otherDataTable.getColumnModel().getColumn(1).setMaxWidth(100);
+        
+        dataTable.getColumnModel().getColumn(0).setPreferredWidth(NAME_CELL_WIDTH);
+        dataTable.getColumnModel().getColumn(1).setPreferredWidth(VALUE_CELL_WIDTH);
+        dataTable.getColumnModel().getColumn(2).setPreferredWidth(TYPE_CELL_WIDTH);
         
         curProject = proj;
         curStage = stage;
         curCriterion = crit;
-        initTables(stage, proj);
+        initTable(stage, proj);
         
         String actionCommand = "";
         if (crit == null) {
@@ -68,36 +75,28 @@ public class CriterionDialog extends MyodalDialog {
     private void selectActionType(String actionCommand) {
         if (actionCommand.equalsIgnoreCase(addRadioButton.getActionCommand())) {
             actionType = ActionType.Add;
-            initCriterionFields(Criterion.EMPTY);
+            initFields(Criterion.EMPTY);
         } else if (actionCommand.equalsIgnoreCase(editRadioButton.getActionCommand())) {
             actionType = ActionType.Edit;
-            initCriterionFields(curCriterion);
+            initFields(curCriterion);
         } else if (actionCommand.equalsIgnoreCase(deleteRadioButton.getActionCommand())) {
             actionType = ActionType.Delete;
-            initCriterionFields(curCriterion);
+            initFields(curCriterion);
         }
     }
     
-    public void initCriterionFields(Criterion crit) {
+    public void initFields(Criterion crit) {
         nameTextField.setText(crit.getName());
         formulaTextField.setText(crit.getFormula());
         valueTextField.setText(crit.getValue());
     }
     
     
-    public void initTables(Stages stage, Project proj) {
-        if (proj == null) return;
-        
-        switch (stage) {
-            case STAGE2_COOPERATION:
-                baseDataTM.setData(proj.getStage(Stages.STAGE2_COOPERATION).getBaseDataFileds());
-                otherDataTM.setData(proj.getStage(Stages.STAGE2_COOPERATION).getOtherDataFileds());
-                break;
-            case STAGE3_RATING:
-                baseDataTM.setData(proj.getStage(Stages.STAGE3_RATING).getBaseDataFileds());
-                otherDataTM.setData(proj.getStage(Stages.STAGE3_RATING).getOtherDataFileds());
-                break;
-        }
+    public void initTable(Stages stage, Project proj) {
+        List <DataField> dataFields = proj.getStage(stage).getDataFields();
+        // for rows sort
+        dataFields.sort(dataFieldComparator);
+        dataTM.setData(dataFields);
     }
     
     public Criterion getCriterion() {
@@ -118,12 +117,6 @@ public class CriterionDialog extends MyodalDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane3 = new javax.swing.JScrollPane();
-        baseDataTable = new javax.swing.JTable();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        otherDataTable = new javax.swing.JTable();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
         cancelButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
@@ -133,37 +126,18 @@ public class CriterionDialog extends MyodalDialog {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         valueTextField = new javax.swing.JTextField();
+        otherRadioButton = new javax.swing.JRadioButton();
+        baseRadioButton = new javax.swing.JRadioButton();
+        jLabel7 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         addRadioButton = new javax.swing.JRadioButton();
         editRadioButton = new javax.swing.JRadioButton();
         deleteRadioButton = new javax.swing.JRadioButton();
         jLabel6 = new javax.swing.JLabel();
+        baseDataScrollPane = new javax.swing.JScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        dataTable = new javax.swing.JTable();
 
         setTitle("Критерий");
-
-        baseDataTable.setModel(baseDataTM);
-        baseDataTable.setName("Основные критерии"); // NOI18N
-        baseDataTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        baseDataTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                baseDataTableMouseClicked(evt);
-            }
-        });
-        jScrollPane3.setViewportView(baseDataTable);
-
-        otherDataTable.setModel(otherDataTM);
-        otherDataTable.setName("Основные критерии"); // NOI18N
-        otherDataTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        otherDataTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                otherDataTableMouseClicked(evt);
-            }
-        });
-        jScrollPane4.setViewportView(otherDataTable);
-
-        jLabel1.setText("Основные");
-
-        jLabel2.setText("Дополнительные");
 
         cancelButton.setText("Отмена");
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
@@ -193,6 +167,15 @@ public class CriterionDialog extends MyodalDialog {
 
         valueTextField.setEnabled(false);
 
+        critTypeGroup.add(otherRadioButton);
+        otherRadioButton.setText("Дополнительный");
+
+        critTypeGroup.add(baseRadioButton);
+        baseRadioButton.setSelected(true);
+        baseRadioButton.setText("Основной");
+
+        jLabel7.setText("Тип");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -202,13 +185,19 @@ public class CriterionDialog extends MyodalDialog {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4)
                     .addComponent(jLabel3)
-                    .addComponent(jLabel5))
+                    .addComponent(jLabel5)
+                    .addComponent(jLabel7))
                 .addGap(24, 24, 24)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(nameTextField)
                     .addComponent(formulaTextField)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(valueTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(baseRadioButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(otherRadioButton))
+                            .addComponent(valueTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -222,10 +211,16 @@ public class CriterionDialog extends MyodalDialog {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(formulaTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(valueTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5)))
+                    .addComponent(jLabel5))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(baseRadioButton)
+                    .addComponent(otherRadioButton))
+                .addContainerGap())
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Тип действия"));
@@ -262,10 +257,21 @@ public class CriterionDialog extends MyodalDialog {
                 .addComponent(editRadioButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(deleteRadioButton)
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jLabel6.setText("Для добавления в формулу ссылки на ячейку данных кникните по ячейке в таблице");
+
+        dataTable.setModel(dataTM);
+        dataTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        dataTable.setName("Основные критерии"); // NOI18N
+        dataTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        dataTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                dataTableMouseClicked(evt);
+            }
+        });
+        baseDataScrollPane.setViewportView(dataTable);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -275,21 +281,11 @@ public class CriterionDialog extends MyodalDialog {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(175, 175, 175)
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel2)
-                        .addGap(186, 186, 186))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 478, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 483, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(10, 10, 10)
                                 .addComponent(jLabel6)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 334, Short.MAX_VALUE)
                                 .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(cancelButton))
@@ -297,23 +293,20 @@ public class CriterionDialog extends MyodalDialog {
                                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addGap(14, 14, 14))))
+                        .addGap(14, 14, 14))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(baseDataScrollPane)
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(12, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addContainerGap()
+                .addComponent(baseDataScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
@@ -346,42 +339,32 @@ public class CriterionDialog extends MyodalDialog {
         dispose();
     }//GEN-LAST:event_okButtonActionPerformed
 
-    private void baseDataTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_baseDataTableMouseClicked
-        int selectedRow = baseDataTable.getSelectedRow();
-        DataField dataField = curProject.getStage(curStage).getBaseDataFileds()
-                .get(baseDataTable.convertRowIndexToModel(selectedRow));
-        // paste String into cursor position in TextField
+    private void dataTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dataTableMouseClicked
+        int selectedRow = dataTable.getSelectedRow();
+        DataField dataField = curProject.getStage(curStage).getDataFields()
+                .get(dataTable.convertRowIndexToModel(selectedRow));
         pasteStringIntoFormulaTextField(dataField.getValueCellReference());
-    }//GEN-LAST:event_baseDataTableMouseClicked
-
-    private void otherDataTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_otherDataTableMouseClicked
-        int selectedRow = otherDataTable.getSelectedRow();
-        DataField dataField = curProject.getStage(curStage).getOtherDataFileds()
-                .get(otherDataTable.convertRowIndexToModel(selectedRow));
-        // paste String into cursor position in TextField
-        pasteStringIntoFormulaTextField(dataField.getValueCellReference());
-    }//GEN-LAST:event_otherDataTableMouseClicked
+    }//GEN-LAST:event_dataTableMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton addRadioButton;
-    private javax.swing.JTable baseDataTable;
+    private javax.swing.JScrollPane baseDataScrollPane;
+    private javax.swing.JRadioButton baseRadioButton;
     private javax.swing.JButton cancelButton;
+    private javax.swing.JTable dataTable;
     private javax.swing.JRadioButton deleteRadioButton;
     private javax.swing.JRadioButton editRadioButton;
     private javax.swing.JTextField formulaTextField;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTextField nameTextField;
     private javax.swing.JButton okButton;
-    private javax.swing.JTable otherDataTable;
+    private javax.swing.JRadioButton otherRadioButton;
     private javax.swing.JTextField valueTextField;
     // End of variables declaration//GEN-END:variables
 }

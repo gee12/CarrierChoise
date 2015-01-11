@@ -11,7 +11,7 @@ import javax.swing.table.AbstractTableModel;
 
 public class DataTableModel extends AbstractTableModel {
 
-    private String[] columnNames = {"Наименование", "Значение"};
+    private String[] columnNames = {"Наименование", "Значение", "Тип"};
     private List<DataField> data = null;
     
     public DataTableModel() {
@@ -28,25 +28,21 @@ public class DataTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
-    //Выдает количество колонок
     @Override
     public int getColumnCount() {
         return columnNames.length;
     }
     
-    //Выдает название колонки
     @Override
     public String getColumnName(int col) {
         return columnNames[col];
     }
 
-    //Выдает количество строк
     @Override
     public int getRowCount() {
         return data.size();
     }
 
-    //Выдает значение ячейки
     @Override
     public Object getValueAt(int row, int col) {
         switch(col) {
@@ -54,47 +50,51 @@ public class DataTableModel extends AbstractTableModel {
                 return data.get(row).getName();
             case 1:
                 return data.get(row).getValue();
+            case 2:
+                return data.get(row).getType();
             default:
                 return null;
         }
     }
 
-    //Возвращает класс колонки
     @Override
     public Class getColumnClass(int col) {
         switch(col) {
             case 0: 
-                return data.get(0).getName().getClass();
+                return String.class;
             case 1:
-                return data.get(0).getValue().getClass();
+                return String.class;
+            case 2:
+                return DataField.Types.class;
             default:
                 return null;
         }
     }
 
-    //Возвращает, можно ли редактировать ячейку
     @Override
     public boolean isCellEditable(int row, int col) {
-        switch (col) {
-            case 0:
-            case 1:
-                return true;
-            default:
-                return false;
-         }
+//        switch (col) {
+//            case 0:
+//            case 1:
+//                return true;
+//            default:
+//                return false;
+//         }
+        return false;
     }
 
-    //Установка нового значения
     @Override
     public void setValueAt(Object v, int row, int col) {
-        switch(col) {
-            case 0: 
-                data.get(row).setName((String)v);
-            case 1:
-                data.get(row).setValue((String)v);
-            default:
-                break;
-        }
-        fireTableCellUpdated(row, col);
+//        switch(col) {
+//            case 0: 
+//                data.get(row).setName((String)v);
+//                break;
+//            case 1:
+//                data.get(row).setValue((String)v);
+//                break;
+//            default:
+//                break;
+//        }
+//        fireTableCellUpdated(row, col);
     }
 }

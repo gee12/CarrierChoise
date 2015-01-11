@@ -50,7 +50,7 @@ public class MainFrame extends JFrame implements SwitchStageListener {
     public void initComponents() {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setLocationByPlatform(true);
-        setPreferredSize(new Dimension(900,600));
+        setPreferredSize(new Dimension(900,650));
         setResizable(false);
 
         // add toolbar and buttons
@@ -119,6 +119,24 @@ public class MainFrame extends JFrame implements SwitchStageListener {
     @Override
     public void nextStage(Project.Stages stage) {
         this.curStage = stage;
+        
+        switch(stage) {
+            case STAGE1_CHOISE:
+                
+                break;
+            case STAGE2_COOPERATION:
+                cooperatePanel.init(curProject, choisePanel.getCurrentCarrier(), projectFileName);
+                break;
+                
+            case STAGE3_RATING:
+                curProject = cooperatePanel.getProject();
+                ratingPanel.init(curProject, choisePanel.getCurrentCarrier(), projectFileName);
+                break;
+            default:
+                
+                break;
+        }
+        
         CardLayout cl = (CardLayout)(cards.getLayout());
         cl.show(cards, stage.toString());
     }

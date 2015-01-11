@@ -5,6 +5,7 @@ package com.gee12.tableModels;
  * @author Иван
  */
 import com.gee12.structures.Matrix;
+import java.util.Locale;
 import javax.swing.table.AbstractTableModel;
 
 public class MatrixTableModel extends AbstractTableModel {
@@ -20,6 +21,10 @@ public class MatrixTableModel extends AbstractTableModel {
     public void setData(Matrix matr) {
         this.matrix = matr;
         fireTableDataChanged();
+    }
+    
+    public Matrix getData() {
+        return matrix;
     }
 
     @Override
@@ -54,7 +59,9 @@ public class MatrixTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object v, int row, int col) {
-        matrix.setAt(row, col, Double.parseDouble(String.valueOf(v)));
+//        matrix.setAt(row, col, Double.parseDouble(String.valueOf(v)));
+        matrix.setAt(row, col, Double.parseDouble(
+                String.format(Locale.US, "%.2f", v)));
         fireTableCellUpdated(row, col);
     }
 }

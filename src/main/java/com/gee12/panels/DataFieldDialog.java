@@ -1,9 +1,7 @@
 package com.gee12.panels;
 
 import com.gee12.structures.DataField;
-import com.gee12.structures.Project;
 import com.gee12.panels.CriterionDialog.ActionType;
-import com.gee12.structures.Project.Stages;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -14,18 +12,21 @@ import java.awt.event.ActionListener;
 public class DataFieldDialog extends MyodalDialog {
     
     private final MyButtonGroup actionTypeGroup;
+    private final MyButtonGroup dataTypeGroup;
     private ActionType actionType = ActionType.Add;
     private DataField curDataField = null;
     
-    public DataFieldDialog(Stages stage, DataField dataField) {
+    public DataFieldDialog(DataField dataField) {
         actionTypeGroup = new MyButtonGroup();
+        dataTypeGroup = new MyButtonGroup();
 	//
 	actionTypeGroup.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
                 selectActionType(e.getActionCommand());
 	    }
-	});         
+	});       
+        
         initComponents();
         initDialogComponents();
         
@@ -54,23 +55,14 @@ public class DataFieldDialog extends MyodalDialog {
             actionType = CriterionDialog.ActionType.Delete;
             initDataFields(curDataField);
         }
-        
     }    
     
     public void initDataFields(DataField data) {
         nameTextField.setText(data.getName());
         valueTextField.setText(data.getValue());
-    }
-    
-    public void initFields(Stages stage, Project proj) {
-        if (proj == null) return;
-        
-        switch (stage) {
-            case STAGE2_COOPERATION:
-                break;
-            case STAGE3_RATING:
-                break;
-        }
+        if (data.getType() == DataField.Types.BASE)
+            baseRadioButton.setSelected(true);
+        else otherRadioButton.setSelected(true);
     }
     
     public DataField getDataField() {
@@ -97,6 +89,9 @@ public class DataFieldDialog extends MyodalDialog {
         jLabel4 = new javax.swing.JLabel();
         nameTextField = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        baseRadioButton = new javax.swing.JRadioButton();
+        otherRadioButton = new javax.swing.JRadioButton();
 
         cancelButton.setText("Отмена");
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
@@ -146,7 +141,7 @@ public class DataFieldDialog extends MyodalDialog {
                 .addComponent(editRadioButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(deleteRadioButton)
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Параметры"));
@@ -159,17 +154,37 @@ public class DataFieldDialog extends MyodalDialog {
 
         jLabel5.setText("Значение");
 
+        jLabel1.setText("Тип");
+
+        dataTypeGroup.add(baseRadioButton);
+        baseRadioButton.setSelected(true);
+        baseRadioButton.setText("Основной");
+        baseRadioButton.setActionCommand("Основной");
+
+        dataTypeGroup.add(otherRadioButton);
+        otherRadioButton.setText("Дополнительный");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel4))
-                .addGap(28, 28, 28)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel4))
+                        .addGap(28, 28, 28))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(baseRadioButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(otherRadioButton))
                     .addComponent(valueTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(nameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
@@ -177,15 +192,18 @@ public class DataFieldDialog extends MyodalDialog {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(nameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 51, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
+                    .addComponent(jLabel4)
+                    .addComponent(nameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(valueTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(baseRadioButton)
+                    .addComponent(otherRadioButton))
+                .addContainerGap(7, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -212,9 +230,9 @@ public class DataFieldDialog extends MyodalDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
                     .addComponent(okButton)
@@ -240,6 +258,9 @@ public class DataFieldDialog extends MyodalDialog {
         
         curDataField.setName(name);
         curDataField.setValue(formula);
+        if (baseRadioButton.isSelected())
+            curDataField.setType(DataField.Types.BASE);
+        else curDataField.setType(DataField.Types.OTHER);
         
         result = true;
         setVisible(false);
@@ -248,9 +269,11 @@ public class DataFieldDialog extends MyodalDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton addRadioButton;
+    private javax.swing.JRadioButton baseRadioButton;
     private javax.swing.JButton cancelButton;
     private javax.swing.JRadioButton deleteRadioButton;
     private javax.swing.JRadioButton editRadioButton;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -258,6 +281,7 @@ public class DataFieldDialog extends MyodalDialog {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JTextField nameTextField;
     private javax.swing.JButton okButton;
+    private javax.swing.JRadioButton otherRadioButton;
     private javax.swing.JTextField valueTextField;
     // End of variables declaration//GEN-END:variables
 }

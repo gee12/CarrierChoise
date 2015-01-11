@@ -31,23 +31,27 @@
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="saveReportButton" max="32767" attributes="0"/>
           </Group>
-          <Component id="jLabel1" alignment="0" max="32767" attributes="0"/>
           <Component id="jPanel2" alignment="0" max="32767" attributes="0"/>
           <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="ratingTextField" min="-2" pref="71" max="-2" attributes="0"/>
+              <Component id="genMarkTextField" min="-2" pref="71" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="56" max="-2" attributes="0"/>
               <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="maxRatingTextField" min="-2" pref="71" max="-2" attributes="0"/>
+              <Component id="maxMarkTextField" min="-2" pref="71" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="99" max="-2" attributes="0"/>
               <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="deviationTextField" min="-2" pref="71" max="-2" attributes="0"/>
               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+          </Group>
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jLabel1" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -62,13 +66,13 @@
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="ratingTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="genMarkTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="maxRatingTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="maxMarkTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="deviationTextField" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="40" max="32767" attributes="0"/>
+              <EmptySpace pref="19" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="saveReportButton" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
                   <Component id="prevButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -104,6 +108,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="&#x421;&#x43e;&#x445;&#x440;&#x430;&#x43d;&#x438;&#x442;&#x44c; &#x43e;&#x442;&#x447;&#x435;&#x442;"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveReportButtonActionPerformed"/>
+      </Events>
     </Component>
     <Container class="javax.swing.JPanel" name="jPanel2">
       <Properties>
@@ -161,7 +168,6 @@
         <Component class="javax.swing.JButton" name="critCooperateButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="+"/>
-            <Property name="enabled" type="boolean" value="false"/>
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
             <Property name="verticalTextPosition" type="int" value="3"/>
@@ -228,7 +234,6 @@
         <Component class="javax.swing.JButton" name="critRatingButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="+"/>
-            <Property name="enabled" type="boolean" value="false"/>
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
             <Property name="verticalTextPosition" type="int" value="3"/>
@@ -243,24 +248,27 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="&#x41d;&#x430;&#x437;&#x430;&#x434;"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="prevButtonActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>
         <Property name="text" type="java.lang.String" value="&#x41e;&#x431;&#x449;&#x430;&#x44f; &#x43e;&#x446;&#x435;&#x43d;&#x43a;&#x430;"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="ratingTextField">
+    <Component class="javax.swing.JTextField" name="genMarkTextField">
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel3">
       <Properties>
         <Property name="text" type="java.lang.String" value="&#x42d;&#x442;&#x430;&#x43b;&#x43e;&#x43d;&#x43d;&#x43e;&#x435; &#x437;&#x43d;&#x430;&#x447;&#x435;&#x43d;&#x438;&#x435;"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="maxRatingTextField">
+    <Component class="javax.swing.JTextField" name="maxMarkTextField">
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel4">
       <Properties>
-        <Property name="text" type="java.lang.String" value="&#x41e;&#x442;&#x43a;&#x43b;&#x43e;&#x43d;&#x435;&#x43d;&#x438;&#x435;"/>
+        <Property name="text" type="java.lang.String" value="&#x41e;&#x442;&#x43a;&#x43b;&#x43e;&#x43d;&#x435;&#x43d;&#x438;&#x435;, %"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="deviationTextField">
