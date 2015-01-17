@@ -10,8 +10,8 @@ public class Matrix {
     private double[][] m;
     private int rows;
     private int cols;
-    private double min = 0;
-    private double max = 0;
+    private double[] mins;
+    private double[] maxes;
 
     public Matrix() {
 	init(DEF_SIZE, DEF_SIZE);
@@ -31,6 +31,7 @@ public class Matrix {
 	if (rows > 0) {
 	    cols = m[0].length;
 	}
+        defineMinMax();
     }
 
     public void init(int rows, int cols) {
@@ -40,18 +41,49 @@ public class Matrix {
         for (int i = 0; i < rows; i++) {
             m[i] = new double[cols];
         }
+        mins = new double[rows];
+        maxes = new double[rows];
     }
 
-    public void reset() {
-	for (int i = 0; i < rows; i++) {
-	    for (int j = 0; j < cols; j++) {
-		m[i][j] = 0;
-	    }
-	}
-    }
+//    public void reset() {
+//	for (int i = 0; i < rows; i++) {
+//	    for (int j = 0; j < cols; j++) {
+//		m[i][j] = 0;
+//	    }
+//	}
+//    }
     
     //////////////////////////////////////////////////
     // operations
+    public void defineMinMax() {
+        mins = new double[rows];
+        maxes = new double[rows];
+        for (int i = 0; i < rows; i++) {
+            mins[i] = Double.MAX_VALUE;
+            maxes[i] = 0.;
+        }
+        defineMins();
+        defineMaxes();
+    }
+    
+    public void defineMins() {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (mins[i] > m[i][j]) {
+                    mins[i] = m[i][j];
+                }
+            }
+        }
+    }
+    public void defineMaxes() {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (maxes[i] < m[i][j]) {
+                    maxes[i] = m[i][j];
+                }
+            }
+        }
+    }
     
 
     //////////////////////////////////////////////////
@@ -66,6 +98,7 @@ public class Matrix {
     
     public void setAt(int i, int j, double value) {
 	m[i][j] = value;
+        defineMinMax();
     }
 
     public int getRows() {
@@ -77,11 +110,11 @@ public class Matrix {
     }
     
 
-    public double getMin() {
-        return min;
+    public double[] getMin() {
+        return mins;
     }
 
-    public double getMax() {
-        return max;
+    public double[] getMax() {
+        return maxes;
     }    
 }

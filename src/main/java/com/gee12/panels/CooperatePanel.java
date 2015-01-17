@@ -90,7 +90,6 @@ public class CooperatePanel extends JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        matrixPanel1 = new com.gee12.panels.MatrixPanel();
         jLabel1 = new javax.swing.JLabel();
         toRatingButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
@@ -114,7 +113,7 @@ public class CooperatePanel extends JPanel {
         jLabel1.setOpaque(true);
 
         toRatingButton.setBackground(new java.awt.Color(170, 92, 0));
-        toRatingButton.setText("Сотрудничать");
+        toRatingButton.setText("Оценить");
         toRatingButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 toRatingButtonActionPerformed(evt);
@@ -314,7 +313,6 @@ public class CooperatePanel extends JPanel {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private com.gee12.panels.MatrixPanel matrixPanel1;
     private javax.swing.JButton prevButton;
     private javax.swing.JButton toRatingButton;
     // End of variables declaration//GEN-END:variables

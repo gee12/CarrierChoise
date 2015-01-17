@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.gee12.panels;
 
 import com.gee12.groupTableHeader.ColumnGroup;
@@ -12,7 +7,9 @@ import com.gee12.groupTableHeader.RowHeaderRenderer;
 import com.gee12.multiSpanCellTable.AttributiveCellTableModel;
 import com.gee12.multiSpanCellTable.CellSpan;
 import com.gee12.multiSpanCellTable.MultiSpanCellTable;
+import com.gee12.other.MatrixTableListener;
 import com.gee12.structures.Matrix;
+import com.gee12.structures.Project;
 import java.awt.Dimension;
 import java.util.Enumeration;
 import javax.swing.JPanel;
@@ -21,6 +18,8 @@ import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.BevelBorder;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -34,17 +33,33 @@ public class MatrixPanel extends JPanel {
     public final static int CELL_WIDTH = 80;
     public final static int CELL_HEIGHT = 30;
     
+    private MatrixTableListener listener;
     private final JTable matrixTable;
     private final MatrixTableModel matrixTM;
     
-    public MatrixPanel() {
-
+//    public MatrixPanel() {
+//        matrixTable = new JTable();
+//        matrixTM = new MatrixTableModel(null);
+//    }
+    
+    public MatrixPanel(final MatrixTableListener listener, 
+            Double[] capacities, Double[] volumes) {
+        this.listener = listener;
+        if (capacities == null) {
+            capacities = new Double[3];
+        }
+        if (volumes == null) {
+            volumes = new Double[3];
+        }
+        
+        
         // rowHeaderModel
         Object[][] rowHeaders = new Object[][]{
-            {"Грузопод-ть", "10"},
-            {"", "15"},
-            {"", "20"}};
-        AttributiveCellTableModel rowHeaderModel = new AttributiveCellTableModel(rowHeaders, new Object[]{"", ""}) {
+            {"Грузопод-ть", capacities[0]},
+            {"", capacities[1]},
+            {"", capacities[2]}};
+        AttributiveCellTableModel rowHeaderModel = new AttributiveCellTableModel(
+                rowHeaders, new Object[]{"", ""}) {
             public boolean CellEditable(int row, int col) {
                 return false;
             }
@@ -62,14 +77,20 @@ public class MatrixPanel extends JPanel {
         rowHeaderTable.getColumnModel().getColumn(1).setPreferredWidth(CELL_WIDTH);
         
         // model
-        String[] columns = new String[]{"200", "300", "400"};
-        matrixTM = new MatrixTableModel(columns);
+//        String[] columns = new String[]{"200", "300", "400"};
+        matrixTM = new MatrixTableModel(volumes);
+        matrixTM.addTableModelListener(new TableModelListener() {
+            public void tableChanged(TableModelEvent e) {
+                listener.tableChanged();
+            }
+        });
 
         // table
         matrixTable = new JTable(matrixTM) {
             protected JTableHeader createDefaultTableHeader() {
                 return new GroupableTableHeader(columnModel);
             }
+            
         };
         matrixTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         matrixTable.setRowHeight(CELL_HEIGHT + matrixTable.getRowMargin());
@@ -108,6 +129,10 @@ public class MatrixPanel extends JPanel {
     
     public void setMatrixTableModel(Matrix m) {
         matrixTM.setData(m);
+    }
+    
+    public Matrix getMatrix() {
+        return matrixTM.getData();
     }
 
 }

@@ -92,7 +92,6 @@ public class RatingPanel extends JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        matrixPanel1 = new com.gee12.panels.MatrixPanel();
         jLabel1 = new javax.swing.JLabel();
         saveReportButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
@@ -351,7 +350,6 @@ public class RatingPanel extends JPanel {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private com.gee12.panels.MatrixPanel matrixPanel1;
     private javax.swing.JTextField maxMarkTextField;
     private javax.swing.JButton prevButton;
     private javax.swing.JButton saveReportButton;

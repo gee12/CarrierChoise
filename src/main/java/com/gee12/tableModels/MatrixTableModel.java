@@ -10,10 +10,10 @@ import javax.swing.table.AbstractTableModel;
 
 public class MatrixTableModel extends AbstractTableModel {
 
-    private String[] columnNames = null;
+    private Object[] columnNames = null;
     Matrix matrix = null;
     
-    public MatrixTableModel(String[] columnNames) {
+    public MatrixTableModel(Object[] columnNames) {
         this.columnNames = columnNames;
         this.matrix = new Matrix();
     }
@@ -34,7 +34,8 @@ public class MatrixTableModel extends AbstractTableModel {
     
     @Override
     public String getColumnName(int col) {
-        return columnNames[col];
+//        return String.valueOf(columnNames[col]);
+        return String.format(Locale.US, "%.2f", columnNames[col]);
     }
 
     @Override
