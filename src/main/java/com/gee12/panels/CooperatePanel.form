@@ -31,7 +31,7 @@
           <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jLabel1" max="32767" attributes="0"/>
+              <Component id="nameLabel" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -39,12 +39,12 @@
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <Component id="jLabel1" min="-2" pref="59" max="-2" attributes="0"/>
+              <Component id="nameLabel" min="-2" pref="41" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="18" max="32767" attributes="0"/>
+              <Component id="jPanel1" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="toRatingButton" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
                   <Component id="prevButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -54,20 +54,20 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="javax.swing.JLabel" name="jLabel1">
+    <Component class="javax.swing.JLabel" name="nameLabel">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="0" green="c8" id="orange" palette="1" red="ff" type="palette"/>
         </Property>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
           <FontInfo relative="true">
-            <Font bold="true" component="jLabel1" property="font" relativeSize="true" size="4"/>
+            <Font bold="true" component="nameLabel" property="font" relativeSize="true" size="4"/>
           </FontInfo>
         </Property>
         <Property name="horizontalAlignment" type="int" value="0"/>
         <Property name="text" type="java.lang.String" value="&#x421;&#x41e;&#x422;&#x420;&#x423;&#x414;&#x41d;&#x418;&#x427;&#x415;&#x421;&#x422;&#x412;&#x41e; &#x421; &#x41f;&#x415;&#x420;&#x415;&#x412;&#x41e;&#x417;&#x427;&#x418;&#x41a;&#x41e;&#x41c;"/>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="new BubbleBorder(Color.ORANGE,1,8,16)" type="code"/>
+          <Connection code="new BubbleBorder(Color.ORANGE,1,8,0)" type="code"/>
         </Property>
         <Property name="horizontalTextPosition" type="int" value="0"/>
         <Property name="opaque" type="boolean" value="true"/>
@@ -97,17 +97,22 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <Component id="dataCooperationScrollPane" max="32767" attributes="0"/>
+                  <Component id="dataCooperationScrollPane" pref="771" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="dataCooperateButton" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="addDataCooperateButton" max="32767" attributes="0"/>
+                      <Component id="saveCooperateButton" max="32767" attributes="0"/>
+                  </Group>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <Component id="dataCooperateButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="0" pref="173" max="32767" attributes="0"/>
+                  <Component id="addDataCooperateButton" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="saveCooperateButton" min="-2" pref="29" max="-2" attributes="0"/>
+                  <EmptySpace min="0" pref="144" max="32767" attributes="0"/>
               </Group>
               <Group type="102" alignment="0" attributes="0">
                   <Component id="dataCooperationScrollPane" max="32767" attributes="0"/>
@@ -144,7 +149,7 @@
             </Component>
           </SubComponents>
         </Container>
-        <Component class="javax.swing.JButton" name="dataCooperateButton">
+        <Component class="javax.swing.JButton" name="addDataCooperateButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="+"/>
             <Property name="focusable" type="boolean" value="false"/>
@@ -152,7 +157,20 @@
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="dataCooperateButtonActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addDataCooperateButtonActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="saveCooperateButton">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="UIManager.getIcon(&quot;FileView.floppyDriveIcon&quot;)" type="code"/>
+            </Property>
+            <Property name="focusable" type="boolean" value="false"/>
+            <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="verticalTextPosition" type="int" value="3"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveCooperateButtonActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>
@@ -172,15 +190,20 @@
               <Group type="102" alignment="0" attributes="0">
                   <Component id="dataRatingScrollPane" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="dataRatingButton" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="addDataRatingButton" max="32767" attributes="0"/>
+                      <Component id="saveRatingButton" max="32767" attributes="0"/>
+                  </Group>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
-                  <Component id="dataRatingButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="0" pref="153" max="32767" attributes="0"/>
+                  <Component id="addDataRatingButton" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="saveRatingButton" min="-2" pref="29" max="-2" attributes="0"/>
+                  <EmptySpace min="0" pref="142" max="32767" attributes="0"/>
               </Group>
               <Group type="102" attributes="0">
                   <Component id="dataRatingScrollPane" max="32767" attributes="0"/>
@@ -217,7 +240,7 @@
             </Component>
           </SubComponents>
         </Container>
-        <Component class="javax.swing.JButton" name="dataRatingButton">
+        <Component class="javax.swing.JButton" name="addDataRatingButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="+"/>
             <Property name="focusable" type="boolean" value="false"/>
@@ -225,7 +248,20 @@
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="dataRatingButtonActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addDataRatingButtonActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="saveRatingButton">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="UIManager.getIcon(&quot;FileView.floppyDriveIcon&quot;)" type="code"/>
+            </Property>
+            <Property name="focusable" type="boolean" value="false"/>
+            <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="verticalTextPosition" type="int" value="3"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveRatingButtonActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

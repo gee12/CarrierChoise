@@ -58,6 +58,8 @@ public class RatingPanel extends JPanel {
         this.curCarrier = curCar;
         this.projectFileName = fileName;
         
+        nameLabel.setText("ОЦЕНКА СОТРУДНИЧЕСТВА С ПЕРЕВОЗЧИКОМ '" + curCar.getName() + "'");
+                
         if (curCar.getName().equalsIgnoreCase(curProject.getCurrentCarrier().getName())) {
             initControls(curProject);
         }
@@ -92,7 +94,7 @@ public class RatingPanel extends JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        nameLabel = new javax.swing.JLabel();
         saveReportButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         baseDataScrollPane = new javax.swing.JScrollPane(critCooperateTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -110,18 +112,20 @@ public class RatingPanel extends JPanel {
         jLabel4 = new javax.swing.JLabel();
         deviationTextField = new javax.swing.JTextField();
 
+        setEnabled(false);
         setPreferredSize(new java.awt.Dimension(840, 600));
 
-        jLabel1.setBackground(java.awt.Color.orange);
-        jLabel1.setFont(jLabel1.getFont().deriveFont(jLabel1.getFont().getStyle() | java.awt.Font.BOLD, jLabel1.getFont().getSize()+4));
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("ОЦЕНКА СОТРУДНИЧЕСТВА С ПЕРЕВОЗЧИКОМ");
-        jLabel1.setBorder(new BubbleBorder(Color.ORANGE,1,8,16));
-        jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel1.setOpaque(true);
+        nameLabel.setBackground(java.awt.Color.orange);
+        nameLabel.setFont(nameLabel.getFont().deriveFont(nameLabel.getFont().getStyle() | java.awt.Font.BOLD, nameLabel.getFont().getSize()+4));
+        nameLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        nameLabel.setText("ОЦЕНКА СОТРУДНИЧЕСТВА С ПЕРЕВОЗЧИКОМ");
+        nameLabel.setBorder(new BubbleBorder(Color.ORANGE,1,8,0));
+        nameLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        nameLabel.setOpaque(true);
 
         saveReportButton.setBackground(new java.awt.Color(170, 92, 0));
         saveReportButton.setText("Сохранить отчет");
+        saveReportButton.setEnabled(false);
         saveReportButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveReportButtonActionPerformed(evt);
@@ -209,9 +213,15 @@ public class RatingPanel extends JPanel {
 
         jLabel2.setText("Общая оценка");
 
+        genMarkTextField.setEditable(false);
+
         jLabel3.setText("Эталонное значение");
 
+        maxMarkTextField.setEditable(false);
+
         jLabel4.setText("Отклонение, %");
+
+        deviationTextField.setEditable(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -240,13 +250,13 @@ public class RatingPanel extends JPanel {
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(nameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(nameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -259,7 +269,7 @@ public class RatingPanel extends JPanel {
                     .addComponent(maxMarkTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4)
                     .addComponent(deviationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(saveReportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(prevButton)))
@@ -344,13 +354,13 @@ public class RatingPanel extends JPanel {
     private javax.swing.JTable critRatingTable;
     private javax.swing.JTextField deviationTextField;
     private javax.swing.JTextField genMarkTextField;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JTextField maxMarkTextField;
+    private javax.swing.JLabel nameLabel;
     private javax.swing.JButton prevButton;
     private javax.swing.JButton saveReportButton;
     // End of variables declaration//GEN-END:variables

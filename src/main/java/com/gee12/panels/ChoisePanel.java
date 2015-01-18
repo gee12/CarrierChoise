@@ -10,7 +10,6 @@ import com.gee12.structures.Carrier;
 import static com.gee12.structures.Carrier.CAPACITIES;
 import static com.gee12.structures.Carrier.VOLUMES;
 import com.gee12.structures.Matrix;
-import com.gee12.structures.MatrixCriterion;
 import com.gee12.structures.Project;
 import com.gee12.tableModels.MatrixCriterionsTableModel;
 import java.awt.Color;
@@ -28,8 +27,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
@@ -382,7 +379,7 @@ public class ChoisePanel extends JPanel implements MatrixTableListener {
     private void toCooperateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toCooperateButtonActionPerformed
         int selectedRow = carriersTable.getSelectedRow();
         if (selectedRow != -1) { 
-            curProject.setCurrentCarrier(carriersTable.convertRowIndexToModel(selectedRow));
+            curCarrier = carriersTM.getData().get(carriersTable.convertRowIndexToModel(selectedRow));
             listener.nextStage(Project.Stages.STAGE2_COOPERATION);
         }
     }//GEN-LAST:event_toCooperateButtonActionPerformed

@@ -2,15 +2,13 @@ package com.gee12.panels;
 
 import com.gee12.other.SwitchStageListener;
 import com.gee12.other.XLSParser;
-import com.gee12.structures.Carrier;
 import com.gee12.structures.Project;
 import com.gee12.structures.Project.Stages;
-import com.gee12.structures.Stage;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import static java.awt.EventQueue.invokeLater;
-import java.util.ArrayList;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -25,7 +23,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  */
 public class MainFrame extends JFrame implements SwitchStageListener {
     //
-    private Stages curStage;
     JPanel cards;
     private ChoisePanel choisePanel;
     private CooperatePanel cooperatePanel;
@@ -50,7 +47,7 @@ public class MainFrame extends JFrame implements SwitchStageListener {
     public void initComponents() {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setLocationByPlatform(true);
-        setPreferredSize(new Dimension(900,650));
+        setPreferredSize(new Dimension(900,700));
         setResizable(false);
 
         // add toolbar and buttons
@@ -63,6 +60,7 @@ public class MainFrame extends JFrame implements SwitchStageListener {
         toolBar.setRollover(true);
 
         createButton.setText("Создать");
+        createButton.setIcon(UIManager.getIcon("FileView.fileIcon"));
         createButton.setToolTipText("Создать проект");
         createButton.setEnabled(true);
         createButton.setFocusable(false);
@@ -76,6 +74,7 @@ public class MainFrame extends JFrame implements SwitchStageListener {
         toolBar.add(createButton);
 
         openButton.setText("Открыть");
+        openButton.setIcon(UIManager.getIcon("FileView.directoryIcon"));
         openButton.setToolTipText("Открыть проект");
         openButton.setFocusable(false);
         openButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -88,6 +87,7 @@ public class MainFrame extends JFrame implements SwitchStageListener {
         toolBar.add(openButton);
 
         closeButton.setText("Закрыть");
+        closeButton.setIcon(new ImageIcon(MainFrame.class.getResource("/images/close.jpg")));
         closeButton.setToolTipText("Закрыть проект");
         closeButton.setEnabled(false);
         closeButton.setFocusable(false);
@@ -118,8 +118,6 @@ public class MainFrame extends JFrame implements SwitchStageListener {
     ////////////////////////////////////////////////////////////////////////////
     @Override
     public void nextStage(Project.Stages stage) {
-        this.curStage = stage;
-        
         switch(stage) {
             case STAGE1_CHOISE:
                 
@@ -130,6 +128,7 @@ public class MainFrame extends JFrame implements SwitchStageListener {
                 
             case STAGE3_RATING:
                 curProject = cooperatePanel.getProject();
+                curProject.defineMarks();
                 ratingPanel.init(curProject, choisePanel.getCurrentCarrier(), projectFileName);
                 break;
             default:
