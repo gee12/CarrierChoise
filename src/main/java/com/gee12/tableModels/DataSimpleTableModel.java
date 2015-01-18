@@ -4,22 +4,18 @@ package com.gee12.tableModels;
  *
  * @author Иван
  */
-import com.gee12.other.Util;
 import com.gee12.structures.DataField;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
-public class DataTableModel extends AbstractTableModel {
+public class DataSimpleTableModel extends AbstractTableModel {
 
-    private static final String[] columnNames = {"Наименование", "Значение", "Тип", "Удалить"};
-    public static final String[] COMBO_STATES = //Util.getNames(DataField.Types.class);
-    {DataField.Types.BASE.name(), DataField.Types.OTHER.name()
-    };
-    
+    private static final String[] columnNames = {"Наименование", "Значение", "Тип", "Ячейка"};
+
     private List<DataField> data = null;
     
-    public DataTableModel() {
+    public DataSimpleTableModel() {
         data = new ArrayList<>();
     }
     
@@ -30,16 +26,6 @@ public class DataTableModel extends AbstractTableModel {
     
     public List<DataField> getData() {
         return data;
-    }
-    
-    public void addRow(DataField obj) {
-        data.add(obj);
-        fireTableDataChanged();
-    }
-    
-    public void deleteRow(int row) {
-        data.remove(row);
-        fireTableDataChanged();
     }
 
     @Override
@@ -59,7 +45,6 @@ public class DataTableModel extends AbstractTableModel {
 
     @Override
     public Class getColumnClass(int col) {
-//        return data.get(col).getClass();
         switch(col) {
             case 0: 
                 return String.class;
@@ -83,8 +68,6 @@ public class DataTableModel extends AbstractTableModel {
                 return data.get(row).getValue();
             case 2:
                 return data.get(row).getType();
-            case 3:
-                return "Удалить";
             default:
                 return null;
         }
@@ -92,24 +75,10 @@ public class DataTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int row, int col) {
-        return true;
+        return false;
     }
 
     @Override
     public void setValueAt(Object v, int row, int col) {
-        switch(col) {
-            case 0:
-                data.get(row).setName((String) v);
-                break;
-            case 1:
-                data.get(row).setValue((String) v);
-                break;
-            case 2:
-                data.get(row).setType(DataField.Types.valueOf((String) v));
-                break;
-            default:
-                break;
-        }
-        fireTableRowsUpdated(row, col);
     }
 }

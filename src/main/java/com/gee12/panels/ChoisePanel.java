@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.List;
+import javafx.scene.control.SelectionMode;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -114,6 +115,10 @@ public class ChoisePanel extends JPanel implements MatrixTableListener {
                 }
             }
         });
+        
+        if (curProject.getCarriers().size() > 0) {
+            carriersTable.setRowSelectionInterval(0, 0);
+        }
     }
     
     // for rows sort
@@ -184,7 +189,7 @@ public class ChoisePanel extends JPanel implements MatrixTableListener {
 
     //
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
@@ -199,10 +204,10 @@ public class ChoisePanel extends JPanel implements MatrixTableListener {
         repeatTextField = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         ratingTextField = new javax.swing.JTextField();
-        matrixPanel = new MatrixPanel(this, CAPACITIES, VOLUMES);
         saveButton = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         matrixCritsTable = new javax.swing.JTable();
+        matrixPanel = new MatrixPanel(this, CAPACITIES, VOLUMES);
         addCarrierButton = new javax.swing.JButton();
         toCooperateButton = new javax.swing.JButton();
         refreshCarriersButton = new javax.swing.JButton();
@@ -219,6 +224,7 @@ public class ChoisePanel extends JPanel implements MatrixTableListener {
 
         carriersTable.setBorder(null);
         carriersTable.setModel(carriersTM);
+        carriersTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(carriersTable);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Подробнее", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION));
@@ -238,9 +244,6 @@ public class ChoisePanel extends JPanel implements MatrixTableListener {
 
         ratingTextField.setEnabled(false);
 
-        matrixPanel.setBorder(null);
-        matrixPanel.setPreferredSize(new java.awt.Dimension(400, 200));
-
         saveButton.setText("Сохранить");
         saveButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -252,6 +255,17 @@ public class ChoisePanel extends JPanel implements MatrixTableListener {
         matrixCritsTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane2.setViewportView(matrixCritsTable);
 
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(matrixPanel);
+        matrixPanel.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 155, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -259,12 +273,12 @@ public class ChoisePanel extends JPanel implements MatrixTableListener {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(matrixPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(nameTextField))
-                    .addComponent(matrixPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -292,9 +306,9 @@ public class ChoisePanel extends JPanel implements MatrixTableListener {
                     .addComponent(nameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(matrixPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addComponent(matrixPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(capacityTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -377,35 +391,36 @@ public class ChoisePanel extends JPanel implements MatrixTableListener {
                     .addComponent(addCarrierButton)
                     .addComponent(refreshCarriersButton)))
         );
-    }// </editor-fold>//GEN-END:initComponents
+    }// </editor-fold>                        
 
-    private void toCooperateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toCooperateButtonActionPerformed
+    private void toCooperateButtonActionPerformed(java.awt.event.ActionEvent evt) {                                                  
         int selectedRow = carriersTable.getSelectedRow();
         if (selectedRow != -1) { 
-            curProject.setCurrentCarrier(carriersTable.convertRowIndexToModel(selectedRow));
+//            curProject.setCurrentCarrier(carriersTable.convertRowIndexToModel(selectedRow));
+            curCarrier = curProject.getCarriers().get(carriersTable.convertRowIndexToModel(selectedRow));
             listener.nextStage(Project.Stages.STAGE2_COOPERATION);
         }
-    }//GEN-LAST:event_toCooperateButtonActionPerformed
+    }                                                 
 
-    private void addCarrierButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addCarrierButtonActionPerformed
+    private void addCarrierButtonActionPerformed(java.awt.event.ActionEvent evt) {                                                 
         int maxId = 0;
         for(Carrier car : curProject.getCarriers()) {
             if (maxId < car.getId())
                 maxId = car.getId();
         }
         carriersTM.addRow(new Carrier(maxId + 1, "", 0, 0, new Matrix()));
-    }//GEN-LAST:event_addCarrierButtonActionPerformed
+    }                                                
 
-    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
+    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {                                           
         XLSParser.saveXLSCarrier(projectFileName, curCarrier);
 //        curProject = XLSParser.readXLSProject(projectFileName);
 //        init(curProject, projectFileName);
-    }//GEN-LAST:event_saveButtonActionPerformed
+    }                                          
 
-    private void refreshCarriersButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshCarriersButtonActionPerformed
+    private void refreshCarriersButtonActionPerformed(java.awt.event.ActionEvent evt) {                                                      
         carriersTM.fireTableDataChanged();
         carriersTableSort();
-    }//GEN-LAST:event_refreshCarriersButtonActionPerformed
+    }                                                     
 
     // when matrix table changed
     @Override
@@ -427,7 +442,7 @@ public class ChoisePanel extends JPanel implements MatrixTableListener {
 	}
     };
     
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+    // Variables declaration - do not modify                     
     private javax.swing.JButton addCarrierButton;
     private javax.swing.JTextField capacityTextField;
     private javax.swing.JTable carriersTable;
@@ -437,16 +452,16 @@ public class ChoisePanel extends JPanel implements MatrixTableListener {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
+    MatrixPanel matrixPanel;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable matrixCritsTable;
-    private com.gee12.panels.MatrixPanel matrixPanel;
     private javax.swing.JTextField nameTextField;
     private javax.swing.JTextField ratingTextField;
     private javax.swing.JButton refreshCarriersButton;
     private javax.swing.JTextField repeatTextField;
     private javax.swing.JButton saveButton;
     private javax.swing.JButton toCooperateButton;
-    // End of variables declaration//GEN-END:variables
+    // End of variables declaration                   
 
 }

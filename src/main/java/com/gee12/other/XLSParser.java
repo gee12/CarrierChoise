@@ -41,8 +41,8 @@ public class XLSParser {
     public static final CellReference carrierMatrixRef = new CellReference(3, 1);
     public static final int CARRIER_ROWS_NUM = 8;
     
-    public static final CellReference curCarrierRef = new CellReference(1, 6);
-    public static final CellReference resultsRef = new CellReference(3, 2);
+    public static final CellReference curCarrierRef = new CellReference(1, 0);
+//    public static final CellReference resultsRef = new CellReference(3, 2);
     
     public static final CellReference baseDataFieldsRef = new CellReference(5, 0);
     public static final CellReference otherDataFieldsRef = new CellReference(5, 3);
@@ -83,7 +83,7 @@ public class XLSParser {
             stage3 = new Stage(dataFields3, criterions3);  
             
             // results
-            results = parseResults(workBook.getSheet(resultsSheetTitle), resultsRef);
+//            results = parseResults(workBook.getSheet(resultsSheetTitle), resultsRef);
             
             inputFile.close();
             workBook.close();
@@ -166,6 +166,8 @@ public class XLSParser {
     }    
     
     ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    // PARSE
     public static List<DataField> parseDataFields(Sheet sheet, CellReference ref, DataField.Types type) {
         if (sheet == null || ref == null) return null;
         
@@ -202,37 +204,38 @@ public class XLSParser {
     }
     
         ////////////////////////////////////////////////////////////////////////////
-    public static double[] parseResults(Sheet sheet, CellReference ref) {
-        if (sheet == null || ref == null) return null;
-        
-        double[] res = new double[3];
-        Cell cell;
-        int cellType;
-        
-        // 0 - общая оценка
-        cell = sheet.getRow(resultsRef.getRow())
-                .getCell(resultsRef.getCol());
-        cellType = cell.getCellType();
-        if (cell != null || cellType == Cell.CELL_TYPE_FORMULA) {
-            res[0] = cell.getNumericCellValue();
-        }  
-        // 1 - эталонная оценка
-        cell = sheet.getRow(resultsRef.getRow() + 1)
-                .getCell(resultsRef.getCol());
-        cellType = cell.getCellType();
-        if (cell != null || cellType == Cell.CELL_TYPE_FORMULA) {
-            res[1] = cell.getNumericCellValue();
-        }
-        // 2 - отклонение
-        cell = sheet.getRow(resultsRef.getRow() + 2)
-                .getCell(resultsRef.getCol());
-        cellType = cell.getCellType();
-        if (cell != null || cellType == Cell.CELL_TYPE_FORMULA) {
-            res[2] = cell.getNumericCellValue();
-        } 
-        
-        return res;
-    }
+//    public static double[] parseResults(Sheet sheet, CellReference ref) {
+//        if (sheet == null || ref == null) return null;
+//        
+//        double[] res = new double[3];
+//        Cell cell;
+//        int cellType;
+//        
+//        // 0 - общая оценка
+//        cell = sheet.getRow(resultsRef.getRow())
+//                .getCell(resultsRef.getCol());
+//        cellType = cell.getCellType();
+//        if (cell != null || cellType == Cell.CELL_TYPE_FORMULA &&
+//                ) {
+//            res[0] = cell.getNumericCellValue();
+//        }  
+//        // 1 - эталонная оценка
+//        cell = sheet.getRow(resultsRef.getRow() + 1)
+//                .getCell(resultsRef.getCol());
+//        cellType = cell.getCellType();
+//        if (cell != null || cellType == Cell.CELL_TYPE_FORMULA) {
+//            res[1] = cell.getNumericCellValue();
+//        }
+//        // 2 - отклонение
+//        cell = sheet.getRow(resultsRef.getRow() + 2)
+//                .getCell(resultsRef.getCol());
+//        cellType = cell.getCellType();
+//        if (cell != null || cellType == Cell.CELL_TYPE_FORMULA) {
+//            res[2] = cell.getNumericCellValue();
+//        } 
+//        
+//        return res;
+//    }
     
     ////////////////////////////////////////////////////////////////////////////
     public static String parseCurrentCarrierName(Sheet sheet) {
@@ -323,20 +326,63 @@ public class XLSParser {
             Row row = it.next();
             Cell nameCell = row.getCell(ref.getCol());
             Cell valueCell = row.getCell(ref.getCol() + 1);
+            Cell maxCell = row.getCell(ref.getCol() + 2);
+            
             if (nameCell != null && valueCell != null && valueCell.getCellType() == Cell.CELL_TYPE_FORMULA) {
                 String name = nameCell.getStringCellValue();
                 String formula = valueCell.getCellFormula();
-                String value = String.format(Locale.US, "%.2f", valueCell.getNumericCellValue());
-                if (name.equalsIgnoreCase("") && formula.equalsIgnoreCase("") && value.equalsIgnoreCase(""))
+                String value = "";
+                // if formula not error => parse numeric value
+                if (valueCell.getCachedFormulaResultType() != Cell.CELL_TYPE_ERROR) {
+                    value = String.format(Locale.US, "%.2f", valueCell.getNumericCellValue());
+                } else {
+                    value = String.format(Locale.US, "Error: %d", valueCell.getErrorCellValue());
+                }
+                String max = "";
+                if (maxCell.getCellType() == Cell.CELL_TYPE_STRING) {
+                    max = maxCell.getStringCellValue();
+                } else {
+                    max = String.valueOf(maxCell.getNumericCellValue());
+                }
+                
+                if (name.isEmpty() && formula.isEmpty() 
+                        && value.isEmpty() && max.isEmpty())
                     continue;
-                res.add(new Criterion(name, formula, value, nameCell, valueCell, type));
+                res.add(new Criterion(name, formula, value, max, nameCell, valueCell, type));
             }
         }
         return res;
     }
-
     
     ////////////////////////////////////////////////////////////////////////////
+    public static String parseCell(Cell cell) {
+        if (cell == null) return null;
+        int cellType = cell.getCellType();
+        switch (cellType) {
+            case Cell.CELL_TYPE_STRING:
+                return cell.getStringCellValue();
+            case Cell.CELL_TYPE_NUMERIC:
+                return String.format(Locale.US, "%.2f", cell.getNumericCellValue());
+            case Cell.CELL_TYPE_BOOLEAN:
+                return Boolean.toString(cell.getBooleanCellValue());
+            case Cell.CELL_TYPE_ERROR:
+                return String.format("Ошибка '%s'", cell.getErrorCellValue());
+            case Cell.CELL_TYPE_FORMULA:
+                // if formula not error => parse numeric value
+                if (cell.getCachedFormulaResultType() != Cell.CELL_TYPE_ERROR) {
+                    return String.format(Locale.US, "%.2f", cell.getNumericCellValue());
+                } else {
+//                    return String.format(Locale.US, "Error: %d", cell.getErrorCellValue());
+                    return cell.getCellFormula();
+                }
+            default:
+                return "";
+        }
+    }    
+    
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    // SAVE
     public static void saveXLSProject(String fileName, Project proj) {
         try {
             FileInputStream inputFile = new FileInputStream(new File(fileName));
@@ -350,9 +396,9 @@ public class XLSParser {
 //                    proj.getStage(Project.Stages.STAGE3_RATING).getBaseDataFileds());
 //            saveXLSProjectData(workBook.getSheet(stage3SheetTitle), 
 //                    proj.getStage(Project.Stages.STAGE3_RATING).getOtherDataFileds());
-            saveXLSProjectData(workBook.getSheet(stage2SheetTitle), 
+            XLSParser.saveXLSDataFields(workBook.getSheet(stage2SheetTitle), 
                     proj.getStage(Project.Stages.STAGE2_COOPERATION).getDataFields());
-            saveXLSProjectData(workBook.getSheet(stage3SheetTitle), 
+            XLSParser.saveXLSDataFields(workBook.getSheet(stage3SheetTitle), 
                     proj.getStage(Project.Stages.STAGE3_RATING).getDataFields());
             
             workBook.getCreationHelper().createFormulaEvaluator().evaluateAll();
@@ -371,50 +417,18 @@ public class XLSParser {
     }
     
     ////////////////////////////////////////////////////////////////////////////
-    public static void saveXLSProjectData(Sheet sheet, List<DataField> dataFields) {
-        if (sheet == null) return;
-        
-        for (DataField dataField : dataFields) {
-            
-            Cell nameCell = sheet.getRow(dataField.getNameRow()).getCell(dataField.getNameCol());
-            nameCell.setCellType(Cell.CELL_TYPE_STRING);
-            nameCell.setCellValue(dataField.getName());
-            
-            Cell valueCell = sheet.getRow(dataField.getValueRow()).getCell(dataField.getValueCol());
-            valueCell.setCellType(Cell.CELL_TYPE_STRING);
-            try {
-                double d = Double.parseDouble(dataField.getValue());
-                valueCell.setCellValue(d);
-            } catch (Exception ex) {
-                valueCell.setCellValue(dataField.getValue());
-            }
-        }
-    }
-    
-    ////////////////////////////////////////////////////////////////////////////
-    public static void saveXLSCriterion(String fileName, Criterion crit, Stages stage) {
+    public static void saveXLSDataFields(String fileName, Project proj) {
         try {
             FileInputStream inputFile = new FileInputStream(new File(fileName));
             HSSFWorkbook workBook = new HSSFWorkbook(inputFile);
             
-            String sheetTitle = (stage == Stages.STAGE2_COOPERATION) ? stage2SheetTitle : stage3SheetTitle;
-            
-            Sheet sheet = workBook.getSheet(sheetTitle);
-            Cell nameCell = sheet.getRow(crit.getNameRow()).createCell(crit.getNameCol());
-            nameCell.setCellType(Cell.CELL_TYPE_STRING);
-            nameCell.setCellValue(crit.getName());
-            
-            Cell valueCell = sheet.getRow(crit.getValueRow()).createCell(crit.getValueCol());
-            String formula = crit.getFormula();
-            if (formula.equalsIgnoreCase("")) {
-                valueCell.setCellType(Cell.CELL_TYPE_STRING);
-                valueCell.setCellValue("");
-            } else {
-                valueCell.setCellType(Cell.CELL_TYPE_FORMULA);
-                valueCell.setCellFormula(crit.getFormula());
-            }
+            XLSParser.saveXLSDataFields(workBook.getSheet(stage2SheetTitle), 
+                    proj.getStage(Project.Stages.STAGE2_COOPERATION).getDataFields());
+            XLSParser.saveXLSDataFields(workBook.getSheet(stage3SheetTitle), 
+                    proj.getStage(Project.Stages.STAGE3_RATING).getDataFields());
             
             workBook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+            
             inputFile.close();
             
             FileOutputStream outputFile = new FileOutputStream(new File(fileName));
@@ -424,10 +438,108 @@ public class XLSParser {
             workBook.close();
 
         } catch (IOException e) {
-            onException(e);
+             onException(e);
         }
     }
     
+    ////////////////////////////////////////////////////////////////////////////
+    public static void saveXLSDataFields(String fileName, Stages stage, List<DataField> dataFields) {
+        try {
+            FileInputStream inputFile = new FileInputStream(new File(fileName));
+            HSSFWorkbook workBook = new HSSFWorkbook(inputFile);
+            //
+            String sheetName = (stage == Stages.STAGE2_COOPERATION) ? stage2SheetTitle :
+                (stage == Stages.STAGE3_RATING) ? stage3SheetTitle : "";
+            XLSParser.saveXLSDataFields(workBook.getSheet(sheetName), dataFields);
+            //
+            workBook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+            inputFile.close();
+            FileOutputStream outputFile = new FileOutputStream(new File(fileName));
+            workBook.write(outputFile);
+            outputFile.close();
+            workBook.close();
+
+        } catch (IOException e) {
+             onException(e);
+        }        
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    public static void saveXLSDataFields(Sheet sheet, List<DataField> dataFields) {
+        if (sheet == null) return;
+        
+        for (DataField dataField : dataFields) {
+            
+            Cell nameCell = sheet.getRow(dataField.getNameRow()).createCell(dataField.getNameCol());
+            nameCell.setCellType(Cell.CELL_TYPE_STRING);
+            nameCell.setCellValue(dataField.getName());
+            
+            Cell valueCell = sheet.getRow(dataField.getValueRow()).createCell(dataField.getValueCol());
+            valueCell.setCellType(Cell.CELL_TYPE_STRING);
+            try {
+                double d = Double.parseDouble(dataField.getValue());
+                valueCell.setCellValue(d);
+            } catch (Exception ex) {
+//                valueCell.setCellType(Cell.CELL_TYPE_FORMULA);
+                valueCell.setCellValue(dataField.getValue());
+            }
+        }
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    public static void saveXLSCriterions(String fileName, Stages stage, List<Criterion> criterions) {
+        try {
+            FileInputStream inputFile = new FileInputStream(new File(fileName));
+            HSSFWorkbook workBook = new HSSFWorkbook(inputFile);
+            //
+            String sheetName = (stage == Stages.STAGE2_COOPERATION) ? stage2SheetTitle :
+                    (stage == Stages.STAGE3_RATING) ? stage3SheetTitle : "";
+            saveXLSCriterions(workBook.getSheet(sheetName), criterions);
+            //
+            workBook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+            inputFile.close();
+            FileOutputStream outputFile = new FileOutputStream(new File(fileName));
+            workBook.write(outputFile);
+            outputFile.close();
+            workBook.close();
+
+        } catch (IOException e) {
+            onException(e);
+        }
+    }
+        
+    ////////////////////////////////////////////////////////////////////////////
+    public static void saveXLSCriterions(Sheet sheet, List<Criterion> criterions) {
+        if (sheet == null) return;
+        
+        for (Criterion crit : criterions) {
+            // name
+            Cell nameCell = sheet.getRow(crit.getNameRow()).createCell(crit.getNameCol());
+            nameCell.setCellType(Cell.CELL_TYPE_STRING);
+            nameCell.setCellValue(crit.getName());
+            // value
+            Cell valueCell = sheet.getRow(crit.getValueRow()).createCell(crit.getValueCol());
+            String formula = crit.getFormula();
+            if (formula.equalsIgnoreCase("")) {
+                valueCell.setCellType(Cell.CELL_TYPE_STRING);
+                valueCell.setCellValue("");
+            } else {
+                valueCell.setCellType(Cell.CELL_TYPE_FORMULA);
+                valueCell.setCellFormula(crit.getFormula());
+            }           
+            // max
+            Cell maxCell = sheet.getRow(crit.getValueRow()).createCell(crit.getValueCol() + 1);
+            maxCell.setCellType(Cell.CELL_TYPE_STRING);
+            try {
+                double d = Double.parseDouble(crit.getMax());
+                maxCell.setCellValue(d);
+            } catch (Exception ex) {
+//                valueCell.setCellType(Cell.CELL_TYPE_FORMULA);
+                maxCell.setCellValue(crit.getMax());
+            }
+        }
+    }
+
     ////////////////////////////////////////////////////////////////////////////
     public static void saveXLSDataField(String fileName, DataField dataField, Stages stage) {
         try {
@@ -435,14 +547,13 @@ public class XLSParser {
             HSSFWorkbook workBook = new HSSFWorkbook(inputFile);
             
             String sheetTitle = (stage == Stages.STAGE2_COOPERATION) ? stage2SheetTitle : stage3SheetTitle;
-            
             Sheet sheet = workBook.getSheet(sheetTitle);
+            // name
             Cell nameCell = sheet.getRow(dataField.getNameRow()).createCell(dataField.getNameCol());
             nameCell.setCellType(Cell.CELL_TYPE_STRING);
             nameCell.setCellValue(dataField.getName());
-            
+            // value
             Cell valueCell = sheet.getRow(dataField.getValueRow()).createCell(dataField.getValueCol());
-            
             try {
                 double d = Double.parseDouble(dataField.getValue());
                 valueCell.setCellType(Cell.CELL_TYPE_NUMERIC);
@@ -501,27 +612,7 @@ public class XLSParser {
             onException(e);
         }
     }
-    
-    ////////////////////////////////////////////////////////////////////////////
-    public static String parseCell(Cell cell) {
-        if (cell == null) return null;
-        int cellType = cell.getCellType();
-        switch (cellType) {
-            case Cell.CELL_TYPE_STRING:
-                return cell.getStringCellValue();
-            case Cell.CELL_TYPE_NUMERIC:
-                return String.format(Locale.US, "%.2f", cell.getNumericCellValue());
-            case Cell.CELL_TYPE_BOOLEAN:
-                return Boolean.toString(cell.getBooleanCellValue());
-            case Cell.CELL_TYPE_ERROR:
-                return String.format("Ошибка '%s'", cell.getErrorCellValue());
-            case Cell.CELL_TYPE_FORMULA:
-//                return String.format("%.2f", cell.getNumericCellValue());
-                return cell.getCellFormula();
-            default:
-                return "";
-        }
-    }    
+
     ////////////////////////////////////////////////////////////////////////////
     public static void onException(Exception ex) {
         ex.printStackTrace();

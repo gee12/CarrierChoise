@@ -15,28 +15,31 @@ public class Criterion {
         OTHER
     }
     
-    public static final Criterion EMPTY = new Criterion("","","","A1","A2", Types.BASE);
+    public static final Criterion EMPTY = new Criterion("","","","","A1","A2", Types.BASE);
     
     protected String name;
     protected String formula;
     protected String value;
+    protected String max;
     protected CellReference nameRef;
     protected CellReference valueRef;
     protected Types type;
    
-    public Criterion(String name, String formula, String value, Cell nameCell, Cell valueCell, Types type) {
+    public Criterion(String name, String formula, String value, String max, Cell nameCell, Cell valueCell, Types type) {
         this.name = name;
         this.formula = formula;
         this.value = value;
+        this.max = max;
         this.nameRef = new CellReference(nameCell);
         this.valueRef = new CellReference(valueCell);
         this.type = type;
     }
     
-    public Criterion(String name, String formula, String value, String nameRef, String valueRef, Types type) {
+    public Criterion(String name, String formula, String value, String max, String nameRef, String valueRef, Types type) {
         this.name = name;
         this.formula = formula;
         this.value = value;
+        this.max = max;
         this.nameRef = new CellReference(nameRef);
         this.valueRef = new CellReference(valueRef);
         this.type = type;
@@ -54,6 +57,10 @@ public class Criterion {
 
     public CellReference getNameRef() {
         return nameRef;
+    }
+    
+    public String getMax() {
+        return max;
     }
 
     public CellReference getValueRef() {

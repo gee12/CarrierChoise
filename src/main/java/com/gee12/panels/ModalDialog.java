@@ -6,18 +6,18 @@ import javax.swing.JDialog;
  *
  * @author Иван
  */
-public class MyodalDialog extends JDialog {
+public class ModalDialog extends JDialog {
     
 //    private JButton okButton;
 //    private JButton cancelButton;
     protected boolean result = false;
  
-    public MyodalDialog() {
+    public ModalDialog() {
         initDialogComponents();
 //        initOkCancelButtons();
     }
     
-    public MyodalDialog(String title) {
+    public ModalDialog(String title) {
         initDialogComponents();
         setTitle(title);
 //        initOkCancelButtons();

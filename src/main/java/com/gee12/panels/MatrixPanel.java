@@ -9,7 +9,6 @@ import com.gee12.multiSpanCellTable.CellSpan;
 import com.gee12.multiSpanCellTable.MultiSpanCellTable;
 import com.gee12.other.MatrixTableListener;
 import com.gee12.structures.Matrix;
-import com.gee12.structures.Project;
 import java.awt.Dimension;
 import java.util.Enumeration;
 import javax.swing.JPanel;

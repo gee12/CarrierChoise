@@ -43,6 +43,29 @@ public class Project {
         this.maxMark = maxMark;
         this.deviation = deviation;
     }   
+    ////////////////////////////////////////////////////////////////////////////
+    //
+    public void defineMarks() {
+        generalMark = 0;
+        maxMark = 0;
+        for (Criterion crit: getStage(Stages.STAGE2_COOPERATION).getCriterions()) {
+            try {
+                double value = Double.parseDouble(crit.getValue());
+                generalMark += value;
+                double max = Double.parseDouble(crit.getMax());
+                maxMark += max;
+            } catch(Exception ex) {}
+        }
+        for (Criterion crit: getStage(Stages.STAGE2_COOPERATION).getCriterions()) {
+            try {
+                double value = Double.parseDouble(crit.getValue());
+                generalMark += value;
+                double max = Double.parseDouble(crit.getMax());
+                maxMark += max;
+            } catch(Exception ex) {}
+        }    
+        deviation = (maxMark - generalMark) / 100.;
+    }
     
     ////////////////////////////////////////////////////////////////////////////
     // set
