@@ -147,7 +147,7 @@ public class CriterionDialog extends ModalDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel6.setText("Для добавления в формулу ссылки на ячейку данных кникните по ячейке в таблице");
+        jLabel6.setText("Для добавления в формулу ссылки (на ячейку данных) кникните по ячейке в таблице");
 
         dataTable.setModel(dataTM);
         dataTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
@@ -170,7 +170,7 @@ public class CriterionDialog extends ModalDialog {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 191, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 183, Short.MAX_VALUE)
                         .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton)

@@ -1,5 +1,6 @@
 package com.gee12.panels;
 
+import com.gee12.other.Utils;
 import com.gee12.other.SwitchStageListener;
 import com.gee12.other.XLSParser;
 import com.gee12.structures.Project;
@@ -8,6 +9,9 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import static java.awt.EventQueue.invokeLater;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -22,9 +26,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  * @author Иван
  */
 public class MainFrame extends JFrame implements SwitchStageListener {
-    //
+    
+    public static final String TEMP_FILE_NAME = "_temp.xls";
+    
     JPanel cards;
-    private ChoisePanelOld choisePanel;
+    private ChoisePanel choisePanel;
     private CooperatePanel cooperatePanel;
     private RatingPanel ratingPanel;
     
@@ -50,7 +56,7 @@ public class MainFrame extends JFrame implements SwitchStageListener {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 //        setLocationByPlatform(true);
         setLocation(100, 0);
-        setPreferredSize(new Dimension(900,700));
+        setPreferredSize(new Dimension(900,650));
         setResizable(false);
 
         // add toolbar and buttons
@@ -136,7 +142,7 @@ public class MainFrame extends JFrame implements SwitchStageListener {
         add(toolBar, BorderLayout.PAGE_START);
         
         // create the panel that contains the "cards".
-        choisePanel = new ChoisePanelOld(this);
+        choisePanel = new ChoisePanel(this);
         cooperatePanel = new CooperatePanel(this);
         ratingPanel = new RatingPanel(this);
         cards = new JPanel(new CardLayout());
@@ -186,12 +192,13 @@ public class MainFrame extends JFrame implements SwitchStageListener {
         
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             projectFileName = createShooser.getSelectedFile().getAbsolutePath();
-            
-            // create file
             projectFileName = XLSParser.withXLSExt(projectFileName);
-            XLSParser.createXLSFile(projectFileName);
-            
             curProject = new Project();
+            
+            // create temp file
+            XLSParser.createXLSFile(TEMP_FILE_NAME);
+            XLSParser.saveXLSProject(TEMP_FILE_NAME, curProject);
+            
             nextStage(Project.Stages.STAGE1_CHOISE);
             
             closeButton.setEnabled(true);
@@ -216,6 +223,11 @@ public class MainFrame extends JFrame implements SwitchStageListener {
         if(returnVal == JFileChooser.APPROVE_OPTION) {
             projectFileName = openChooser.getSelectedFile().getAbsolutePath();
             curProject = XLSParser.readXLSProject(projectFileName);
+            
+            // create temp file
+            XLSParser.createXLSFile(TEMP_FILE_NAME);
+            XLSParser.saveXLSProject(TEMP_FILE_NAME, curProject);
+            
             nextStage(Project.Stages.STAGE1_CHOISE);
             
             closeButton.setEnabled(true);
@@ -237,8 +249,13 @@ public class MainFrame extends JFrame implements SwitchStageListener {
 
     ////////////////////////////////////////////////////////////////////////////
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {  
-        // write project to file
-        XLSParser.saveXLSProject(projectFileName, curProject);
+            // write project to file
+//        XLSParser.saveXLSProject(projectFileName, curProject);
+        try {
+            Utils.copyFile(TEMP_FILE_NAME, projectFileName);
+        } catch (IOException ex) {
+            Utils.onException(ex);
+        }
     }      
 
     ////////////////////////////////////////////////////////////////////////////
@@ -253,13 +270,17 @@ public class MainFrame extends JFrame implements SwitchStageListener {
         
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             projectFileName = saveAsChooser.getSelectedFile().getAbsolutePath();
-            
-            // create file
             projectFileName = XLSParser.withXLSExt(projectFileName);
-            XLSParser.createXLSFile(projectFileName);
-            // write project to file
-            XLSParser.saveXLSProject(projectFileName, curProject);
             
+//            // create file
+//            XLSParser.createXLSFile(projectFileName);
+//            // write project to file
+//            XLSParser.saveXLSProject(projectFileName, curProject);
+            try {
+                Utils.copyFile(TEMP_FILE_NAME, projectFileName);
+            } catch (IOException ex) {
+                Utils.onException(ex);
+            }            
         } 
     }      
     ////////////////////////////////////////////////////////////////////////////

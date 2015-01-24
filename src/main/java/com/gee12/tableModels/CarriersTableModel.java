@@ -11,7 +11,7 @@ import javax.swing.table.AbstractTableModel;
 
 public class CarriersTableModel extends AbstractTableModel {
 
-    private String[] columnNames = {"Рей\nтинг", "Перевозчик", "Грузо\nподъемн.","Кол-во\nповтор."};
+    private String[] columnNames = {"Рей\nтинг", "Перевозчик", "Грузо\nподъемн.","Кол-во\nповтор."," "};
     private List<Carrier> data = null;
     
     public CarriersTableModel() {
@@ -29,6 +29,11 @@ public class CarriersTableModel extends AbstractTableModel {
     
     public void addRow(Carrier car) {
         data.add(car);
+        fireTableDataChanged();
+    }
+    
+    public void deleteRow(int row) {
+        data.remove(row);
         fireTableDataChanged();
     }
 
@@ -58,7 +63,9 @@ public class CarriersTableModel extends AbstractTableModel {
                 return data.get(row).getCapacity();
             case 3:
                 return data.get(row).getRepeatNum();
-            default:
+             case 4:
+                return "Удалить";           
+             default:
                 return null;
         }
     }
@@ -74,6 +81,8 @@ public class CarriersTableModel extends AbstractTableModel {
                 return Double.class;
             case 3:
                 return Integer.class;
+            case 4:
+                return String.class;            
             default:
                 return null;
         }
@@ -81,7 +90,12 @@ public class CarriersTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int row, int col) {
-        return false;
+        switch(col) {
+            case 4:
+                return true;            
+            default:
+                return false;
+        }
     }
 
     @Override

@@ -27,7 +27,8 @@ public class Project {
     ////////////////////////////////////////////////////////////////////////////
     public Project() {
         this.carriers = new ArrayList<Carrier>();
-        stages = new Stage[] { new Stage(), new Stage() };
+        this.stages = new Stage[] { new Stage(), new Stage() };
+        this.curCarrier = Carrier.EMPTY;
     }
     
     public Project(List<Carrier> carriers, Stage[] stages) {

@@ -35,17 +35,17 @@ import org.apache.poi.ss.util.CellReference;
  */
 public class RatingPanel extends JPanel implements RowListener {
     
-    public static final int NAME_CELL_WIDTH = 545;
+    public static final int NAME_CELL_WIDTH = 605;
     public static final int VALUE_CELL_WIDTH = 80;
-    public static final int FORMULA_CELL_WIDTH = 60;
     public static final int TYPE_CELL_WIDTH = 60;
-    public static final int DELETE_CELL_WIDTH = 60;
+    public static final int FORMULA_CELL_WIDTH = 30;
+    public static final int DELETE_CELL_WIDTH = 30;
     
     
     SwitchStageListener listener;
     private final CriterionsTableModel critCooperateTM;
     private final CriterionsTableModel critRatingTM;
-    private String projectFileName = null;            
+//    private String projectFileName = null;            
     private Project curProject = null;
 //    private Carrier curCarrier = null;
     
@@ -65,7 +65,7 @@ public class RatingPanel extends JPanel implements RowListener {
         if (proj == null || curCar == null) return;
         this.curProject = proj;
 //        this.curCarrier = curCar;
-        this.projectFileName = fileName;
+//        this.projectFileName = fileName;
         
         nameLabel.setText("ОЦЕНКА СОТРУДНИЧЕСТВА С ПЕРЕВОЗЧИКОМ '" + curCar.getName() + "'");
                 
@@ -97,8 +97,8 @@ public class RatingPanel extends JPanel implements RowListener {
         
         table.getColumnModel().getColumn(0).setPreferredWidth(NAME_CELL_WIDTH);
         table.getColumnModel().getColumn(1).setPreferredWidth(VALUE_CELL_WIDTH);
-        table.getColumnModel().getColumn(2).setPreferredWidth(FORMULA_CELL_WIDTH);
-        table.getColumnModel().getColumn(3).setPreferredWidth(TYPE_CELL_WIDTH);
+        table.getColumnModel().getColumn(2).setPreferredWidth(TYPE_CELL_WIDTH);
+        table.getColumnModel().getColumn(3).setPreferredWidth(FORMULA_CELL_WIDTH);
         table.getColumnModel().getColumn(4).setPreferredWidth(DELETE_CELL_WIDTH);
     }
     
@@ -192,7 +192,7 @@ public class RatingPanel extends JPanel implements RowListener {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(addCritCooperateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 158, Short.MAX_VALUE))
+                .addGap(0, 152, Short.MAX_VALUE))
             .addComponent(critCooperateScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
 
@@ -227,7 +227,7 @@ public class RatingPanel extends JPanel implements RowListener {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(addCritRatingButton)
-                .addContainerGap(160, Short.MAX_VALUE))
+                .addContainerGap(142, Short.MAX_VALUE))
             .addComponent(critRatingScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
 
@@ -268,25 +268,24 @@ public class RatingPanel extends JPanel implements RowListener {
                         .addComponent(nameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(prevButton, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(saveReportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 468, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(genMarkTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(56, 56, 56)
-                                .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(maxMarkTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(99, 99, 99)
-                                .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(deviationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(107, 107, 107))))))
+                        .addGap(0, 333, Short.MAX_VALUE)
+                        .addComponent(prevButton, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(saveReportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 468, javax.swing.GroupLayout.PREFERRED_SIZE))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(genMarkTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(78, 78, 78)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(maxMarkTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(99, 99, 99)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(deviationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(105, 105, 105))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(0, 0, Short.MAX_VALUE)
@@ -309,15 +308,15 @@ public class RatingPanel extends JPanel implements RowListener {
                     .addComponent(maxMarkTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4)
                     .addComponent(deviationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(saveReportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(prevButton)))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addGap(0, 284, Short.MAX_VALUE)
                     .addComponent(saveRatingButton1)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+                    .addGap(0, 284, Short.MAX_VALUE)))
         );
     }// </editor-fold>//GEN-END:initComponents
 

@@ -32,15 +32,15 @@ import org.apache.poi.ss.util.CellReference;
  */
 public class CooperatePanel extends JPanel implements RowListener {
     
-    public static final int NAME_CELL_WIDTH = 550;
+    public static final int NAME_CELL_WIDTH = 595;
     public static final int VALUE_CELL_WIDTH = 100;
     public static final int TYPE_CELL_WIDTH = 70;
-    public static final int DELETE_CELL_WIDTH = 70;
+    public static final int DELETE_CELL_WIDTH = 30;
 
     SwitchStageListener listener;
     private final DataTableModel dataCooperateTM;
     private final DataTableModel dataRatingTM;
-    private String projectFileName = null;            
+//    private String projectFileName = null;            
     private Project curProject = null;
 //    private Carrier curCarrier = null;
             
@@ -61,7 +61,7 @@ public class CooperatePanel extends JPanel implements RowListener {
         if (proj == null || curCar == null) return;
         this.curProject = proj;
 //        this.curCarrier = curCar;
-        this.projectFileName = fileName;
+//        this.projectFileName = fileName;
         
         nameLabel.setText("СОТРУДНИЧЕСТВО С ПЕРЕВОЗЧИКОМ '" + curCar.getName() + "'");
         
@@ -78,12 +78,12 @@ public class CooperatePanel extends JPanel implements RowListener {
         JComboBox comboBox = new JComboBox(DataTableModel.COMBO_STATES);
         comboBox.setEditable(false);   
         // Assign the editor
-        TableColumnModel tcm = table.getColumnModel();
-        tcm.getColumn(2).setCellEditor(
+        TableColumnModel colModel = table.getColumnModel();
+        colModel.getColumn(2).setCellEditor(
                 new DefaultCellEditor(comboBox));
-        tcm.getColumn(3).setCellEditor(
+        colModel.getColumn(3).setCellEditor(
             new ButtonEditor(new JCheckBox(), this, -1, 3));
-        tcm.getColumn(3).setCellRenderer(new ButtonRenderer(
+        colModel.getColumn(3).setCellRenderer(new ButtonRenderer(
             new ImageIcon(MainFrame.class.getResource("/images/delete.jpg"))));
         
         table.getColumnModel().getColumn(0).setPreferredWidth(NAME_CELL_WIDTH);
@@ -171,7 +171,7 @@ public class CooperatePanel extends JPanel implements RowListener {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(addDataCooperateButton)
-                .addGap(0, 179, Short.MAX_VALUE))
+                .addGap(0, 167, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(dataCooperationScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -210,7 +210,7 @@ public class CooperatePanel extends JPanel implements RowListener {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(addDataRatingButton)
-                .addGap(0, 177, Short.MAX_VALUE))
+                .addGap(0, 169, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(dataRatingScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())

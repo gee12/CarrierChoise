@@ -15,11 +15,10 @@ import javax.swing.table.TableCellRenderer;
  */
 public class ButtonRenderer extends JButton implements TableCellRenderer {
 
-    private Icon icon;
-    
     public ButtonRenderer(Icon icon) {
-        this.icon = icon;
-        setOpaque(true);
+        setOpaque(false);
+//        setBorder(BorderFactory.createEmptyBorder());
+        setIcon(icon);
     }
 
     public Component getTableCellRendererComponent(JTable table, Object value,
@@ -32,8 +31,6 @@ public class ButtonRenderer extends JButton implements TableCellRenderer {
 //            setBackground(UIManager.getColor("Button.background"));
 //        }
 //        setText((value == null) ? "" : value.toString());
-        setBorder(BorderFactory.createEmptyBorder());
-        setIcon(new ImageIcon(MainFrame.class.getResource("/images/delete.jpg")));
         return this;
     }
 }

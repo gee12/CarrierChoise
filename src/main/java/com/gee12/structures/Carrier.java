@@ -8,6 +8,7 @@ import java.util.List;
  */
 public class Carrier {
     
+    public static final Carrier EMPTY = new Carrier(0, "", 0, 0, new Matrix());
     public static final Double[] CAPACITIES = {10.,15.,20.};
     public static final Double[] VOLUMES = {200.,300.,400.};
     

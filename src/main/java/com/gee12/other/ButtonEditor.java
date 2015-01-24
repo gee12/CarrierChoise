@@ -1,5 +1,6 @@
 package com.gee12.other;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,8 +34,8 @@ public class ButtonEditor extends DefaultCellEditor {
         this.deleteCol = deleteCol;
         
         button = new JButton();
-        button.setBorder(BorderFactory.createEmptyBorder());
-        button.setOpaque(false);
+//        button.setBorder(BorderFactory.createLineBorder(Color.yellow));
+        button.setOpaque(true);
 //        button.setIcon(new ImageIcon(MainFrame.class.getResource("/images/delete.jpg")));
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -46,17 +47,19 @@ public class ButtonEditor extends DefaultCellEditor {
     @Override
     public Component getTableCellEditorComponent(JTable table, Object v,
             boolean isSelected, int row, int col) {
-//        if (isSelected) {
+        if (isSelected) {
+//            button.setBorder(BorderFactory.createLineBorder(Color.red));
 //            button.setForeground(table.getSelectionForeground());
 //            button.setBackground(table.getSelectionBackground());
-//        } else {
+        } else {
+//            button.setBorder(BorderFactory.createLineBorder(Color.yellow));
 //            button.setForeground(table.getForeground());
 //            button.setBackground(table.getBackground());
-//        }
+        }
         this.curRow = row;
         this.curCol = col;
         this.table = table;
-        button.setBorder(BorderFactory.createEmptyBorder());
+//        button.setBorder(BorderFactory.createEmptyBorder());
 //        this.value = (v == null) ? "" : v.toString();
 //        button.setText(label);
         isPushed = true;

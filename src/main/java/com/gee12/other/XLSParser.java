@@ -1,6 +1,7 @@
 package com.gee12.other;
 
 
+import static com.gee12.other.Utils.onException;
 import com.gee12.panels.MainFrame;
 import com.gee12.structures.Carrier;
 import com.gee12.structures.Criterion;
@@ -397,13 +398,16 @@ public class XLSParser {
             
             // choise stage (carriers)
             Sheet sheet1 = workBook.getSheet(stage1SheetTitle);
+            if (sheet1 == null) sheet1 = workBook.createSheet(stage1SheetTitle);
             saveXLSCarriers(sheet1, proj.getCarriers());
             // cooperation stage
             Sheet sheet2 = workBook.getSheet(stage2SheetTitle);
+            if (sheet2 == null) sheet2 = workBook.createSheet(stage2SheetTitle);
             saveXLSCriterions(sheet2, proj.getStage(Project.Stages.STAGE2_COOPERATION).getCriterions());
             saveXLSDataFields(sheet2, proj.getStage(Project.Stages.STAGE2_COOPERATION).getDataFields());
             // rating stage
             Sheet sheet3 = workBook.getSheet(stage3SheetTitle);
+            if (sheet3 == null) sheet3 = workBook.createSheet(stage3SheetTitle);
             saveXLSCriterions(sheet3, proj.getStage(Project.Stages.STAGE3_RATING).getCriterions());
             saveXLSDataFields(sheet3, proj.getStage(Project.Stages.STAGE3_RATING).getDataFields());
             
@@ -673,32 +677,9 @@ public class XLSParser {
         }
     }
 
-    ////////////////////////////////////////////////////////////////////////////
-    public static void onException(Exception ex) {
-        ex.printStackTrace();
-        showErrorDialog(ex.getMessage());
-    }
     
     ////////////////////////////////////////////////////////////////////////////
-    public static void showErrorDialog(String mes) {
-        JOptionPane.showMessageDialog(MainFrame.getFrames()[0], mes, "Ошибка", JOptionPane.ERROR_MESSAGE);
-    }
-    
-    ////////////////////////////////////////////////////////////////////////////
-    // get file name without path & extension
-    public static String withOutExtAndPath(String fullFileName) {
-	Path path = Paths.get(fullFileName);
-	String withoutPath = path.getFileName().toString();
-	return withoutPath.replaceFirst("[.][^.]+$", "");
-    }
-    
-    // get file name without extension
-    public static String withOutExt(String fileName) {
-	return fileName.replaceFirst("[.][^.]+$", "");
-    }
-    
-    // get file name with .xls extension
     public static String withXLSExt(String fileName) {
-        return fileName.replaceFirst("[.][^.]+$", "") + ".xls";
-    }
+        return Utils.withExt(fileName, ".xls");
+    }  
 }

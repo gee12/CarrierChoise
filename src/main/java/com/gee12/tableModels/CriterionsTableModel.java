@@ -12,7 +12,7 @@ import javax.swing.table.AbstractTableModel;
 
 public class CriterionsTableModel extends AbstractTableModel {
 
-    private static final String[] columnNames = {"Наименование", "Значение", "Тип", "Формула", "Удалить"};
+    private static final String[] columnNames = {"Наименование", "Значение", "Тип", "", ""};
     public static final String[] COMBO_STATES = //Util.getNames(Criterion.Types.class);
     {Criterion.Types.BASE.name(), Criterion.Types.OTHER.name()
     };

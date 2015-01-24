@@ -12,7 +12,7 @@ import javax.swing.table.AbstractTableModel;
 
 public class DataTableModel extends AbstractTableModel {
 
-    private static final String[] columnNames = {"Наименование", "Значение", "Тип", "Удалить"};
+    private static final String[] columnNames = {"Наименование", "Значение", "Тип", ""};
     public static final String[] COMBO_STATES = //Util.getNames(DataField.Types.class);
     {DataField.Types.BASE.name(), DataField.Types.OTHER.name()
     };
