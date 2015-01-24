@@ -24,7 +24,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class MainFrame extends JFrame implements SwitchStageListener {
     //
     JPanel cards;
-    private ChoisePanel choisePanel;
+    private ChoisePanelOld choisePanel;
     private CooperatePanel cooperatePanel;
     private RatingPanel ratingPanel;
     
@@ -32,6 +32,8 @@ public class MainFrame extends JFrame implements SwitchStageListener {
     private JButton createButton;
     private JToolBar toolBar;
     private JButton openButton;
+    private JButton saveButton;
+    private JButton saveAsButton;
     
     private String projectFileName = null;            
     private Project curProject = null;
@@ -56,6 +58,8 @@ public class MainFrame extends JFrame implements SwitchStageListener {
         createButton = new javax.swing.JButton();
         openButton = new javax.swing.JButton();
         closeButton = new javax.swing.JButton();
+        saveButton = new javax.swing.JButton();
+        saveAsButton = new javax.swing.JButton();
 
         toolBar.setFloatable(false);
         toolBar.setRollover(true);
@@ -86,7 +90,35 @@ public class MainFrame extends JFrame implements SwitchStageListener {
             }
         });
         toolBar.add(openButton);
-
+        
+        saveButton.setText("Сохранить");
+        saveButton.setIcon(new ImageIcon(MainFrame.class.getResource("/images/save.jpg")));
+        saveButton.setToolTipText("Сохранить текущий проект");
+        saveButton.setEnabled(false);
+        saveButton.setFocusable(false);
+        saveButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        saveButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        saveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveButtonActionPerformed(evt);
+            }
+        });
+        toolBar.add(saveButton); 
+        
+        saveAsButton.setText("Сохранить как");
+        saveAsButton.setIcon(new ImageIcon(MainFrame.class.getResource("/images/saveas.jpg")));
+        saveAsButton.setToolTipText("Сохранить проект как");
+        saveAsButton.setEnabled(false);
+        saveAsButton.setFocusable(false);
+        saveAsButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        saveAsButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        saveAsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveAsButtonActionPerformed(evt);
+            }
+        });
+        toolBar.add(saveAsButton); 
+        
         closeButton.setText("Закрыть");
         closeButton.setIcon(new ImageIcon(MainFrame.class.getResource("/images/close.jpg")));
         closeButton.setToolTipText("Закрыть проект");
@@ -100,10 +132,11 @@ public class MainFrame extends JFrame implements SwitchStageListener {
             }
         });
         toolBar.add(closeButton);        
+
         add(toolBar, BorderLayout.PAGE_START);
         
         // create the panel that contains the "cards".
-        choisePanel = new ChoisePanel(this);
+        choisePanel = new ChoisePanelOld(this);
         cooperatePanel = new CooperatePanel(this);
         ratingPanel = new RatingPanel(this);
         cards = new JPanel(new CardLayout());
@@ -144,16 +177,26 @@ public class MainFrame extends JFrame implements SwitchStageListener {
     ////////////////////////////////////////////////////////////////////////////
     private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {
         JFileChooser createShooser = new JFileChooser();
-        FileNameExtensionFilter filter = new FileNameExtensionFilter(
-            "Таблицы MS Office (*.xls)", "xls");
-        createShooser.setFileFilter(filter);
-        int returnVal = createShooser.showSaveDialog(this);
+        createShooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        createShooser.setApproveButtonText("Создать");
+        createShooser.setDialogTitle("Создание нового проекта");
+        createShooser.setDialogType(JFileChooser.OPEN_DIALOG);
+        createShooser.setMultiSelectionEnabled(false);
+        int returnVal = createShooser.showOpenDialog(this);
+        
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             projectFileName = createShooser.getSelectedFile().getAbsolutePath();
+            
+            // create file
+            projectFileName = XLSParser.withXLSExt(projectFileName);
+            XLSParser.createXLSFile(projectFileName);
+            
             curProject = new Project();
             nextStage(Project.Stages.STAGE1_CHOISE);
             
             closeButton.setEnabled(true);
+            saveButton.setEnabled(true);
+            saveAsButton.setEnabled(true);
         }   
     }                                            
 
@@ -163,13 +206,21 @@ public class MainFrame extends JFrame implements SwitchStageListener {
         FileNameExtensionFilter filter = new FileNameExtensionFilter(
             "Таблицы MS Office (*.xls)", "xls");
         openChooser.setFileFilter(filter);
+        openChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        openChooser.setApproveButtonText("Открыть");
+        openChooser.setDialogTitle("Открытие нового проекта");
+        openChooser.setDialogType(JFileChooser.OPEN_DIALOG);
+        openChooser.setMultiSelectionEnabled(false);
         int returnVal = openChooser.showOpenDialog(this);
+        
         if(returnVal == JFileChooser.APPROVE_OPTION) {
             projectFileName = openChooser.getSelectedFile().getAbsolutePath();
             curProject = XLSParser.readXLSProject(projectFileName);
             nextStage(Project.Stages.STAGE1_CHOISE);
             
             closeButton.setEnabled(true);
+            saveButton.setEnabled(true);
+            saveAsButton.setEnabled(true);
         }
     }                                          
 
@@ -180,11 +231,39 @@ public class MainFrame extends JFrame implements SwitchStageListener {
             curProject = null;
             
             closeButton.setEnabled(false);
+            saveButton.setEnabled(false);
+            saveAsButton.setEnabled(false);
     }     
-    
+
+    ////////////////////////////////////////////////////////////////////////////
+    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {  
+        // write project to file
+        XLSParser.saveXLSProject(projectFileName, curProject);
+    }      
+
+    ////////////////////////////////////////////////////////////////////////////
+    private void saveAsButtonActionPerformed(java.awt.event.ActionEvent evt) {  
+        JFileChooser saveAsChooser = new JFileChooser();
+        saveAsChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        saveAsChooser.setApproveButtonText("Сохранить");
+        saveAsChooser.setDialogTitle("Сохранение проекта как");
+        saveAsChooser.setDialogType(JFileChooser.SAVE_DIALOG);
+        saveAsChooser.setMultiSelectionEnabled(false);
+        int returnVal = saveAsChooser.showSaveDialog(this);
+        
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            projectFileName = saveAsChooser.getSelectedFile().getAbsolutePath();
+            
+            // create file
+            projectFileName = XLSParser.withXLSExt(projectFileName);
+            XLSParser.createXLSFile(projectFileName);
+            // write project to file
+            XLSParser.saveXLSProject(projectFileName, curProject);
+            
+        } 
+    }      
     ////////////////////////////////////////////////////////////////////////////
     public static void main(String args[]) {
-        //
         try {
             for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -195,7 +274,6 @@ public class MainFrame extends JFrame implements SwitchStageListener {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        //
         invokeLater(new Runnable() {
             public void run() {
                 new MainFrame().setVisible(true);

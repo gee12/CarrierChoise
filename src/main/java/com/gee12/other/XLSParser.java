@@ -13,15 +13,19 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import javax.swing.JOptionPane;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 
 /**
@@ -33,21 +37,23 @@ public class XLSParser {
     public static final String stage1SheetTitle = "1 этап";
     public static final String stage2SheetTitle = "2 этап";
     public static final String stage3SheetTitle = "3 этап";
-    public static final String resultsSheetTitle = "Результат";
+    public static final String[] carrierMatrixTitle = {"Грузоподъемность,тонн",
+        "200","300","400"};
+    public static final String[] matrixCapacitiesTitle = {
+        "10", "15", "20"
+    };
     
-    public static final CellReference carrierNameRef = new CellReference(0, 1);
-    public static final CellReference carrierCapacityRef = new CellReference(6, 1);
-    public static final CellReference carrierRepeatRef = new CellReference(6, 2);
-    public static final CellReference carrierMatrixRef = new CellReference(3, 1);
-    public static final int CARRIER_ROWS_NUM = 8;
+    public static final CellReference carrierNameRef = new CellReference(0, 0);
+    public static final CellReference carrierMatrixRef = new CellReference(1, 0);
+    public static final CellReference carrierResultRef = new CellReference(5, 0);
+    public static final int CARRIER_ROWS_NUM = 7;
     
-    public static final CellReference curCarrierRef = new CellReference(1, 0);
-//    public static final CellReference resultsRef = new CellReference(3, 2);
+    public static final CellReference curCarrierRef = new CellReference(0, 0);
     
-    public static final CellReference baseDataFieldsRef = new CellReference(5, 0);
-    public static final CellReference otherDataFieldsRef = new CellReference(5, 3);
-    public static final CellReference baseCriterionsRef = new CellReference(5, 7);
-    public static final CellReference otherCriterionsRef = new CellReference(5, 9);
+    public static final CellReference baseDataFieldsRef = new CellReference(3, 0);
+    public static final CellReference otherDataFieldsRef = new CellReference(3, 3);
+    public static final CellReference baseCriterionsRef = new CellReference(3, 7);
+    public static final CellReference otherCriterionsRef = new CellReference(3, 9);
     
     ////////////////////////////////////////////////////////////////////////////
     public static Project readXLSProject(String fileName) {
@@ -271,9 +277,10 @@ public class XLSParser {
         
         Cell cell;
         int cellType;
+        int shift = id * CARRIER_ROWS_NUM;
         
         String name = null;
-        cell = sheet.getRow(carrierNameRef.getRow() + id * CARRIER_ROWS_NUM)
+        cell = sheet.getRow(carrierNameRef.getRow() + shift)
                 .getCell(carrierNameRef.getCol());
         cellType = cell.getCellType();
         if (cell != null || cellType == Cell.CELL_TYPE_STRING) {
@@ -281,16 +288,16 @@ public class XLSParser {
         }
         
         double capacity = 0.0;
-        cell = sheet.getRow(carrierCapacityRef.getRow() + id * CARRIER_ROWS_NUM)
-                .getCell(carrierCapacityRef.getCol());
+        cell = sheet.getRow(carrierResultRef.getRow() + shift)
+                .getCell(carrierResultRef.getCol() + 1);
         cellType = cell.getCellType();
         if (cell != null || cellType == Cell.CELL_TYPE_FORMULA) {
             capacity = cell.getNumericCellValue();
         }
         
         int repeatNum = 0;
-        cell = sheet.getRow(carrierRepeatRef.getRow() + id * CARRIER_ROWS_NUM)
-                .getCell(carrierRepeatRef.getCol());
+        cell = sheet.getRow(carrierResultRef.getRow() + shift)
+                .getCell(carrierResultRef.getCol() + 2);
         cellType = cell.getCellType();
         if (cell != null || cellType == Cell.CELL_TYPE_FORMULA) {
             repeatNum = (int)cell.getNumericCellValue();
@@ -299,8 +306,8 @@ public class XLSParser {
         Matrix matrix = new Matrix();
         for(int i = 0; i < Matrix.DEF_SIZE; i++) {
             for(int j = 0; j < Matrix.DEF_SIZE; j++) {
-                cell = sheet.getRow(carrierMatrixRef.getRow() + id * CARRIER_ROWS_NUM + i)
-                        .getCell(carrierMatrixRef.getCol() + j);
+                cell = sheet.getRow(carrierMatrixRef.getRow() + shift + i + 1)
+                        .getCell(carrierMatrixRef.getCol() + j + 1);
                 cellType = cell.getCellType();                
                 if (cell != null || cellType == Cell.CELL_TYPE_FORMULA) {
                     matrix.setAt(i, j, cell.getNumericCellValue());
@@ -388,29 +395,25 @@ public class XLSParser {
             FileInputStream inputFile = new FileInputStream(new File(fileName));
             HSSFWorkbook workBook = new HSSFWorkbook(inputFile);
             
-//            saveXLSProjectData(workBook.getSheet(stage2SheetTitle), 
-//                    proj.getStage(Project.Stages.STAGE2_COOPERATION).getBaseDataFileds());
-//            saveXLSProjectData(workBook.getSheet(stage2SheetTitle), 
-//                    proj.getStage(Project.Stages.STAGE2_COOPERATION).getOtherDataFileds());
-//            saveXLSProjectData(workBook.getSheet(stage3SheetTitle), 
-//                    proj.getStage(Project.Stages.STAGE3_RATING).getBaseDataFileds());
-//            saveXLSProjectData(workBook.getSheet(stage3SheetTitle), 
-//                    proj.getStage(Project.Stages.STAGE3_RATING).getOtherDataFileds());
-            XLSParser.saveXLSDataFields(workBook.getSheet(stage2SheetTitle), 
-                    proj.getStage(Project.Stages.STAGE2_COOPERATION).getDataFields());
-            XLSParser.saveXLSDataFields(workBook.getSheet(stage3SheetTitle), 
-                    proj.getStage(Project.Stages.STAGE3_RATING).getDataFields());
+            // choise stage (carriers)
+            Sheet sheet1 = workBook.getSheet(stage1SheetTitle);
+            saveXLSCarriers(sheet1, proj.getCarriers());
+            // cooperation stage
+            Sheet sheet2 = workBook.getSheet(stage2SheetTitle);
+            saveXLSCriterions(sheet2, proj.getStage(Project.Stages.STAGE2_COOPERATION).getCriterions());
+            saveXLSDataFields(sheet2, proj.getStage(Project.Stages.STAGE2_COOPERATION).getDataFields());
+            // rating stage
+            Sheet sheet3 = workBook.getSheet(stage3SheetTitle);
+            saveXLSCriterions(sheet3, proj.getStage(Project.Stages.STAGE3_RATING).getCriterions());
+            saveXLSDataFields(sheet3, proj.getStage(Project.Stages.STAGE3_RATING).getDataFields());
             
             workBook.getCreationHelper().createFormulaEvaluator().evaluateAll();
             
             inputFile.close();
-            
             FileOutputStream outputFile = new FileOutputStream(new File(fileName));
             workBook.write(outputFile);
             outputFile.close();
-            
             workBook.close();
-
         } catch (IOException e) {
              onException(e);
         }
@@ -422,9 +425,9 @@ public class XLSParser {
             FileInputStream inputFile = new FileInputStream(new File(fileName));
             HSSFWorkbook workBook = new HSSFWorkbook(inputFile);
             
-            XLSParser.saveXLSDataFields(workBook.getSheet(stage2SheetTitle), 
+            saveXLSDataFields(workBook.getSheet(stage2SheetTitle), 
                     proj.getStage(Project.Stages.STAGE2_COOPERATION).getDataFields());
-            XLSParser.saveXLSDataFields(workBook.getSheet(stage3SheetTitle), 
+            saveXLSDataFields(workBook.getSheet(stage3SheetTitle), 
                     proj.getStage(Project.Stages.STAGE3_RATING).getDataFields());
             
             workBook.getCreationHelper().createFormulaEvaluator().evaluateAll();
@@ -450,7 +453,7 @@ public class XLSParser {
             //
             String sheetName = (stage == Stages.STAGE2_COOPERATION) ? stage2SheetTitle :
                 (stage == Stages.STAGE3_RATING) ? stage3SheetTitle : "";
-            XLSParser.saveXLSDataFields(workBook.getSheet(sheetName), dataFields);
+            saveXLSDataFields(workBook.getSheet(sheetName), dataFields);
             //
             workBook.getCreationHelper().createFormulaEvaluator().evaluateAll();
             inputFile.close();
@@ -502,7 +505,6 @@ public class XLSParser {
             workBook.write(outputFile);
             outputFile.close();
             workBook.close();
-
         } catch (IOException e) {
             onException(e);
         }
@@ -565,12 +567,10 @@ public class XLSParser {
             
             workBook.getCreationHelper().createFormulaEvaluator().evaluateAll();
             inputFile.close();
-            
             FileOutputStream outputFile = new FileOutputStream(new File(fileName));
             workBook.write(outputFile);
             outputFile.close();
             workBook.close();
-
         } catch (IOException e) {
             onException(e);
         }
@@ -582,32 +582,92 @@ public class XLSParser {
             FileInputStream inputFile = new FileInputStream(new File(fileName));
             HSSFWorkbook workBook = new HSSFWorkbook(inputFile);
 
-            // name
             Sheet sheet = workBook.getSheet(stage1SheetTitle);
-            Cell nameCell = sheet.getRow(carrierNameRef.getRow() + car.getId() * CARRIER_ROWS_NUM)
-                    .createCell(carrierNameRef.getCol());
-            nameCell.setCellType(Cell.CELL_TYPE_STRING);
-            nameCell.setCellValue(car.getName());
-            // matrix
-            Matrix matrix = car.getMatrix();
-            for(int i = 0; i < Matrix.DEF_SIZE; i++) {
-                for(int j = 0; j < Matrix.DEF_SIZE; j++) {
-                    Cell cell = sheet.getRow(carrierMatrixRef.getRow() + car.getId() * CARRIER_ROWS_NUM + i)
-                            .createCell(carrierMatrixRef.getCol() + j);
-                    cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-                    cell.setCellValue(matrix.getAt(i, j));
-                }
-            }
+            saveXLSCarrier(sheet, car);
             
-            workBook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+//            workBook.getCreationHelper().createFormulaEvaluator().evaluateAll();
             inputFile.close();
+            FileOutputStream outputFile = new FileOutputStream(new File(fileName));
+            workBook.write(outputFile);
+            outputFile.close();
+            workBook.close();
+        } catch (IOException e) {
+            onException(e);
+        }
+    }
+    
+    public static void saveXLSCarriers(Sheet sheet, List<Carrier> cars) {
+        for (Carrier car : cars) {
+            saveXLSCarrier(sheet, car);
+        }
+    }
+    
+    public static void saveXLSCarrier(Sheet sheet, Carrier car) {
+        if (sheet == null || car == null) return;
+        
+        int shift = car.getId() * CARRIER_ROWS_NUM;
+        // 1
+        Row carrierNameRow = sheet.createRow(carrierNameRef.getRow() + shift);
+        // name
+        Cell nameCell = carrierNameRow.createCell(carrierNameRef.getCol());
+        nameCell.setCellValue(car.getName());
+        // matrix title
+        CellRangeAddress matrixTitleRegion = new CellRangeAddress(carrierNameRef.getRow() + shift, 
+                carrierNameRef.getRow() + shift, 
+                carrierNameRef.getCol() + 1, 
+                carrierNameRef.getCol() + 3);
+        sheet.addMergedRegion(matrixTitleRegion);
+        Cell matrixTitleCell = carrierNameRow.createCell(carrierNameRef.getCol() + 1);
+        matrixTitleCell.setCellValue("Планируемый объём продаж, тонн");
+
+        // 2
+        // matrix columns title
+        Row matrixTitleRow = sheet.createRow(carrierMatrixRef.getRow() + shift);
+        for (int i = 0; i < carrierMatrixTitle.length; i++) {
+            Cell cell = matrixTitleRow.createCell(carrierMatrixRef.getCol() + i);
+            cell.setCellValue(carrierMatrixTitle[i]);
+        }
+        // matrix
+        Matrix matrix = car.getMatrix();
+        for(int i = 0; i < Matrix.DEF_SIZE; i++) {
+            Row row = sheet.createRow(carrierMatrixRef.getRow() + shift + i + 1);
+            Cell titleCell = row.createCell(carrierMatrixRef.getCol());
+            titleCell.setCellValue(matrixCapacitiesTitle[i]);
+
+            for(int j = 0; j < Matrix.DEF_SIZE; j++) {
+                Cell cell = row.createCell(carrierMatrixRef.getCol() + j + 1);
+                cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+                cell.setCellValue(matrix.getAt(i, j));
+            }
+        }
+
+        // 3 result
+        Row resultRow = sheet.createRow(carrierResultRef.getRow() + shift);
+        // title
+        Cell resultTitleCell = resultRow.createCell(carrierResultRef.getCol());
+        resultTitleCell.setCellValue("Результат");
+        // capacity
+        Cell capacityCell = resultRow.createCell(carrierResultRef.getCol() + 1);
+        capacityCell.setCellValue(car.getCapacity());
+        // repeat number
+        Cell repeatCell = resultRow.createCell(carrierResultRef.getCol() + 2);
+        repeatCell.setCellValue(car.getRepeatNum());
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    public static void createXLSFile(String fileName) {
+        try {
+            HSSFWorkbook workBook = new HSSFWorkbook();
+            
+            //
+            workBook.createSheet(stage1SheetTitle);
+            workBook.createSheet(stage2SheetTitle);
+            workBook.createSheet(stage3SheetTitle);
             
             FileOutputStream outputFile = new FileOutputStream(new File(fileName));
             workBook.write(outputFile);
             outputFile.close();
-            
             workBook.close();
-
         } catch (IOException e) {
             onException(e);
         }
@@ -622,5 +682,23 @@ public class XLSParser {
     ////////////////////////////////////////////////////////////////////////////
     public static void showErrorDialog(String mes) {
         JOptionPane.showMessageDialog(MainFrame.getFrames()[0], mes, "Ошибка", JOptionPane.ERROR_MESSAGE);
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // get file name without path & extension
+    public static String withOutExtAndPath(String fullFileName) {
+	Path path = Paths.get(fullFileName);
+	String withoutPath = path.getFileName().toString();
+	return withoutPath.replaceFirst("[.][^.]+$", "");
+    }
+    
+    // get file name without extension
+    public static String withOutExt(String fileName) {
+	return fileName.replaceFirst("[.][^.]+$", "");
+    }
+    
+    // get file name with .xls extension
+    public static String withXLSExt(String fileName) {
+        return fileName.replaceFirst("[.][^.]+$", "") + ".xls";
     }
 }

@@ -9,8 +9,10 @@ import com.gee12.multiSpanCellTable.CellSpan;
 import com.gee12.multiSpanCellTable.MultiSpanCellTable;
 import com.gee12.other.MatrixTableListener;
 import com.gee12.structures.Matrix;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.util.Enumeration;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -32,31 +34,32 @@ public class MatrixPanel extends JPanel {
     public final static int CELL_WIDTH = 80;
     public final static int CELL_HEIGHT = 30;
     
-    private MatrixTableListener listener;
+//    private final MatrixTableListener listener;
     private final JTable matrixTable;
     private final MatrixTableModel matrixTM;
     
 //    public MatrixPanel() {
+//        this.listener = null;
 //        matrixTable = new JTable();
 //        matrixTM = new MatrixTableModel(null);
 //    }
     
-    public MatrixPanel(final MatrixTableListener listener, 
-            Double[] capacities, Double[] volumes) {
-        this.listener = listener;
-        if (capacities == null) {
-            capacities = new Double[3];
-        }
-        if (volumes == null) {
-            volumes = new Double[3];
-        }
+    public MatrixPanel( ) {
+//            Double[] capacities, Double[] volumes) {
+//        this.listener = listener;
+//        if (capacities == null) {
+//            capacities = new Double[3];
+//        }
+//        if (volumes == null) {
+//            volumes = new Double[3];
+//        }
         
         
         // rowHeaderModel
         Object[][] rowHeaders = new Object[][]{
-            {"Грузопод-ть", capacities[0]},
-            {"", capacities[1]},
-            {"", capacities[2]}};
+            {"Грузопод-ть", "10"},
+            {"", "15"},
+            {"", "20"}};
         AttributiveCellTableModel rowHeaderModel = new AttributiveCellTableModel(
                 rowHeaders, new Object[]{"", ""}) {
             public boolean CellEditable(int row, int col) {
@@ -76,13 +79,13 @@ public class MatrixPanel extends JPanel {
         rowHeaderTable.getColumnModel().getColumn(1).setPreferredWidth(CELL_WIDTH);
         
         // model
-//        String[] columns = new String[]{"200", "300", "400"};
+        String[] volumes = new String[]{"200", "300", "400"};
         matrixTM = new MatrixTableModel(volumes);
-        matrixTM.addTableModelListener(new TableModelListener() {
-            public void tableChanged(TableModelEvent e) {
-                listener.tableChanged();
-            }
-        });
+//        matrixTM.addTableModelListener(new TableModelListener() {
+//            public void tableChanged(TableModelEvent e) {
+//                listener.tableChanged();
+//            }
+//        });
 
         // table
         matrixTable = new JTable(matrixTM) {
@@ -124,6 +127,15 @@ public class MatrixPanel extends JPanel {
         scroll.setPreferredSize(new Dimension(430,156));
 
         add(scroll);
+
+    }
+    
+    public void addTableModelListener(final MatrixTableListener listener) {
+        matrixTM.addTableModelListener(new TableModelListener() {
+            public void tableChanged(TableModelEvent e) {
+                listener.tableChanged();
+            }
+        });
     }
     
     public void setMatrixTableModel(Matrix m) {

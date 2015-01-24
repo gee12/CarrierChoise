@@ -35,7 +35,8 @@ public class MatrixTableModel extends AbstractTableModel {
     @Override
     public String getColumnName(int col) {
 //        return String.valueOf(columnNames[col]);
-        return String.format(Locale.US, "%.2f", columnNames[col]);
+//        return String.format(Locale.US, "%.2f", columnNames[col]);
+        return (String)columnNames[col];
     }
 
     @Override

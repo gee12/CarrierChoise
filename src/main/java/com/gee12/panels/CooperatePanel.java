@@ -67,6 +67,8 @@ public class CooperatePanel extends JPanel implements RowListener {
         
         if (curCar.getName().equalsIgnoreCase(curProject.getCurrentCarrier().getName())) {
             initTables(curProject);
+        } else {
+            initTables(new Project());
         }
     }
         
@@ -112,15 +114,13 @@ public class CooperatePanel extends JPanel implements RowListener {
         dataCooperationScrollPane = new javax.swing.JScrollPane(dataCooperateTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         dataCooperateTable = new javax.swing.JTable();
         addDataCooperateButton = new javax.swing.JButton();
-        saveCooperateButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         dataRatingScrollPane = new javax.swing.JScrollPane(dataCooperateTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         dataRatingTable = new javax.swing.JTable();
         addDataRatingButton = new javax.swing.JButton();
-        saveRatingButton = new javax.swing.JButton();
         prevButton = new javax.swing.JButton();
 
-        setPreferredSize(new java.awt.Dimension(840, 600));
+        setPreferredSize(new java.awt.Dimension(900, 600));
 
         nameLabel.setBackground(java.awt.Color.orange);
         nameLabel.setFont(nameLabel.getFont().deriveFont(nameLabel.getFont().getStyle() | java.awt.Font.BOLD, nameLabel.getFont().getSize()+4));
@@ -158,34 +158,20 @@ public class CooperatePanel extends JPanel implements RowListener {
             }
         });
 
-        saveCooperateButton.setIcon(UIManager.getIcon("FileView.floppyDriveIcon"));
-        saveCooperateButton.setFocusable(false);
-        saveCooperateButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        saveCooperateButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        saveCooperateButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveCooperateButtonActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(dataCooperationScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 771, Short.MAX_VALUE)
+                .addComponent(dataCooperationScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 831, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(addDataCooperateButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(saveCooperateButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addComponent(addDataCooperateButton))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(addDataCooperateButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(saveCooperateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 144, Short.MAX_VALUE))
+                .addGap(0, 179, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(dataCooperationScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -211,34 +197,20 @@ public class CooperatePanel extends JPanel implements RowListener {
             }
         });
 
-        saveRatingButton.setIcon(UIManager.getIcon("FileView.floppyDriveIcon"));
-        saveRatingButton.setFocusable(false);
-        saveRatingButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        saveRatingButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        saveRatingButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveRatingButtonActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(dataRatingScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(dataRatingScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 831, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(addDataRatingButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(saveRatingButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addComponent(addDataRatingButton))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(addDataRatingButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(saveRatingButton, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 142, Short.MAX_VALUE))
+                .addGap(0, 177, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(dataRatingScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -255,17 +227,19 @@ public class CooperatePanel extends JPanel implements RowListener {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(311, 311, 311)
-                .addComponent(prevButton, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(toRatingButton, javax.swing.GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE))
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(nameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(prevButton, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(toRatingButton, javax.swing.GroupLayout.PREFERRED_SIZE, 468, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(nameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -375,14 +349,6 @@ public class CooperatePanel extends JPanel implements RowListener {
     private void toRatingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toRatingButtonActionPerformed
         listener.nextStage(Project.Stages.STAGE3_RATING);
     }//GEN-LAST:event_toRatingButtonActionPerformed
-
-    private void saveCooperateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveCooperateButtonActionPerformed
-        XLSParser.saveXLSDataFields(projectFileName, Stages.STAGE2_COOPERATION, dataCooperateTM.getData());
-    }//GEN-LAST:event_saveCooperateButtonActionPerformed
-
-    private void saveRatingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveRatingButtonActionPerformed
-        XLSParser.saveXLSDataFields(projectFileName, Stages.STAGE3_RATING, dataRatingTM.getData());
-    }//GEN-LAST:event_saveRatingButtonActionPerformed
     
     public static Comparator<DataField> dataFieldComparator = new Comparator<DataField>() {
 	@Override
@@ -409,8 +375,6 @@ public class CooperatePanel extends JPanel implements RowListener {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel nameLabel;
     private javax.swing.JButton prevButton;
-    private javax.swing.JButton saveCooperateButton;
-    private javax.swing.JButton saveRatingButton;
     private javax.swing.JButton toRatingButton;
     // End of variables declaration//GEN-END:variables
 
