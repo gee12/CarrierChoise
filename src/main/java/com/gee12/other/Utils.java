@@ -1,16 +1,15 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.gee12.other;
 
 import com.gee12.panels.MainFrame;
+import java.awt.Frame;
+import java.awt.Window;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
+import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
 
 /**
@@ -19,6 +18,10 @@ import javax.swing.JOptionPane;
  */
 public class Utils {
     
+    ////////////////////////////////////////////////////////////////////////////
+    public static String[] getNames(Class<? extends Enum<?>> e) {
+        return Arrays.toString(e.getEnumConstants()).replaceAll("^.|.$", "").split(", ");
+    }
  
     ////////////////////////////////////////////////////////////////////////////
     public static void onException(Exception ex) {
@@ -28,7 +31,15 @@ public class Utils {
     
     ////////////////////////////////////////////////////////////////////////////
     public static void showErrorDialog(String mes) {
-        JOptionPane.showMessageDialog(MainFrame.getFrames()[0], mes, "Ошибка", JOptionPane.ERROR_MESSAGE);
+//        Frame activeFrame = null;
+//        for(Frame frame : MainFrame.getFrames()) {
+//            if (frame.isActive()) {
+//                activeFrame = frame;
+//                break;
+//            }
+//        }
+//        JOptionPane.showMessageDialog(activeFrame, mes, "Ошибка", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(null, mes, "Ошибка", JOptionPane.ERROR_MESSAGE);
     }
     
     ////////////////////////////////////////////////////////////////////////////
@@ -46,7 +57,7 @@ public class Utils {
     
     // get file name with .xls extension
     public static String withExt(String fileName, String ext) {
-        return fileName.replaceFirst("[.][^.]+$", ext);
+        return fileName.replaceFirst("[.][^.]+$", "") + ext;
     }
     
     public static void copyFile(String src, String dest) throws IOException {

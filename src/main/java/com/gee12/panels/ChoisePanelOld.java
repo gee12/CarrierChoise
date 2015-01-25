@@ -1,8 +1,8 @@
 package com.gee12.panels;
 
 import com.gee12.other.BubbleBorder;
-import com.gee12.tableModels.CarriersTableModel;
-import com.gee12.groupTableHeader.MultiLineHeaderRenderer;
+import com.gee12.tablemodels.CarriersTableModel;
+import com.gee12.panels.groupTableHeader.MultiLineHeaderRenderer;
 import com.gee12.other.MatrixTableListener;
 import com.gee12.other.SwitchStageListener;
 import com.gee12.other.XLSParser;
@@ -11,7 +11,7 @@ import static com.gee12.structures.Carrier.CAPACITIES;
 import static com.gee12.structures.Carrier.VOLUMES;
 import com.gee12.structures.Matrix;
 import com.gee12.structures.Project;
-import com.gee12.tableModels.MatrixCriterionsTableModel;
+import com.gee12.tablemodels.MatrixCriterionsTableModel;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Comparator;

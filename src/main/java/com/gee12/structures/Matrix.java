@@ -31,7 +31,7 @@ public class Matrix {
 	if (rows > 0) {
 	    cols = m[0].length;
 	}
-        defineMinMax();
+        defineRowMinMax();
     }
 
     public void init(int rows, int cols) {
@@ -55,18 +55,18 @@ public class Matrix {
     
     //////////////////////////////////////////////////
     // operations
-    public void defineMinMax() {
+    public void defineRowMinMax() {
         mins = new double[rows];
         maxes = new double[rows];
         for (int i = 0; i < rows; i++) {
             mins[i] = Double.MAX_VALUE;
             maxes[i] = 0.;
         }
-        defineMins();
-        defineMaxes();
+        defineRowMins();
+        defineRowMaxes();
     }
     
-    public void defineMins() {
+    public void defineRowMins() {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 if (mins[i] > m[i][j]) {
@@ -75,7 +75,7 @@ public class Matrix {
             }
         }
     }
-    public void defineMaxes() {
+    public void defineRowMaxes() {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 if (maxes[i] < m[i][j]) {
@@ -98,7 +98,7 @@ public class Matrix {
     
     public void setAt(int i, int j, double value) {
 	m[i][j] = value;
-        defineMinMax();
+        defineRowMinMax();
     }
 
     public int getRows() {
@@ -110,11 +110,11 @@ public class Matrix {
     }
     
 
-    public double[] getMin() {
+    public double[] getRowMins() {
         return mins;
     }
 
-    public double[] getMax() {
+    public double[] getRowMaxes() {
         return maxes;
     }    
 }

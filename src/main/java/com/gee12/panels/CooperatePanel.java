@@ -4,7 +4,7 @@ import com.gee12.other.BubbleBorder;
 import com.gee12.other.ButtonEditor;
 import com.gee12.other.ButtonRenderer;
 import com.gee12.other.RowListener;
-import com.gee12.tableModels.DataTableModel;
+import com.gee12.tablemodels.DataTableModel;
 import com.gee12.other.SwitchStageListener;
 import com.gee12.other.XLSParser;
 import com.gee12.structures.Carrier;
@@ -12,7 +12,6 @@ import com.gee12.structures.DataField;
 import com.gee12.structures.Project;
 import com.gee12.structures.Project.Stages;
 import java.awt.Color;
-import java.util.Comparator;
 import java.util.List;
 import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
@@ -22,7 +21,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.UIManager;
 import javax.swing.table.TableColumnModel;
 import org.apache.poi.ss.util.CellReference;
 
@@ -41,9 +39,11 @@ public class CooperatePanel extends JPanel implements RowListener {
     private final DataTableModel dataCooperateTM;
     private final DataTableModel dataRatingTM;
 //    private String projectFileName = null;            
-    private Project curProject = null;
-//    private Carrier curCarrier = null;
+//    private Project curProject = null;
+//    private Project srcProject = null;
+    private Carrier selectedCarrier = null;
             
+    ////////////////////////////////////////////////////////////////////////////
     public CooperatePanel(SwitchStageListener listener) {
         this.listener = listener;
         
@@ -57,21 +57,25 @@ public class CooperatePanel extends JPanel implements RowListener {
 
     }
     
-    public void init(Project proj, Carrier curCar, String fileName) {
-        if (proj == null || curCar == null) return;
-        this.curProject = proj;
-//        this.curCarrier = curCar;
+    ////////////////////////////////////////////////////////////////////////////
+    public void init(Carrier selectedCarrier, String fileName) {
+        if (selectedCarrier == null) return;
+//        this.srcProject = srcProj;
+//        this.curProject = new Project();
+        this.selectedCarrier = selectedCarrier;
 //        this.projectFileName = fileName;
         
-        nameLabel.setText("СОТРУДНИЧЕСТВО С ПЕРЕВОЗЧИКОМ '" + curCar.getName() + "'");
+        nameLabel.setText("СОТРУДНИЧЕСТВО С ПЕРЕВОЗЧИКОМ '" + selectedCarrier.getName() + "'");
         
-        if (curCar.getName().equalsIgnoreCase(curProject.getCurrentCarrier().getName())) {
-            initTables(curProject);
-        } else {
-            initTables(new Project());
-        }
+//        if (selectedCarrier.getName().equalsIgnoreCase(selectedCarrier.getName())) {
+//            curProject = srcProject;
+//        } else {
+//            curProject = new Project();
+//        }
+        initTables(selectedCarrier);
     }
         
+    ////////////////////////////////////////////////////////////////////////////
     private void initDataTable(JTable table) {
         if (table == null) return;
         // Create the combo box editor
@@ -92,18 +96,20 @@ public class CooperatePanel extends JPanel implements RowListener {
         table.getColumnModel().getColumn(3).setPreferredWidth(DELETE_CELL_WIDTH);
     }
 
-    public void initTables(Project proj) {
-        initTable(proj.getStage(Project.Stages.STAGE2_COOPERATION).getDataFields(), dataCooperateTM);
-        initTable(proj.getStage(Project.Stages.STAGE3_RATING).getDataFields(), dataRatingTM);
+    ////////////////////////////////////////////////////////////////////////////
+    public void initTables(Carrier car) {
+        initTable(car.getStage(Project.Stages.STAGE2_COOPERATION).getDataFields(), dataCooperateTM);
+        initTable(car.getStage(Project.Stages.STAGE3_RATING).getDataFields(), dataRatingTM);
     }
     
+    ////////////////////////////////////////////////////////////////////////////
     public void initTable(List <DataField> dataFields, DataTableModel tm) {
         // for rows sort
-        dataFields.sort(dataFieldComparator);
+        dataFields.sort(DataField.COMPARATOR);
         tm.setData(dataFields);
     }
 
-    //
+    ////////////////////////////////////////////////////////////////////////////
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -210,13 +216,13 @@ public class CooperatePanel extends JPanel implements RowListener {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(addDataRatingButton)
-                .addGap(0, 169, Short.MAX_VALUE))
+                .addGap(0, 189, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(dataRatingScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        prevButton.setText("Назад");
+        prevButton.setText("Прекратить сотрудничество");
         prevButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 prevButtonActionPerformed(evt);
@@ -234,7 +240,7 @@ public class CooperatePanel extends JPanel implements RowListener {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(prevButton, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(prevButton)
                         .addGap(18, 18, 18)
                         .addComponent(toRatingButton, javax.swing.GroupLayout.PREFERRED_SIZE, 468, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
@@ -255,84 +261,45 @@ public class CooperatePanel extends JPanel implements RowListener {
                     .addComponent(prevButton)))
         );
     }// </editor-fold>//GEN-END:initComponents
-
-//    private void updateDataField(JTable table, List<DataField> dataFields, Stages stage) {
-//        if (table == null || dataFields == null) return;
-//        
-//        int selectedRow = table.getSelectedRow();
-//        DataField dataField = (selectedRow == -1) ? null : 
-//                dataFields.get(table.convertRowIndexToModel(selectedRow));
-//        DataFieldDialog dataFieldDialog = new DataFieldDialog(dataField);
-//        
-//        if (dataFieldDialog.showDialog()) {
-//            DataField newDataField = dataFieldDialog.getDataField();
-//            CriterionDialog.ActionType action = dataFieldDialog.getActionType();
-//            
-//            // сохранение в excel обновленных входных данных
-//            switch(action) {
-//                case Add:
-//                    // ишем последний DataField и берем его координаты ячеек
-//                    CellReference lastRef = DataField.lastDataFieldNameRef(dataFields, newDataField.getType());
-//                    // переходим на след.строку
-//                    int nextRow = lastRef.getRow() + 1;
-//                    CellReference ref = (newDataField.getType() == DataField.Types.BASE) ?
-//                            XLSParser.baseDataFieldsRef : XLSParser.otherDataFieldsRef;
-//                    newDataField.setNameRef(new CellReference(nextRow, ref.getCol()));
-//                    newDataField.setValueRef(new CellReference(nextRow, ref.getCol() + 1));
-//                    
-//                    XLSParser.saveXLSDataField(projectFileName, newDataField, stage);
-//                    break;
-//                    
-//                case Edit:
-//                    XLSParser.saveXLSDataField(projectFileName, newDataField, stage);
-//                    break;
-//                    
-//                case Delete:
-//                    newDataField.setName("");
-//                    newDataField.setValue("");
-//                    
-//                    XLSParser.saveXLSDataField(projectFileName, newDataField, stage);
-//                    break;
-//            }
-//            // и повторная загрузка из excel
-//            curProject.getStage(stage).setDataFields(
-//                    XLSParser.readXLSDataFields(projectFileName, stage));
-//            initTable(curProject.getStage(stage).getDataFields(), 
-//                    (stage == Stages.STAGE2_COOPERATION) ? dataCooperateTM : dataRatingTM);
-//        }
-//    }
     
+    ////////////////////////////////////////////////////////////////////////////
     private DataField getNewDataField(Stages stage) {
-        DataField res = DataField.EMPTY;
+        DataField res = new DataField();
         // ишем последний DataField и берем его координаты ячеек
         CellReference lastRef = DataField.lastDataFieldNameRef(
-                curProject.getStage(stage).getDataFields(), 
+                selectedCarrier.getStage(stage).getDataFields(), 
                 res.getType());
         // переходим на след.строку
-        int nextRow = lastRef.getRow() + 1;
-        CellReference ref = (res.getType() == DataField.Types.BASE)
-                ? XLSParser.baseDataFieldsRef : XLSParser.otherDataFieldsRef;
-        res.setNameRef(new CellReference(nextRow, ref.getCol()));
-        res.setValueRef(new CellReference(nextRow, ref.getCol() + 1));
+//        int nextRow = lastRef.getRow() + 1;
+//        CellReference ref = (res.getType() == DataField.Types.BASE)
+//                ? XLSParser.baseDataFieldsRef : XLSParser.otherDataFieldsRef;
+        res.setNameRef(new CellReference(lastRef.getRow() + 1, lastRef.getCol()));
+        res.setValueRef(new CellReference(lastRef.getRow() + 1, lastRef.getCol() + 1));
         
         return res;
     }
     
+    ////////////////////////////////////////////////////////////////////////////
     private void addDataRatingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addDataRatingButtonActionPerformed
         DataField newDF = getNewDataField(Stages.STAGE3_RATING);
         dataRatingTM.addRow(newDF);
+//        selectedCarrier.getStage(Stages.STAGE3_RATING).getDataFields().add(newDF);
     }//GEN-LAST:event_addDataRatingButtonActionPerformed
 
+    ////////////////////////////////////////////////////////////////////////////
     private void addDataCooperateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addDataCooperateButtonActionPerformed
         DataField newDF = getNewDataField(Stages.STAGE2_COOPERATION);
         dataCooperateTM.addRow(newDF);
+//        selectedCarrier.getStage(Stages.STAGE2_COOPERATION).getDataFields().add(newDF);
     }//GEN-LAST:event_addDataCooperateButtonActionPerformed
 
+    ////////////////////////////////////////////////////////////////////////////
     @Override
     public Object editRow(JTable table, int row) {
         return null;
     }
         
+    ////////////////////////////////////////////////////////////////////////////
     @Override
     public void deleteRow(JTable table, int row) {
         int res = JOptionPane.showConfirmDialog(null, "Удалить строку?", "Удаление",
@@ -342,27 +309,25 @@ public class CooperatePanel extends JPanel implements RowListener {
         }
     }
 
+    ////////////////////////////////////////////////////////////////////////////
     private void prevButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prevButtonActionPerformed
         listener.nextStage(Project.Stages.STAGE1_CHOISE);
     }//GEN-LAST:event_prevButtonActionPerformed
 
+    ////////////////////////////////////////////////////////////////////////////
     private void toRatingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toRatingButtonActionPerformed
+//        curProject.setCurrentCarrier(curCarrier);
+//        curCarrier = curProject.getCurCarrier();
+//        curCarrier
+//        srcProject = curProject;
+        
         listener.nextStage(Project.Stages.STAGE3_RATING);
     }//GEN-LAST:event_toRatingButtonActionPerformed
-    
-    public static Comparator<DataField> dataFieldComparator = new Comparator<DataField>() {
-	@Override
-	public int compare(DataField data1, DataField data2) {
-            final DataField.Types type1 = data1.getType();
-            final DataField.Types type2 = data2.getType();
-	    return (type1 == DataField.Types.BASE && type2 == DataField.Types.OTHER) ? -1 :
-		    (type2 == DataField.Types.BASE && type1 == DataField.Types.OTHER) ? 1 : 0;
-	}
-    };
-    
-    public Project getProject() {
-        return curProject;
-    }
+
+    ////////////////////////////////////////////////////////////////////////////
+//    public Project getProject() {
+//        return curProject;
+//    }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addDataCooperateButton;

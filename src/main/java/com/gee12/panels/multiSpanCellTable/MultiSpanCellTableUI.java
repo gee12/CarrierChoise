@@ -1,4 +1,4 @@
-package com.gee12.multiSpanCellTable;
+package com.gee12.panels.multiSpanCellTable;
 
 import java.awt.*;
 import javax.swing.*;

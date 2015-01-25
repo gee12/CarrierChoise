@@ -28,7 +28,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                      <Component id="prevButton" min="-2" pref="75" max="-2" attributes="0"/>
+                      <Component id="prevButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="toRatingButton" min="-2" pref="468" max="-2" attributes="0"/>
                   </Group>
@@ -184,7 +184,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
                   <Component id="addDataRatingButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="0" pref="169" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="189" max="32767" attributes="0"/>
               </Group>
               <Group type="102" attributes="0">
                   <Component id="dataRatingScrollPane" max="32767" attributes="0"/>
@@ -236,7 +236,7 @@
     </Container>
     <Component class="javax.swing.JButton" name="prevButton">
       <Properties>
-        <Property name="text" type="java.lang.String" value="&#x41d;&#x430;&#x437;&#x430;&#x434;"/>
+        <Property name="text" type="java.lang.String" value="&#x41f;&#x440;&#x435;&#x43a;&#x440;&#x430;&#x442;&#x438;&#x442;&#x44c; &#x441;&#x43e;&#x442;&#x440;&#x443;&#x434;&#x43d;&#x438;&#x447;&#x435;&#x441;&#x442;&#x432;&#x43e;"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="prevButtonActionPerformed"/>

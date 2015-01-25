@@ -1,17 +1,13 @@
 package com.gee12.panels;
 
-import com.gee12.other.Utils;
 import com.gee12.other.SwitchStageListener;
 import com.gee12.other.XLSParser;
+import com.gee12.structures.Carrier;
 import com.gee12.structures.Project;
-import com.gee12.structures.Project.Stages;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import static java.awt.EventQueue.invokeLater;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -19,7 +15,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.UIManager;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -43,6 +38,7 @@ public class MainFrame extends JFrame implements SwitchStageListener {
     
     private String projectFileName = null;            
     private Project curProject = null;
+    private Carrier curCarrier = null;
     
     ////////////////////////////////////////////////////////////////////////////
     public MainFrame() {
@@ -163,44 +159,32 @@ public class MainFrame extends JFrame implements SwitchStageListener {
                 choisePanel.init(curProject, projectFileName);
                 break;
             case STAGE2_COOPERATION:
-                cooperatePanel.init(curProject, choisePanel.getCurrentCarrier(), projectFileName);
+                curCarrier = choisePanel.getCurrentCarrier();
+                cooperatePanel.init(curCarrier, projectFileName);
                 break;
-                
             case STAGE3_RATING:
-                curProject = cooperatePanel.getProject();
-                curProject.defineMarks();
-                ratingPanel.init(curProject, choisePanel.getCurrentCarrier(), projectFileName);
+                
+                ratingPanel.init(curCarrier, projectFileName);
                 break;
             default:
-                
                 break;
         }
-        
         CardLayout cl = (CardLayout)(cards.getLayout());
         cl.show(cards, stage.toString());
     }
     
     ////////////////////////////////////////////////////////////////////////////
     private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        JFileChooser createShooser = new JFileChooser();
-        createShooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        createShooser.setApproveButtonText("Создать");
-        createShooser.setDialogTitle("Создание нового проекта");
-        createShooser.setDialogType(JFileChooser.OPEN_DIALOG);
-        createShooser.setMultiSelectionEnabled(false);
-        int returnVal = createShooser.showOpenDialog(this);
-        
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            projectFileName = createShooser.getSelectedFile().getAbsolutePath();
+        if (JFileChoosers.showCreateChooser(this) == JFileChooser.APPROVE_OPTION) {
+            // get file name
+            projectFileName = JFileChoosers.getChooser().getSelectedFile().getAbsolutePath();
             projectFileName = XLSParser.withXLSExt(projectFileName);
             curProject = new Project();
-            
-            // create temp file
-            XLSParser.createXLSFile(TEMP_FILE_NAME);
-            XLSParser.saveXLSProject(TEMP_FILE_NAME, curProject);
-            
+            // create file
+            XLSParser.createXLSFile(projectFileName);
+            // switch panel
             nextStage(Project.Stages.STAGE1_CHOISE);
-            
+            // buttons
             closeButton.setEnabled(true);
             saveButton.setEnabled(true);
             saveAsButton.setEnabled(true);
@@ -209,27 +193,14 @@ public class MainFrame extends JFrame implements SwitchStageListener {
 
     ////////////////////////////////////////////////////////////////////////////
     private void openButtonActionPerformed(java.awt.event.ActionEvent evt) {                                           
-        JFileChooser openChooser = new JFileChooser();
-        FileNameExtensionFilter filter = new FileNameExtensionFilter(
-            "Таблицы MS Office (*.xls)", "xls");
-        openChooser.setFileFilter(filter);
-        openChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        openChooser.setApproveButtonText("Открыть");
-        openChooser.setDialogTitle("Открытие нового проекта");
-        openChooser.setDialogType(JFileChooser.OPEN_DIALOG);
-        openChooser.setMultiSelectionEnabled(false);
-        int returnVal = openChooser.showOpenDialog(this);
-        
-        if(returnVal == JFileChooser.APPROVE_OPTION) {
-            projectFileName = openChooser.getSelectedFile().getAbsolutePath();
-            curProject = XLSParser.readXLSProject(projectFileName);
-            
-            // create temp file
-            XLSParser.createXLSFile(TEMP_FILE_NAME);
-            XLSParser.saveXLSProject(TEMP_FILE_NAME, curProject);
-            
+        if(JFileChoosers.showOpenChooser(this) == JFileChooser.APPROVE_OPTION) {
+            // get file name
+            projectFileName = JFileChoosers.getChooser().getSelectedFile().getAbsolutePath();
+            // create current carrier from project
+            curProject = XLSParser.readXLSCarrierProject(projectFileName);
+            // switch panel
             nextStage(Project.Stages.STAGE1_CHOISE);
-            
+            // buttons
             closeButton.setEnabled(true);
             saveButton.setEnabled(true);
             saveAsButton.setEnabled(true);
@@ -240,8 +211,8 @@ public class MainFrame extends JFrame implements SwitchStageListener {
     private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {                                            
         nextStage(Project.Stages.STAGE0_START);
             projectFileName = null;
-            curProject = null;
-            
+            curCarrier = null;
+            // buttons
             closeButton.setEnabled(false);
             saveButton.setEnabled(false);
             saveAsButton.setEnabled(false);
@@ -249,40 +220,27 @@ public class MainFrame extends JFrame implements SwitchStageListener {
 
     ////////////////////////////////////////////////////////////////////////////
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {  
-            // write project to file
-//        XLSParser.saveXLSProject(projectFileName, curProject);
-        try {
-            Utils.copyFile(TEMP_FILE_NAME, projectFileName);
-        } catch (IOException ex) {
-            Utils.onException(ex);
-        }
+        // create file (for overwrite)
+        XLSParser.createXLSFile(projectFileName);
+        // write project to file
+        curCarrier = choisePanel.getCurrentCarrier();
+        XLSParser.saveXLSCarrierProject(projectFileName, curProject, curCarrier);
     }      
 
     ////////////////////////////////////////////////////////////////////////////
     private void saveAsButtonActionPerformed(java.awt.event.ActionEvent evt) {  
-        JFileChooser saveAsChooser = new JFileChooser();
-        saveAsChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        saveAsChooser.setApproveButtonText("Сохранить");
-        saveAsChooser.setDialogTitle("Сохранение проекта как");
-        saveAsChooser.setDialogType(JFileChooser.SAVE_DIALOG);
-        saveAsChooser.setMultiSelectionEnabled(false);
-        int returnVal = saveAsChooser.showSaveDialog(this);
-        
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            projectFileName = saveAsChooser.getSelectedFile().getAbsolutePath();
+        if (JFileChoosers.showSaveChooser(this) == JFileChooser.APPROVE_OPTION) {
+            // get file name
+            projectFileName = JFileChoosers.getChooser().getSelectedFile().getAbsolutePath();
             projectFileName = XLSParser.withXLSExt(projectFileName);
-            
-//            // create file
-//            XLSParser.createXLSFile(projectFileName);
-//            // write project to file
-//            XLSParser.saveXLSProject(projectFileName, curProject);
-            try {
-                Utils.copyFile(TEMP_FILE_NAME, projectFileName);
-            } catch (IOException ex) {
-                Utils.onException(ex);
-            }            
+            // create file
+            XLSParser.createXLSFile(projectFileName);
+            // write project to file
+            curCarrier = choisePanel.getCurrentCarrier();
+            XLSParser.saveXLSCarrierProject(projectFileName, curProject, curCarrier);
         } 
     }      
+    
     ////////////////////////////////////////////////////////////////////////////
     public static void main(String args[]) {
         try {

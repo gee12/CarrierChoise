@@ -1,4 +1,4 @@
-package com.gee12.groupTableHeader;
+package com.gee12.panels.groupTableHeader;
 
 import java.util.Enumeration;
 import java.util.Vector;

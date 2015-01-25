@@ -78,8 +78,8 @@ public class ButtonEditor extends DefaultCellEditor {
             }
         }
         isPushed = false;
-//        return value;
         return res;
+//        return "123";
     }
 
     @Override

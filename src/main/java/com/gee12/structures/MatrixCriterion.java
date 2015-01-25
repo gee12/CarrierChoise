@@ -1,8 +1,5 @@
 package com.gee12.structures;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  *
  * @author Иван
@@ -82,16 +79,32 @@ public class MatrixCriterion {
     ////////////////////////////////////////////////////////////////////////////
     // build
     public void buildLaplace(Matrix m) {
+        // average for rows
+        double[] rowAverages = new double[m.getRows()];
+        for (int i = 0; i < m.getRows(); i++) {
+            for (int j = 0; j < m.getCols(); j++) {
+                rowAverages[i] += m.getAt(i, j);
+            }
+            rowAverages[i] /= 3.;
+        }    
+        // max from averages
+        double max = rowAverages[0];
         row = 0;
-        value = m.getAt(row, row);
+        for (int i = 1; i < rowAverages.length; i++) {
+            if (max < rowAverages[i]) {
+                max = rowAverages[i];
+                row = i;
+            }
+        }        
+        value = max;
     }
     
     public void buildVald(Matrix m) {
-        double max = m.getMin()[0];
+        double max = m.getRowMins()[0];
         row = 0;
         for (int i = 1; i < m.getRows(); i++) {
-            if (max < m.getMin()[i]) {
-                max = m.getMin()[i];
+            if (max < m.getRowMins()[i]) {
+                max = m.getRowMins()[i];
                 row = i;
             }
         }
@@ -99,11 +112,11 @@ public class MatrixCriterion {
     }
     
     public void buildOptimism(Matrix m) {
-        double max = m.getMax()[0];
+        double max = m.getRowMaxes()[0];
         row = 0;
         for (int i = 1; i < m.getRows(); i++) {
-            if (max < m.getMax()[i]) {
-                max = m.getMax()[i];
+            if (max < m.getRowMaxes()[i]) {
+                max = m.getRowMaxes()[i];
                 row = i;
             }
         }
@@ -111,11 +124,11 @@ public class MatrixCriterion {
     }
     
     public void buildPessimism(Matrix m) {
-        double min = m.getMin()[0];
+        double min = m.getRowMins()[0];
         row = 0;
         for (int i = 1; i < m.getRows(); i++) {
-            if (min > m.getMin()[i]) {
-                min = m.getMin()[i];
+            if (min > m.getRowMins()[i]) {
+                min = m.getRowMins()[i];
                 row = i;
             }
         }
@@ -123,11 +136,11 @@ public class MatrixCriterion {
     }
     
     public void buildSavage(Matrix m) {
-        double min = m.getMax()[0];
+        double min = m.getRowMaxes()[0];
         row = 0;
         for (int i = 1; i < m.getRows(); i++) {
-            if (min > m.getMax()[i]) {
-                min = m.getMax()[i];
+            if (min > m.getRowMaxes()[i]) {
+                min = m.getRowMaxes()[i];
                 row = i;
             }
         }
@@ -135,8 +148,21 @@ public class MatrixCriterion {
     }
     
     public void buildHurwitz(Matrix m) {
+        // max/2 + min/2 for rows
+        double[] minMaxHalfs = new double[m.getRows()];
+        for (int i = 0; i < m.getRows(); i++) {
+            minMaxHalfs[i] = m.getRowMaxes()[i] / 2. + m.getRowMins()[i] / 2.;
+        }    
+        // max from this rows
+        double max = minMaxHalfs[0];
         row = 0;
-        value = m.getAt(row, row);
+        for (int i = 1; i < minMaxHalfs.length; i++) {
+            if (max < minMaxHalfs[i]) {
+                max = minMaxHalfs[i];
+                row = i;
+            }
+        }        
+        value = max;
     }
     
     ////////////////////////////////////////////////////////////////////////////

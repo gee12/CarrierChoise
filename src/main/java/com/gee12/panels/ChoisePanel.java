@@ -1,24 +1,19 @@
 package com.gee12.panels;
 
 import com.gee12.other.BubbleBorder;
-import com.gee12.tableModels.CarriersTableModel;
-import com.gee12.groupTableHeader.MultiLineHeaderRenderer;
+import com.gee12.tablemodels.CarriersTableModel;
+import com.gee12.panels.groupTableHeader.MultiLineHeaderRenderer;
 import com.gee12.other.ButtonEditor;
 import com.gee12.other.ButtonRenderer;
 import com.gee12.other.MatrixTableListener;
 import com.gee12.other.RowListener;
 import com.gee12.other.SwitchStageListener;
-import com.gee12.other.XLSParser;
 import com.gee12.structures.Carrier;
 import static com.gee12.structures.Carrier.CAPACITIES;
-import static com.gee12.structures.Carrier.VOLUMES;
 import com.gee12.structures.Matrix;
 import com.gee12.structures.Project;
-import com.gee12.tableModels.DataTableModel;
-import com.gee12.tableModels.MatrixCriterionsTableModel;
+import com.gee12.tablemodels.MatrixCriterionsTableModel;
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.List;
 import javax.swing.ImageIcon;
@@ -27,17 +22,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.RowSorter;
-import javax.swing.SortOrder;
 import javax.swing.UIManager;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 
 /**
  *
@@ -48,11 +37,11 @@ public class ChoisePanel extends JPanel implements MatrixTableListener, RowListe
     SwitchStageListener listener;
     private final CarriersTableModel carriersTM;
     private final MatrixCriterionsTableModel matrixCritsTM;
-//    private String projectFileName = null;            
     private Project curProject = null;
     private Carrier curCarrier = null;
     private int selectedRow = 0;
            
+    ////////////////////////////////////////////////////////////////////////////
     public ChoisePanel(SwitchStageListener listener) {
         this.listener = listener;
         carriersTM = new CarriersTableModel();
@@ -65,7 +54,6 @@ public class ChoisePanel extends JPanel implements MatrixTableListener, RowListe
         // for multi line header
         MultiLineHeaderRenderer renderer = new MultiLineHeaderRenderer();
         TableColumnModel columnModel = carriersTable.getColumnModel();
-//        curriersTable.setBorder(new BevelBorder(BevelBorder.RAISED));
         Enumeration e = columnModel.getColumns();
         while (e.hasMoreElements()) {
             ((TableColumn) e.nextElement()).setHeaderRenderer(renderer);
@@ -78,41 +66,6 @@ public class ChoisePanel extends JPanel implements MatrixTableListener, RowListe
         columnModel.getColumn(4).setCellRenderer(new ButtonRenderer(
             new ImageIcon(MainFrame.class.getResource("/images/delete.jpg"))));
         
-        // listen for changes in the name
-        nameTextField.getDocument().addDocumentListener(new DocumentListener() {
-            public void changedUpdate(DocumentEvent e) {
-                check();
-            }
-
-            public void removeUpdate(DocumentEvent e) {
-                check();
-            }
-
-            public void insertUpdate(DocumentEvent e) {
-                check();
-            }
-
-            public void check() {
-                String name = nameTextField.getText();
-                if (name.isEmpty()) {
-                    nameTextField.setBackground(Color.RED);
-                } else {
-                    nameTextField.setBackground(UIManager.getColor("TextField.background"));
-                    curCarrier.setName(name);
-//                    updateCarriersTable(curCarrier);
-                }
-            }
-        });
-
-    }
-    
-    public void init(Project proj, String fileName) {
-        if (proj == null) return;
-        this.curProject = proj;
-//        this.projectFileName = fileName;
-        
-        initCarriersTable();
-        
         // for row selection
         ListSelectionModel rowSM = carriersTable.getSelectionModel();
         rowSM.addListSelectionListener(new ListSelectionListener() {
@@ -123,47 +76,46 @@ public class ChoisePanel extends JPanel implements MatrixTableListener, RowListe
                 }
                 ListSelectionModel lsm = (ListSelectionModel) e.getSource();
                 if (!lsm.isSelectionEmpty()) {
-//                    selectedRow = lsm.getMinSelectionIndex();
                     onRowSelected(lsm.getMinSelectionIndex());
                 }
             }
         });
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    public void init(Project proj, String fileName) {
+        if (proj == null) return;
+        
+        this.curProject = proj;
+        this.curCarrier = null;
+        
+        initCarriersTable();
+        initFields(new Carrier());
         
         if (curProject.getCarriers().size() > 0) {
             carriersTable.setRowSelectionInterval(selectedRow, selectedRow);
         }
     }
     
-    // for rows sort
+    ////////////////////////////////////////////////////////////////////////////
     public void initCarriersTable() {
+        // rows sort
         List <Carrier> carriers = curProject.getCarriers();
-        carriers.sort(carrierComparator);
+        carriers.sort(Carrier.COMPARATOR);
         carriersTM.setData(carriers);
-        // select row with current carrier
-//        for (int i = 0; i < carriers.size(); i++) {
-//            if (curCarrier.equals(carriers.get(i))) {
-//                int tableRow = carriersTable.convertRowIndexToView(i);
-//                onRowSelected(tableRow);
-//                return;
-//            }
-//        }
+
         if (curCarrier != null) {
             int modelRow = carriers.indexOf(curCarrier);
             int tableRow = carriersTable.convertRowIndexToView(modelRow);
-//            onRowSelected(tableRow);
-            carriersTable.setRowSelectionInterval(tableRow, tableRow);
+            if (modelRow == -1 || tableRow == -1) {
+                carriersTable.setRowSelectionInterval(tableRow, tableRow);
+            }
         }
     }
     
+    ////////////////////////////////////////////////////////////////////////////
     public void onRowSelected(int row) {
-//        for(Carrier car : carriersTM.getData()) {
-//            if (car.getName().isEmpty()
-//                    /*|| car.getMatrix() */) {
-//                car.setState(Carrier.States.ERROR);
-//            } else car.setState(Carrier.States.NORM);
-//        }
         this.selectedRow = row;
-        
         if (row != -1) {
             curCarrier = curProject.getCarriers()
                     .get(carriersTable.convertRowIndexToModel(row));
@@ -171,51 +123,34 @@ public class ChoisePanel extends JPanel implements MatrixTableListener, RowListe
         }
     }
 
-    public void updateCarriersTable(Carrier carrier) {
-        int rowTable = carriersTable.getSelectedRow();
-        int rowTM = carriersTable.convertRowIndexToModel(rowTable);
-        carriersTM.setValueAt(carrier.getName(), rowTM, 1);
-        carriersTM.setValueAt(carrier.getCapacity(), rowTM, 2);
-        carriersTM.setValueAt(carrier.getRepeatNum(), rowTM, 3);
-//        carriersTM.fireTableDataChanged();
-//        carriersTable.setRowSelectionInterval(rowTable, rowTable);
-        
-//        carriersTableSort();
-    }
-        
+    ////////////////////////////////////////////////////////////////////////////
     public void initFields(Carrier carrier) {
         // changable fields
-        nameTextField.setText(carrier.getName());
+        String name = carrier.getName();
+        if (name.isEmpty()) {
+            nameTextField.setBackground(Color.RED);
+        } else {
+            nameTextField.setBackground(UIManager.getColor("TextField.background"));
+        }
+        nameTextField.setText(name);
         matrixPanel.setMatrixTableModel(carrier.getMatrix());
         // 
         matrixCritsTM.setData(carrier.getMatrix(), CAPACITIES);
         initDependentFields(carrier);
     }
     
+    ////////////////////////////////////////////////////////////////////////////
     public void initDependentFields(Carrier carrier) {
         capacityTextField.setText(String.valueOf(carrier.getCapacity()));
         repeatTextField.setText(String.valueOf(carrier.getRepeatNum()));
-//        int selectedRow = carriersTable.getSelectedRow();
-        // make after sort
-//        ratingTextField.setText(String.valueOf(carriersTable.getModel().getValueAt(selectedRow, 0)));
     }
     
-    public static void sortTableRows(JTable table) {
-        if (table == null) return;
-        TableRowSorter<TableModel> sorter = new TableRowSorter<>(table.getModel());
-        table.setRowSorter(sorter);
-        List<RowSorter.SortKey> sortKeys = new ArrayList<>();
-        int columnIndexToSort = 3;
-        sortKeys.add(new RowSorter.SortKey(columnIndexToSort, SortOrder.DESCENDING));
-        sorter.setSortKeys(sortKeys);
-        sorter.sort();
-    }
-    
+    ////////////////////////////////////////////////////////////////////////////
     public Carrier getCurrentCarrier() {
         return curCarrier;
     }
 
-    //
+    ////////////////////////////////////////////////////////////////////////////
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -250,9 +185,20 @@ public class ChoisePanel extends JPanel implements MatrixTableListener, RowListe
         carriersTable.setBorder(null);
         carriersTable.setModel(carriersTM);
         carriersTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        carriersTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                carriersTableMousePressed(evt);
+            }
+        });
         jScrollPane1.setViewportView(carriersTable);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Подробнее", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION));
+
+        nameTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                nameTextFieldKeyReleased(evt);
+            }
+        });
 
         jLabel2.setText("Имя");
 
@@ -386,15 +332,20 @@ public class ChoisePanel extends JPanel implements MatrixTableListener, RowListe
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    ////////////////////////////////////////////////////////////////////////////
     private void toCooperateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toCooperateButtonActionPerformed
-        int selectedRow = carriersTable.getSelectedRow();
-        if (selectedRow != -1) { 
-//            curProject.setCurrentCarrier(carriersTable.convertRowIndexToModel(selectedRow));
-            curCarrier = curProject.getCarriers().get(carriersTable.convertRowIndexToModel(selectedRow));
-            listener.nextStage(Project.Stages.STAGE2_COOPERATION);
-        }
+        toCooperateStage(carriersTable.getSelectedRow());
     }//GEN-LAST:event_toCooperateButtonActionPerformed
 
+    ////////////////////////////////////////////////////////////////////////////
+    private void toCooperateStage(int row) {
+        if (row != -1 && !curCarrier.getName().isEmpty()) {
+            curCarrier = curProject.getCarriers().get(carriersTable.convertRowIndexToModel(row));
+            listener.nextStage(Project.Stages.STAGE2_COOPERATION);
+        }
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////
     private void addCarrierButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addCarrierButtonActionPerformed
         int maxId = -1;
         for(Carrier car : curProject.getCarriers()) {
@@ -404,33 +355,67 @@ public class ChoisePanel extends JPanel implements MatrixTableListener, RowListe
         carriersTM.addRow(new Carrier(maxId + 1, "", 0, 0, new Matrix()));
         int row = carriersTM.getRowCount() - 1;
         carriersTable.setRowSelectionInterval(row, row);
+//        nameTextField.setBackground(Color.RED);
     }//GEN-LAST:event_addCarrierButtonActionPerformed
 
+    ////////////////////////////////////////////////////////////////////////////
     private void refreshCarriersButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshCarriersButtonActionPerformed
-//        carriersTM.fireTableDataChanged();
         initCarriersTable();
     }//GEN-LAST:event_refreshCarriersButtonActionPerformed
 
+    ////////////////////////////////////////////////////////////////////////////
+    private void carriersTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_carriersTableMousePressed
+        if (evt.getClickCount() == 2) {
+            toCooperateStage(carriersTable.getSelectedRow()); 
+        }
+    }//GEN-LAST:event_carriersTableMousePressed
+
+    ////////////////////////////////////////////////////////////////////////////
+    private void nameTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_nameTextFieldKeyReleased
+        String name = nameTextField.getText();
+        if (name.isEmpty()) {
+            nameTextField.setBackground(Color.RED);
+        } else {
+            nameTextField.setBackground(UIManager.getColor("TextField.background"));
+            curCarrier.setName(name);
+            // update names in table
+            int caret = nameTextField.getCaretPosition();
+            initCarriersTable();
+            nameTextField.setCaretPosition(caret);
+            carriersTable.setRowSelectionInterval(selectedRow, selectedRow);
+        }
+    }//GEN-LAST:event_nameTextFieldKeyReleased
+
+    ////////////////////////////////////////////////////////////////////////////
     // when matrix table changed
     @Override
     public void tableChanged() {
+        if (curCarrier == null) return;
+        
         curCarrier.setMatrix(matrixPanel.getMatrix());
         matrixCritsTM.setData(curCarrier.getMatrix(), CAPACITIES);
         curCarrier.defineCapacityRepeat(matrixCritsTM.getData());
         initDependentFields(curCarrier);
-        updateCarriersTable(curCarrier);
     }
-    
-    public static Comparator<Carrier> carrierComparator = new Comparator<Carrier>() {
-	@Override
-	public int compare(Carrier car1, Carrier car2) {
-            final double num1 = car1.getRepeatNum();
-            final double num2 = car2.getRepeatNum();
-	    return (num1 < num2) ? 1 :
-		    (num1 > num2) ? -1 : 0;
-	}
-    };
-    
+ 
+    ////////////////////////////////////////////////////////////////////////////
+    @Override
+    public Object editRow(JTable table, int row) {
+        return null;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    @Override
+    public void deleteRow(JTable table, int row) {
+        int res = JOptionPane.showConfirmDialog(null, "Удалить перевозчика?", "Удаление",
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (res == JOptionPane.YES_OPTION) {
+            ((CarriersTableModel)table.getModel()).deleteRow(row);
+//            selectedRow = table.getSelectedRow();
+            initCarriersTable();
+        }
+    }
+   
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addCarrierButton;
     private javax.swing.JTextField capacityTextField;
@@ -449,19 +434,5 @@ public class ChoisePanel extends JPanel implements MatrixTableListener, RowListe
     private javax.swing.JTextField repeatTextField;
     private javax.swing.JButton toCooperateButton;
     // End of variables declaration//GEN-END:variables
-
-    @Override
-    public Object editRow(JTable table, int row) {
-        return null;
-    }
-
-    @Override
-    public void deleteRow(JTable table, int row) {
-        int res = JOptionPane.showConfirmDialog(null, "Удалить перевозчика?", "Удаление",
-                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-        if (res == JOptionPane.YES_OPTION) {
-            ((CarriersTableModel)table.getModel()).deleteRow(row);
-        }
-    }
 
 }

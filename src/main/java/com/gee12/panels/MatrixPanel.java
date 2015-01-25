@@ -1,12 +1,12 @@
 package com.gee12.panels;
 
-import com.gee12.groupTableHeader.ColumnGroup;
-import com.gee12.tableModels.MatrixTableModel;
-import com.gee12.groupTableHeader.GroupableTableHeader;
-import com.gee12.groupTableHeader.RowHeaderRenderer;
-import com.gee12.multiSpanCellTable.AttributiveCellTableModel;
-import com.gee12.multiSpanCellTable.CellSpan;
-import com.gee12.multiSpanCellTable.MultiSpanCellTable;
+import com.gee12.panels.groupTableHeader.ColumnGroup;
+import com.gee12.tablemodels.MatrixTableModel;
+import com.gee12.panels.groupTableHeader.GroupableTableHeader;
+import com.gee12.panels.groupTableHeader.RowHeaderRenderer;
+import com.gee12.panels.multiSpanCellTable.AttributiveCellTableModel;
+import com.gee12.panels.multiSpanCellTable.CellSpan;
+import com.gee12.panels.multiSpanCellTable.MultiSpanCellTable;
 import com.gee12.other.MatrixTableListener;
 import com.gee12.structures.Matrix;
 import java.awt.Color;

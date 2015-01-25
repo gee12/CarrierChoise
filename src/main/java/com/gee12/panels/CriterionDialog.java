@@ -1,14 +1,11 @@
 package com.gee12.panels;
 
-import static com.gee12.panels.CooperatePanel.dataFieldComparator;
-import com.gee12.tableModels.DataTableModel;
-import com.gee12.structures.Project;
+import com.gee12.other.XLSParser;
+import com.gee12.structures.Carrier;
 import com.gee12.structures.Criterion;
 import com.gee12.structures.DataField;
 import com.gee12.structures.Project.Stages;
-import com.gee12.tableModels.DataSimpleTableModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import com.gee12.tablemodels.DataSimpleTableModel;
 import java.util.List;
 import javax.swing.JScrollPane;
 
@@ -24,11 +21,12 @@ public class CriterionDialog extends ModalDialog {
     public static final int REF_CELL_WIDTH = 70;
     
     private final DataSimpleTableModel dataTM;
-    private Project curProject = null;
+    private Carrier curCarrier = null;
+    private Criterion curCriterion = null;
     private Stages curStage = Stages.STAGE1_CHOISE;
-//    private String formula = null;
     
-    public CriterionDialog(Project proj, Criterion crit, Stages stage) {
+    ////////////////////////////////////////////////////////////////////////////
+    public CriterionDialog(Carrier car, Criterion crit, Stages stage) {
         dataTM = new DataSimpleTableModel();
         
         initComponents();
@@ -38,37 +36,35 @@ public class CriterionDialog extends ModalDialog {
         dataTable.getColumnModel().getColumn(1).setPreferredWidth(VALUE_CELL_WIDTH);
         dataTable.getColumnModel().getColumn(2).setPreferredWidth(TYPE_CELL_WIDTH);
         dataTable.getColumnModel().getColumn(3).setPreferredWidth(REF_CELL_WIDTH);
-        
-        curProject = proj;
+
+        curCarrier = car;
         curStage = stage;
-        initTable(stage, proj);
+        curCriterion = crit;
+        initTable(stage, car);
         initFields(crit);
     }
     
+    ////////////////////////////////////////////////////////////////////////////
     public void initFields(Criterion crit) {
         nameLabel.setText(crit.getName());
         formulaTextField.setText(crit.getFormula());
         valueTextField.setText(crit.getValue());
     }
     
-    
-    public void initTable(Stages stage, Project proj) {
-        List <DataField> dataFields = proj.getStage(stage).getDataFields();
+    ////////////////////////////////////////////////////////////////////////////
+    public void initTable(Stages stage, Carrier car) {
+        List <DataField> dataFields = car.getStage(stage).getDataFields();
         // for rows sort
-        dataFields.sort(dataFieldComparator);
+        dataFields.sort(DataField.COMPARATOR);
         dataTM.setData(dataFields);
     }
     
-    public String getFormula() {
-        return formulaTextField.getText();
+    ////////////////////////////////////////////////////////////////////////////
+    public Criterion getCriterion() {
+        return curCriterion;
     }
     
-    public void pasteStringIntoFormulaTextField(String value) {
-        int caretPos = formulaTextField.getCaretPosition();
-        String res =  new StringBuffer(formulaTextField.getText()).insert(caretPos, value).toString();
-        formulaTextField.setText(res);
-    }
-
+    ////////////////////////////////////////////////////////////////////////////
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -81,6 +77,7 @@ public class CriterionDialog extends ModalDialog {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         valueTextField = new javax.swing.JTextField();
+        defineButton = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         baseDataScrollPane = new javax.swing.JScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         dataTable = new javax.swing.JTable();
@@ -113,6 +110,13 @@ public class CriterionDialog extends ModalDialog {
 
         valueTextField.setEnabled(false);
 
+        defineButton.setText("Вычислить");
+        defineButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                defineButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -128,9 +132,12 @@ public class CriterionDialog extends ModalDialog {
                         .addGap(24, 24, 24)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(valueTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(formulaTextField)))))
+                                .addComponent(formulaTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 568, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(defineButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(valueTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -139,7 +146,8 @@ public class CriterionDialog extends ModalDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(formulaTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(formulaTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(defineButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(valueTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -199,33 +207,57 @@ public class CriterionDialog extends ModalDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    ////////////////////////////////////////////////////////////////////////////
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         result = false;
         setVisible(false);
         dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
+    ////////////////////////////////////////////////////////////////////////////
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-//        formula = formulaTextField.getText();
-//        if (formula.isEmpty())
-//            return;
-        
+        defineValue(formulaTextField.getText());
         result = true;
         setVisible(false);
         dispose();
     }//GEN-LAST:event_okButtonActionPerformed
 
+    ////////////////////////////////////////////////////////////////////////////
     private void dataTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dataTableMouseClicked
+        // get DataField reference
         int selectedRow = dataTable.getSelectedRow();
-        DataField dataField = curProject.getStage(curStage).getDataFields()
+        DataField dataField = curCarrier.getStage(curStage).getDataFields()
                 .get(dataTable.convertRowIndexToModel(selectedRow));
-        pasteStringIntoFormulaTextField(dataField.getValueCellReference());
+        // paste String reference into caret position in TextField
+        String ref = dataField.getValueCellReference();
+        int caretPos = formulaTextField.getCaretPosition();
+        String res =  new StringBuffer(formulaTextField.getText()).insert(caretPos, ref).toString();
+        // save updated formula
+        formulaTextField.setText(res);
+        curCriterion.setFormula(formulaTextField.getText());
+        formulaTextField.requestFocus();
     }//GEN-LAST:event_dataTableMouseClicked
 
+    ////////////////////////////////////////////////////////////////////////////
+    private void defineButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_defineButtonActionPerformed
+        defineValue(formulaTextField.getText());
+    }//GEN-LAST:event_defineButtonActionPerformed
+
+    ////////////////////////////////////////////////////////////////////////////
+    private void defineValue(String formula) {
+        curCriterion.setFormula(formula);
+        // update formula in excel
+        String newValue = XLSParser.redefineXLSCriterionValue(MainFrame.TEMP_FILE_NAME, curCriterion, curStage);
+        // save updated value
+        curCriterion.setValue(newValue);
+        valueTextField.setText(newValue);
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane baseDataScrollPane;
     private javax.swing.JButton cancelButton;
     private javax.swing.JTable dataTable;
+    private javax.swing.JButton defineButton;
     private javax.swing.JTextField formulaTextField;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;

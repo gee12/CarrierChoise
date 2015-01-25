@@ -4,17 +4,14 @@ import com.gee12.other.BubbleBorder;
 import com.gee12.other.ButtonEditor;
 import com.gee12.other.ButtonRenderer;
 import com.gee12.other.RowListener;
-import com.gee12.tableModels.CriterionsTableModel;
+import com.gee12.tablemodels.CriterionsTableModel;
 import com.gee12.other.SwitchStageListener;
 import com.gee12.other.XLSParser;
 import com.gee12.structures.Carrier;
 import com.gee12.structures.Criterion;
-import com.gee12.structures.Criterion.Types;
 import com.gee12.structures.Project;
 import com.gee12.structures.Project.Stages;
-import com.gee12.tableModels.DataTableModel;
 import java.awt.Color;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import javax.swing.DefaultCellEditor;
@@ -25,7 +22,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumnModel;
 import org.apache.poi.ss.util.CellReference;
 
@@ -35,8 +35,9 @@ import org.apache.poi.ss.util.CellReference;
  */
 public class RatingPanel extends JPanel implements RowListener {
     
-    public static final int NAME_CELL_WIDTH = 605;
-    public static final int VALUE_CELL_WIDTH = 80;
+    public static final int NAME_CELL_WIDTH = 545;
+    public static final int VALUE_CELL_WIDTH = 70;
+    public static final int MAX_CELL_WIDTH = 70;
     public static final int TYPE_CELL_WIDTH = 60;
     public static final int FORMULA_CELL_WIDTH = 30;
     public static final int DELETE_CELL_WIDTH = 30;
@@ -45,10 +46,10 @@ public class RatingPanel extends JPanel implements RowListener {
     SwitchStageListener listener;
     private final CriterionsTableModel critCooperateTM;
     private final CriterionsTableModel critRatingTM;
-//    private String projectFileName = null;            
-    private Project curProject = null;
-//    private Carrier curCarrier = null;
+//    private Project curProject = null;
+    private Carrier selectedCarrier;
     
+    ////////////////////////////////////////////////////////////////////////////
     public RatingPanel(SwitchStageListener listener) {
         this.listener = listener;
         
@@ -59,21 +60,31 @@ public class RatingPanel extends JPanel implements RowListener {
                 
         initDataTable(critCooperateTable);
         initDataTable(critRatingTable);
+        
     }
     
-    public void init(Project proj, Carrier curCar, String fileName) {
-        if (proj == null || curCar == null) return;
-        this.curProject = proj;
-//        this.curCarrier = curCar;
-//        this.projectFileName = fileName;
+    ////////////////////////////////////////////////////////////////////////////
+    public void init(Carrier selectedCarrier, String fileName) {
+//        if (proj == null) return;
+//        this.curProject = proj;
+        this.selectedCarrier = selectedCarrier;
         
-        nameLabel.setText("ОЦЕНКА СОТРУДНИЧЕСТВА С ПЕРЕВОЗЧИКОМ '" + curCar.getName() + "'");
+        nameLabel.setText("ОЦЕНКА СОТРУДНИЧЕСТВА С ПЕРЕВОЗЧИКОМ '" + selectedCarrier.getName() + "'");
+        
+        // create temp file
+        XLSParser.createXLSFile(MainFrame.TEMP_FILE_NAME);
                 
-        if (curCar.getName().equalsIgnoreCase(curProject.getCurrentCarrier().getName())) {
-            initControls(curProject);
-        }
+        // define marks based on criterions
+        selectedCarrier.defineMarks();
+
+        // save project in temp file
+        XLSParser.saveXLSCarrierProject(MainFrame.TEMP_FILE_NAME, null, selectedCarrier);
+
+        // init controls
+        initControls(selectedCarrier);
     }
         
+    ////////////////////////////////////////////////////////////////////////////
     private void initDataTable(JTable table) {
         if (table == null) return;
         // Create the combo box editor
@@ -82,42 +93,71 @@ public class RatingPanel extends JPanel implements RowListener {
         // Assign the editor
         TableColumnModel tcm = table.getColumnModel();
         // type
-        tcm.getColumn(2).setCellEditor(
+        tcm.getColumn(3).setCellEditor(
                 new DefaultCellEditor(comboBox));
         // formula
-        tcm.getColumn(3).setCellEditor(
-            new ButtonEditor(new JCheckBox(), this, 3, 4));
-        tcm.getColumn(3).setCellRenderer(new ButtonRenderer(
+        tcm.getColumn(4).setCellEditor(
+            new ButtonEditor(new JCheckBox(), this, 4, 5));
+        tcm.getColumn(4).setCellRenderer(new ButtonRenderer(
             new ImageIcon(MainFrame.class.getResource("/images/edit.jpg"))));
         // delete
-        tcm.getColumn(4).setCellEditor(
-            new ButtonEditor(new JCheckBox(), this, 3, 4));
-        tcm.getColumn(4).setCellRenderer(new ButtonRenderer(
+        tcm.getColumn(5).setCellEditor(
+            new ButtonEditor(new JCheckBox(), this, 4, 5));
+        tcm.getColumn(5).setCellRenderer(new ButtonRenderer(
             new ImageIcon(MainFrame.class.getResource("/images/delete.jpg"))));
         
         table.getColumnModel().getColumn(0).setPreferredWidth(NAME_CELL_WIDTH);
         table.getColumnModel().getColumn(1).setPreferredWidth(VALUE_CELL_WIDTH);
-        table.getColumnModel().getColumn(2).setPreferredWidth(TYPE_CELL_WIDTH);
-        table.getColumnModel().getColumn(3).setPreferredWidth(FORMULA_CELL_WIDTH);
-        table.getColumnModel().getColumn(4).setPreferredWidth(DELETE_CELL_WIDTH);
-    }
-    
-    public void initControls(Project proj) {
-        initTable(proj.getStage(Project.Stages.STAGE2_COOPERATION).getCriterions(), critCooperateTM);
-        initTable(proj.getStage(Project.Stages.STAGE3_RATING).getCriterions(), critRatingTM);
+        table.getColumnModel().getColumn(2).setPreferredWidth(MAX_CELL_WIDTH);
+        table.getColumnModel().getColumn(3).setPreferredWidth(TYPE_CELL_WIDTH);
+        table.getColumnModel().getColumn(4).setPreferredWidth(FORMULA_CELL_WIDTH);
+        table.getColumnModel().getColumn(5).setPreferredWidth(DELETE_CELL_WIDTH);
         
-        genMarkTextField.setText(String.format(Locale.US, "%.2f", proj.getGeneralMark()));
-        maxMarkTextField.setText(String.format(Locale.US, "%.2f", proj.getMaxMark()));
-        deviationTextField.setText(String.format(Locale.US, "%.2f", proj.getDeviation()));
+//        // for row selection
+//        ListSelectionModel rowSM = table.getSelectionModel();
+//        rowSM.addListSelectionListener(new ListSelectionListener() {
+//            public void valueChanged(ListSelectionEvent e) {
+//                // ignore extra messages.
+//                if (e.getValueIsAdjusting()) {
+//                    return;
+//                }
+//                ListSelectionModel lsm = (ListSelectionModel) e.getSource();
+//                if (!lsm.isSelectionEmpty()) {
+//                    int index = lsm.getMinSelectionIndex();
+//                    
+//                    selectedCarrier.defineMarks();
+//                    initMarksTextFields(selectedCarrier);
+//                }
+//            }
+//        });
     }
     
-    public void initTable(List <Criterion> dataFields, CriterionsTableModel tm) {
-        // for rows sort
-        dataFields.sort(critComparator);
-        tm.setData(dataFields);
+    ////////////////////////////////////////////////////////////////////////////
+    public void initControls(Carrier car) {
+        if (car == null) return;
+        
+        initTable(car.getStage(Project.Stages.STAGE2_COOPERATION).getCriterions(), critCooperateTM);
+        initTable(car.getStage(Project.Stages.STAGE3_RATING).getCriterions(), critRatingTM);
+        initMarksTextFields(car);
     }
-
-    //
+    
+    ////////////////////////////////////////////////////////////////////////////
+    public void initTable(List <Criterion> dataFields, CriterionsTableModel tableModel) {
+        // for rows sort
+        dataFields.sort(Criterion.COMPARATOR);
+        tableModel.setData(dataFields);
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    public void initMarksTextFields(Carrier car) {
+        if (car == null) return;
+        
+        genMarkTextField.setText(String.format(Locale.US, "%.2f", car.getGeneralMark()));
+        maxMarkTextField.setText(String.format(Locale.US, "%.2f", car.getMaxMark()));
+        deviationTextField.setText(String.format(Locale.US, "%.2f", car.getDeviation()));
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -153,7 +193,6 @@ public class RatingPanel extends JPanel implements RowListener {
         nameLabel.setOpaque(true);
 
         saveReportButton.setBackground(new java.awt.Color(170, 92, 0));
-        saveReportButton.setText("Сохранить отчет");
         saveReportButton.setEnabled(false);
         saveReportButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -167,6 +206,11 @@ public class RatingPanel extends JPanel implements RowListener {
         critCooperateTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
         critCooperateTable.setName("Основные критерии"); // NOI18N
         critCooperateTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        critCooperateTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                critTableKeyReleased(evt);
+            }
+        });
         critCooperateScrollPane.setViewportView(critCooperateTable);
 
         addCritCooperateButton.setText("+");
@@ -202,6 +246,11 @@ public class RatingPanel extends JPanel implements RowListener {
         critRatingTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
         critRatingTable.setName("Основные критерии"); // NOI18N
         critRatingTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        critRatingTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                critTableKeyReleased(evt);
+            }
+        });
         critRatingScrollPane.setViewportView(critRatingTable);
 
         addCritRatingButton.setText("+");
@@ -231,7 +280,7 @@ public class RatingPanel extends JPanel implements RowListener {
             .addComponent(critRatingScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
 
-        prevButton.setText("Назад");
+        prevButton.setText("К этапу сотрудничества");
         prevButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 prevButtonActionPerformed(evt);
@@ -268,8 +317,8 @@ public class RatingPanel extends JPanel implements RowListener {
                         .addComponent(nameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 333, Short.MAX_VALUE)
-                        .addComponent(prevButton, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(prevButton, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(saveReportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 468, javax.swing.GroupLayout.PREFERRED_SIZE))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -308,10 +357,12 @@ public class RatingPanel extends JPanel implements RowListener {
                     .addComponent(maxMarkTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4)
                     .addComponent(deviationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(saveReportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(prevButton)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(saveReportButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(prevButton)
+                        .addContainerGap())))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(0, 284, Short.MAX_VALUE)
@@ -320,104 +371,62 @@ public class RatingPanel extends JPanel implements RowListener {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-//    private void updateCriterion(JTable table, List<Criterion> criterions, Stages stage) {
-//        if (table == null || criterions == null) return;
-//        
-//        int selectedRow = table.getSelectedRow();
-//        Criterion crit = (selectedRow == -1) ? null : 
-//                criterions.get(table.convertRowIndexToModel(selectedRow));
-//        CriterionDialog critDialog = new CriterionDialog(curProject, crit, stage);
-//        
-//        if (critDialog.showDialog()) {
-//            Criterion newCrit = critDialog.getCriterion();
-//            ActionType action = critDialog.getActionType();
-//            // сохранение в excel обновленных критериев
-//            switch(action) {
-//                case Add:
-//                    // ишем последний критерий и берем его координаты ячеек
-//                    //Criterion lastCrit = criterions.get(criterions.size() - 1);
-//                    CellReference lastRef = Criterion.lastCriterionNameRef(criterions, newCrit.getType());
-//                     // переходим на след.строку
-//                    int nextRow = lastRef.getRow() + 1;
-//                    CellReference ref = (newCrit.getType() == Criterion.Types.BASE) ?
-//                            XLSParser.baseCriterionsRef: XLSParser.otherCriterionsRef;
-//                    newCrit.setNameRef(new CellReference(nextRow, ref.getCol()));
-//                    newCrit.setValueRef(new CellReference(nextRow, ref.getCol() + 1));
-//                    
-//                    XLSParser.saveXLSCriterion(projectFileName, newCrit, stage);
-//                    break;
-//                    
-//                case Edit:
-//                    XLSParser.saveXLSCriterion(projectFileName, newCrit, stage);
-//                    break;
-//                    
-//                case Delete:
-//                    newCrit.setName("");
-//                    newCrit.setFormula("");
-//                    
-//                    XLSParser.saveXLSCriterion(projectFileName, newCrit, stage);
-//                    break;
-//            }
-//            // и повторная загрузка из excel
-////            curProject.getStage(stage).setCriterions(
-////                    XLSParser.readXLSCriterions(projectFileName, stage));
-////            initTable(curProject.getStage(stage).getCriterions(), 
-////                    (stage == Stages.STAGE2_COOPERATION) ? critCooperateTM : critRatingTM);
-//            curProject = XLSParser.readXLSProject(projectFileName);
-//            initControls(curProject);
-//        }
-//    }    
-    
+    ////////////////////////////////////////////////////////////////////////////
     private Criterion getNewCriterion(Stages stage) {
-        Criterion res = Criterion.EMPTY;
+        Criterion res = new Criterion();
         // ишем последний Criterion и берем его координаты ячеек
         CellReference lastRef = Criterion.lastCriterionNameRef(
-                curProject.getStage(stage).getCriterions(), 
+                selectedCarrier.getStage(stage).getCriterions(), 
                 res.getType());
         // переходим на след.строку
-        int nextRow = lastRef.getRow() + 1;
-        CellReference ref = (res.getType() == Criterion.Types.BASE)
-                ? XLSParser.baseDataFieldsRef : XLSParser.otherDataFieldsRef;
-        res.setNameRef(new CellReference(nextRow, ref.getCol()));
-        res.setValueRef(new CellReference(nextRow, ref.getCol() + 1));
+//        int nextRow = lastRef.getRow() + 1;
+//        CellReference ref = (res.getType() == Criterion.Types.BASE)
+//                ? XLSParser.baseDataFieldsRef : XLSParser.otherDataFieldsRef;
+        res.setNameRef(new CellReference(lastRef.getRow() + 1, lastRef.getCol()));
         
         return res;
     }
     
+    ////////////////////////////////////////////////////////////////////////////
     private void addCritRatingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addCritRatingButtonActionPerformed
-//        updateCriterion(critRatingTable,
-//            curProject.getStage(Stages.STAGE3_RATING).getCriterions(),
-//            Stages.STAGE3_RATING);
         Criterion newCrit = getNewCriterion(Stages.STAGE3_RATING);
         critRatingTM.addRow(newCrit);
     }//GEN-LAST:event_addCritRatingButtonActionPerformed
 
+    ////////////////////////////////////////////////////////////////////////////
     private void addCritCooperateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addCritCooperateButtonActionPerformed
-//        updateCriterion(critCooperateTable,
-//            curProject.getStage(Stages.STAGE2_COOPERATION).getCriterions(),
-//            Stages.STAGE2_COOPERATION);
         Criterion newCrit = getNewCriterion(Stages.STAGE2_COOPERATION);
         critCooperateTM.addRow(newCrit);
     }//GEN-LAST:event_addCritCooperateButtonActionPerformed
 
+    ////////////////////////////////////////////////////////////////////////////
     @Override
     public Object editRow(JTable table, int row) {
         if (table == null) return null;
         
+        // get selected criterion
         Stages stage = (table.equals(critCooperateTable)) ? Stages.STAGE2_COOPERATION :
                 (table.equals(critRatingTable)) ? Stages.STAGE3_RATING : Stages.STAGE0_START;
-//        int selectedRow = table.getSelectedRow();
         Criterion crit = (row == -1) ? null : 
                 ((CriterionsTableModel)table.getModel()).getData().get(table.convertRowIndexToModel(row));
-        CriterionDialog critDialog = new CriterionDialog(curProject, crit, stage);
+        // create dialog
+        CriterionDialog critDialog = new CriterionDialog(selectedCarrier, crit, stage);
         if (critDialog.showDialog()) {
-            String formula = critDialog.getFormula();
-            ((CriterionsTableModel)table.getModel()).setValueAt(formula, row, 3);
-            return formula;
+            // get updated criterion
+            Criterion updatedCrit = critDialog.getCriterion();
+            ((CriterionsTableModel)table.getModel()).setValueAt(updatedCrit.getValue(), row, 1);
+            ((CriterionsTableModel)table.getModel()).setValueAt(updatedCrit.getFormula(), row, 4);
+            // update criterion in project
+//            curProject.getStage(stage).getCriterions().get(row)
+            // update marks
+            selectedCarrier.defineMarks();
+            initMarksTextFields(selectedCarrier);
+            return updatedCrit.getFormula();
         }
         return null;
     }
 
+    ////////////////////////////////////////////////////////////////////////////
     @Override
     public void deleteRow(JTable table, int row) {
          if (table == null) return;
@@ -425,26 +434,27 @@ public class RatingPanel extends JPanel implements RowListener {
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (res == JOptionPane.YES_OPTION) {
             ((CriterionsTableModel)table.getModel()).deleteRow(row);
+            // update marks
+            selectedCarrier.defineMarks();
+            initMarksTextFields(selectedCarrier);
         } 
     }
     
+    ////////////////////////////////////////////////////////////////////////////
     private void saveReportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveReportButtonActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_saveReportButtonActionPerformed
 
+    ////////////////////////////////////////////////////////////////////////////
     private void prevButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prevButtonActionPerformed
         listener.nextStage(Project.Stages.STAGE2_COOPERATION);
     }//GEN-LAST:event_prevButtonActionPerformed
 
-    public static Comparator<Criterion> critComparator = new Comparator<Criterion>() {
-	@Override
-	public int compare(Criterion crit1, Criterion crit2) {
-            final Types type1 = crit1.getType();
-            final Types type2 = crit2.getType();
-	    return (type1 == Types.BASE && type2 == Types.OTHER) ? -1 :
-		    (type2 == Criterion.Types.BASE && type1 == Types.OTHER) ? 1 : 0;
-	}
-    };
+    private void critTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_critTableKeyReleased
+        selectedCarrier.defineMarks();
+        initMarksTextFields(selectedCarrier);
+    }//GEN-LAST:event_critTableKeyReleased
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addCritCooperateButton;

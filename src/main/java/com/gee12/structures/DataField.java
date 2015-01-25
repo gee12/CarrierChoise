@@ -1,6 +1,7 @@
 package com.gee12.structures;
 
 import com.gee12.other.XLSParser;
+import java.util.Comparator;
 import java.util.List;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.util.CellReference;
@@ -16,7 +17,17 @@ public class DataField {
         OTHER
     }
     
-    public static final DataField EMPTY = new DataField("","","A1","A2", Types.BASE);
+//    public static final DataField EMPTY = new DataField("","","A1", Types.BASE);
+    
+    public static Comparator<DataField> COMPARATOR = new Comparator<DataField>() {
+	@Override
+	public int compare(DataField data1, DataField data2) {
+            final DataField.Types type1 = data1.getType();
+            final DataField.Types type2 = data2.getType();
+	    return (type1 == DataField.Types.BASE && type2 == DataField.Types.OTHER) ? -1 :
+		    (type2 == DataField.Types.BASE && type1 == DataField.Types.OTHER) ? 1 : 0;
+	}
+    };
     
     protected String name;
     protected String value;
@@ -24,27 +35,32 @@ public class DataField {
     protected CellReference valueRef;
     protected Types type;
 
+    public DataField() {
+        this("","","A1", Types.BASE);
+    }   
+    
     public DataField(Cell nameCell, Cell valueCell, Types type) {
         this.name = XLSParser.parseCell(nameCell);
         this.value = XLSParser.parseCell(valueCell);
         nameRef = new CellReference(nameCell);
-        valueRef = new CellReference(valueCell);
+        valueRef = new CellReference(nameCell.getRowIndex(), nameCell.getColumnIndex() + 1);
         this.type = type;
     }
     
-    public DataField(String name, String value, String nameRef, String valueRef, Types type) {
+    public DataField(String name, String value, String nameStringRef, Types type) {
         this.name = name;
         this.value = value;
-        this.nameRef = new CellReference(nameRef);
-        this.valueRef = new CellReference(valueRef);
+        this.nameRef = new CellReference(nameStringRef);
+        valueRef = new CellReference(nameRef.getRow(), nameRef.getCol() + 1);
         this.type = type;
     }
     
     public static CellReference lastDataFieldNameRef(List<DataField> dataFields, Types type) {
-        CellReference lastRef = new CellReference(0, 0);
+        CellReference lastRef = (type == Types.BASE) ? XLSParser.baseDataFieldsRef :
+            XLSParser.otherDataFieldsRef;//new CellReference(0, 0);
         for(DataField dataField : dataFields) {
-            if (dataField.getType() == type && lastRef.getRow() < dataField.getValueRow()) {
-                lastRef = dataField.getValueRef();
+            if (dataField.getType() == type && lastRef.getRow() < dataField.getNameRow()) {
+                lastRef = dataField.getNameRef();
             }
         }
         return lastRef;
@@ -66,12 +82,13 @@ public class DataField {
         return type;
     }
 
-    public void setNameRef(CellReference nameRef) {
-        this.nameRef = nameRef;
+    public void setNameRef(CellReference ref) {
+        this.nameRef = ref;
     }
+    
 
-    public void setValueRef(CellReference valueRef) {
-        this.valueRef = valueRef;
+    public void setValueRef(CellReference ref) {
+        this.valueRef = ref;
     }
     
     public void setName(String name) {
@@ -97,18 +114,11 @@ public class DataField {
     public int getNameCol() {
         return nameRef.getCol();
     }
-
-    public int getValueRow() {
-        return valueRef.getRow();
-    }
-
-    public int getValueCol() {
-        return valueRef.getCol();
-    }
         
     public String getNameCellReference() {
         return nameRef.formatAsString();
     }
+    
     public String getValueCellReference() {
         return valueRef.formatAsString();
     }
