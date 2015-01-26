@@ -76,7 +76,7 @@ public class ChoisePanel extends JPanel implements RowListener {
         columnModel.getColumn(4).setCellEditor(
             new ButtonEditor(new JCheckBox(), this, -1, 4));
         columnModel.getColumn(4).setCellRenderer(new ButtonRenderer(
-            new ImageIcon(MainFrame.class.getResource("/images/delete.jpg"))));
+            new ImageIcon(MainFrame.class.getResource("/images/delete.png"))));
         
         // for row selection
         ListSelectionModel rowSM = carriersTable.getSelectionModel();

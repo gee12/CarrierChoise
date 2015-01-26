@@ -80,7 +80,7 @@ public class CriterionsTableModel extends AbstractTableModel {
     @Override
     public Class getColumnClass(int col) {
         switch(col) {
-            case 3:
+            case 4:
                 return Criterion.Types.class;
             default:
                 return String.class;

@@ -79,7 +79,7 @@ public class CooperatePanel extends JPanel implements RowListener {
         colModel.getColumn(4).setCellEditor(
             new ButtonEditor(new JCheckBox(), this, -1, 4));
         colModel.getColumn(4).setCellRenderer(new ButtonRenderer(
-            new ImageIcon(MainFrame.class.getResource("/images/delete.jpg"))));
+            new ImageIcon(MainFrame.class.getResource("/images/delete.png"))));
         
         table.getColumnModel().getColumn(0).setPreferredWidth(ID_CELL_WIDTH);
         table.getColumnModel().getColumn(1).setPreferredWidth(NAME_CELL_WIDTH);
@@ -158,7 +158,7 @@ public class CooperatePanel extends JPanel implements RowListener {
             }
         });
 
-        importDataCooperateButton.setIcon(new ImageIcon(MainFrame.class.getResource("/images/import.jpg")));
+        importDataCooperateButton.setIcon(new ImageIcon(MainFrame.class.getResource("/images/import.png")));
         importDataCooperateButton.setFocusable(false);
         importDataCooperateButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         importDataCooperateButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -211,7 +211,7 @@ public class CooperatePanel extends JPanel implements RowListener {
             }
         });
 
-        importDataRatingButton.setIcon(new ImageIcon(MainFrame.class.getResource("/images/import.jpg")));
+        importDataRatingButton.setIcon(new ImageIcon(MainFrame.class.getResource("/images/import.png")));
         importDataRatingButton.setFocusable(false);
         importDataRatingButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         importDataRatingButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);

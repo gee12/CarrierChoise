@@ -1,10 +1,7 @@
 package com.gee12.other;
 
-import com.gee12.panels.MainFrame;
 import java.awt.Component;
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;

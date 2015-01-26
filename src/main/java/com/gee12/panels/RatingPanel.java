@@ -34,7 +34,7 @@ import org.apache.poi.ss.util.CellReference;
 public class RatingPanel extends JPanel implements RowListener {
     
     public static final int ID_CELL_WIDTH = 25;
-    public static final int NAME_CELL_WIDTH = 510;
+    public static final int NAME_CELL_WIDTH = 505;
     public static final int VALUE_CELL_WIDTH = 70;
     public static final int MAX_CELL_WIDTH = 70;
     public static final int TYPE_CELL_WIDTH = 70;
@@ -95,12 +95,12 @@ public class RatingPanel extends JPanel implements RowListener {
         tcm.getColumn(5).setCellEditor(
             new ButtonEditor(new JCheckBox(), this, 5, 6));
         tcm.getColumn(5).setCellRenderer(new ButtonRenderer(
-            new ImageIcon(MainFrame.class.getResource("/images/edit.jpg"))));
+            new ImageIcon(MainFrame.class.getResource("/images/edit.png"))));
         // delete
         tcm.getColumn(6).setCellEditor(
             new ButtonEditor(new JCheckBox(), this, 5, 6));
         tcm.getColumn(6).setCellRenderer(new ButtonRenderer(
-            new ImageIcon(MainFrame.class.getResource("/images/delete.jpg"))));
+            new ImageIcon(MainFrame.class.getResource("/images/delete.png"))));
         
         table.getColumnModel().getColumn(0).setPreferredWidth(ID_CELL_WIDTH);
         table.getColumnModel().getColumn(1).setPreferredWidth(NAME_CELL_WIDTH);
@@ -204,7 +204,7 @@ public class RatingPanel extends JPanel implements RowListener {
             }
         });
 
-        importCritCooperateButton.setIcon(new ImageIcon(MainFrame.class.getResource("/images/import.jpg")));
+        importCritCooperateButton.setIcon(new ImageIcon(MainFrame.class.getResource("/images/import.png")));
         importCritCooperateButton.setFocusable(false);
         importCritCooperateButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         importCritCooperateButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -258,7 +258,7 @@ public class RatingPanel extends JPanel implements RowListener {
             }
         });
 
-        importCritRatingButton.setIcon(new ImageIcon(MainFrame.class.getResource("/images/import.jpg")));
+        importCritRatingButton.setIcon(new ImageIcon(MainFrame.class.getResource("/images/import.png")));
         importCritRatingButton.setFocusable(false);
         importCritRatingButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         importCritRatingButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);

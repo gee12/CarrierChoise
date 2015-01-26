@@ -2,12 +2,17 @@ package com.gee12.panels;
 
 import com.gee12.other.SwitchStageListener;
 import com.gee12.other.ExcelParser;
+import com.gee12.other.Utils;
 import com.gee12.structures.Carrier;
 import com.gee12.structures.Project;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import static java.awt.EventQueue.invokeLater;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -45,24 +50,33 @@ public class MainFrame extends JFrame implements SwitchStageListener {
     
     ////////////////////////////////////////////////////////////////////////////
     public MainFrame() {
-        initComponents();
+        try {
+            //
+            initComponents();
+            // load temporary carrier
+            Project tempProject = ExcelParser.readExcelFile(TEMPLATE_FILE_NAME);
+            tempCarrier = tempProject.getCarrier(TEMPLATE_FILE_NAME);
+            
+            setIconImage(ImageIO.read(MainFrame.class.getResource("/images/main.png")));
+            
+        } catch (IOException ex) {
+            Utils.onException(ex);
+        }
         
-        // load temporary carrier
-        Project tempProject = ExcelParser.readExcelFile(TEMPLATE_FILE_NAME);
-        tempCarrier = tempProject.getCarrier(TEMPLATE_FILE_NAME);
         if (tempCarrier == null) {
             tempCarrier = new Carrier();
         }
     }
     
     ////////////////////////////////////////////////////////////////////////////
-    public void initComponents() {
+    public void initComponents() throws IOException {
         setTitle(null);
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 //        setLocationByPlatform(true);
         setLocation(100, 0);
         setPreferredSize(new Dimension(900,650));
         setResizable(false);
+        
 
         // add toolbar and buttons
         toolBar = new javax.swing.JToolBar();
@@ -103,7 +117,7 @@ public class MainFrame extends JFrame implements SwitchStageListener {
         toolBar.add(openButton);
         
         saveButton.setText("Сохранить");
-        saveButton.setIcon(new ImageIcon(MainFrame.class.getResource("/images/save.jpg")));
+        saveButton.setIcon(new ImageIcon(MainFrame.class.getResource("/images/save.gif")));
         saveButton.setToolTipText("Сохранить текущий проект");
         saveButton.setEnabled(false);
         saveButton.setFocusable(false);
@@ -117,7 +131,7 @@ public class MainFrame extends JFrame implements SwitchStageListener {
         toolBar.add(saveButton); 
         
         saveAsButton.setText("Сохранить как");
-        saveAsButton.setIcon(new ImageIcon(MainFrame.class.getResource("/images/saveas.jpg")));
+        saveAsButton.setIcon(new ImageIcon(MainFrame.class.getResource("/images/saveas.png")));
         saveAsButton.setToolTipText("Сохранить проект как");
         saveAsButton.setEnabled(false);
         saveAsButton.setFocusable(false);
@@ -131,7 +145,7 @@ public class MainFrame extends JFrame implements SwitchStageListener {
         toolBar.add(saveAsButton); 
         
         closeButton.setText("Закрыть");
-        closeButton.setIcon(new ImageIcon(MainFrame.class.getResource("/images/close.jpg")));
+        closeButton.setIcon(new ImageIcon(MainFrame.class.getResource("/images/close.png")));
         closeButton.setToolTipText("Закрыть проект");
         closeButton.setEnabled(false);
         closeButton.setFocusable(false);
