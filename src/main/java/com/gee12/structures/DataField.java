@@ -1,7 +1,7 @@
 package com.gee12.structures;
 
-import com.gee12.other.XLSParser;
-import java.util.Comparator;
+import com.gee12.other.ExcelParser;
+import java.util.Arrays;
 import java.util.List;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.util.CellReference;
@@ -10,24 +10,38 @@ import org.apache.poi.ss.util.CellReference;
  *
  * @author Иван
  */
-public class DataField {
-    
+public class DataField implements Comparable<DataField> {
+
     public enum Types {
-        BASE,
-        OTHER
+        BASE("Базовый"),
+        OTHER("Дополнительный");
+        
+        private final String name;
+        
+        Types(String name) {
+            this.name = name;
+        }
+        
+        public String getName() {
+            return name;
+        }
+        
+        public static Types getType(String name) {
+//            Arrays.asList(Types.values()).forEach((Types t) -> t.getName().equalsIgnoreCase(name));
+            for (Types type : values()) {
+                if (type.getName().equalsIgnoreCase(name)) {
+                    return type;
+                }
+            }
+            return BASE;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+        
     }
-    
-//    public static final DataField EMPTY = new DataField("","","A1", Types.BASE);
-    
-    public static Comparator<DataField> COMPARATOR = new Comparator<DataField>() {
-	@Override
-	public int compare(DataField data1, DataField data2) {
-            final DataField.Types type1 = data1.getType();
-            final DataField.Types type2 = data2.getType();
-	    return (type1 == DataField.Types.BASE && type2 == DataField.Types.OTHER) ? -1 :
-		    (type2 == DataField.Types.BASE && type1 == DataField.Types.OTHER) ? 1 : 0;
-	}
-    };
     
     protected String name;
     protected String value;
@@ -40,8 +54,8 @@ public class DataField {
     }   
     
     public DataField(Cell nameCell, Cell valueCell, Types type) {
-        this.name = XLSParser.parseCell(nameCell);
-        this.value = XLSParser.parseCell(valueCell);
+        this.name = ExcelParser.parseCell(nameCell);
+        this.value = ExcelParser.parseCell(valueCell);
         nameRef = new CellReference(nameCell);
         valueRef = new CellReference(nameCell.getRowIndex(), nameCell.getColumnIndex() + 1);
         this.type = type;
@@ -56,8 +70,8 @@ public class DataField {
     }
     
     public static CellReference lastDataFieldNameRef(List<DataField> dataFields, Types type) {
-        CellReference lastRef = (type == Types.BASE) ? XLSParser.baseDataFieldsRef :
-            XLSParser.otherDataFieldsRef;//new CellReference(0, 0);
+        CellReference lastRef = (type == Types.BASE) ? ExcelParser.baseDataFieldsRef :
+            ExcelParser.otherDataFieldsRef;//new CellReference(0, 0);
         for(DataField dataField : dataFields) {
             if (dataField.getType() == type && lastRef.getRow() < dataField.getNameRow()) {
                 lastRef = dataField.getNameRef();
@@ -122,5 +136,12 @@ public class DataField {
     public String getValueCellReference() {
         return valueRef.formatAsString();
     }
-    
+
+    @Override
+    public int compareTo(DataField o) {
+        final DataField.Types type2 = o.getType();
+        return (type == DataField.Types.BASE && type2 == DataField.Types.OTHER) ? -1 :
+                (type2 == DataField.Types.BASE && type == DataField.Types.OTHER) ? 1 : 0;
+    }
+        
 }

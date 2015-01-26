@@ -12,7 +12,7 @@ import javax.swing.table.AbstractTableModel;
 
 public class CriterionsTableModel extends AbstractTableModel {
 
-    private static final String[] columnNames = {"Наименование", "Значение", "Эталон", "Тип", "", ""};
+    private static final String[] columnNames = {"№", "Наименование", "Значение", "Эталон", "Тип", "", ""};
     public static final String[] COMBO_STATES = Utils.getNames(Criterion.Types.class);
     
     private List<Criterion> data = null;
@@ -59,16 +59,18 @@ public class CriterionsTableModel extends AbstractTableModel {
     public Object getValueAt(int row, int col) {
         switch(col) {
             case 0: 
+                return row + 1;
+            case 1: 
                 return data.get(row).getName();
-            case 1:
-                return data.get(row).getValue();
             case 2:
-                return data.get(row).getMax();
+                return data.get(row).getValue();
             case 3:
-                return data.get(row).getType();
+                return data.get(row).getMax();
             case 4:
-                return data.get(row).getFormula();
+                return data.get(row).getType();
             case 5:
+                return data.get(row).getFormula();
+            case 6:
                 return "Удалить";
             default:
                 return null;
@@ -89,16 +91,18 @@ public class CriterionsTableModel extends AbstractTableModel {
     public boolean isCellEditable(int row, int col) {
         switch(col) {
             case 0: 
-                return true;
-            case 1:
                 return false;
-            case 2:
+            case 1: 
                 return true;
+            case 2:
+                return false;
             case 3:
                 return true;
             case 4:
                 return true;
             case 5:
+                return true;
+            case 6:
                 return true;
             default:
                 return false;
@@ -108,19 +112,19 @@ public class CriterionsTableModel extends AbstractTableModel {
     @Override
     public void setValueAt(Object v, int row, int col) {
         switch(col) {
-            case 0:
+            case 1:
                 data.get(row).setName((String) v);
                 break;
-            case 1:
+            case 2:
                 data.get(row).setValue((String) v);
                 break;
-            case 2:
+            case 3:
                 data.get(row).setMax((String) v);
                 break;
-            case 3:
-                data.get(row).setType(Criterion.Types.valueOf((String) v));
-                break;
             case 4:
+                data.get(row).setType(Criterion.Types.getType((String) v));
+                break;
+            case 5:
                 data.get(row).setFormula((String) v);
                 break;
             default:

@@ -145,7 +145,10 @@
               <Group type="102" alignment="0" attributes="0">
                   <Component id="critCooperateScrollPane" pref="831" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="addCritCooperateButton" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="addCritCooperateButton" max="32767" attributes="0"/>
+                      <Component id="importCritCooperateButton" max="32767" attributes="0"/>
+                  </Group>
               </Group>
           </Group>
         </DimensionLayout>
@@ -153,7 +156,9 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
                   <Component id="addCritCooperateButton" min="-2" pref="28" max="-2" attributes="0"/>
-                  <EmptySpace min="0" pref="152" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="importCritCooperateButton" min="-2" pref="27" max="-2" attributes="0"/>
+                  <EmptySpace min="0" pref="119" max="32767" attributes="0"/>
               </Group>
               <Component id="critCooperateScrollPane" pref="0" max="32767" attributes="0"/>
           </Group>
@@ -196,6 +201,19 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addCritCooperateButtonActionPerformed"/>
           </Events>
         </Component>
+        <Component class="javax.swing.JButton" name="importCritCooperateButton">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="new ImageIcon(MainFrame.class.getResource(&quot;/images/import.jpg&quot;))" type="code"/>
+            </Property>
+            <Property name="focusable" type="boolean" value="false"/>
+            <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="verticalTextPosition" type="int" value="3"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importCritCooperateButtonActionPerformed"/>
+          </Events>
+        </Component>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPanel" name="jPanel1">
@@ -213,7 +231,10 @@
               <Group type="102" alignment="0" attributes="0">
                   <Component id="critRatingScrollPane" pref="831" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="addCritRatingButton" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="addCritRatingButton" max="32767" attributes="0"/>
+                      <Component id="importCritRatingButton" max="32767" attributes="0"/>
+                  </Group>
               </Group>
           </Group>
         </DimensionLayout>
@@ -221,7 +242,9 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
                   <Component id="addCritRatingButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="142" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="importCritRatingButton" min="-2" pref="27" max="-2" attributes="0"/>
+                  <EmptySpace pref="109" max="32767" attributes="0"/>
               </Group>
               <Component id="critRatingScrollPane" pref="0" max="32767" attributes="0"/>
           </Group>
@@ -262,6 +285,19 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addCritRatingButtonActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="importCritRatingButton">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="new ImageIcon(MainFrame.class.getResource(&quot;/images/import.jpg&quot;))" type="code"/>
+            </Property>
+            <Property name="focusable" type="boolean" value="false"/>
+            <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="verticalTextPosition" type="int" value="3"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importCritRatingButtonActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

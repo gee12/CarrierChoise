@@ -6,12 +6,13 @@ import com.gee12.other.ButtonRenderer;
 import com.gee12.other.RowListener;
 import com.gee12.tablemodels.CriterionsTableModel;
 import com.gee12.other.SwitchStageListener;
-import com.gee12.other.XLSParser;
+import com.gee12.other.ExcelParser;
 import com.gee12.structures.Carrier;
 import com.gee12.structures.Criterion;
 import com.gee12.structures.Project;
 import com.gee12.structures.Project.Stages;
 import java.awt.Color;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import javax.swing.DefaultCellEditor;
@@ -22,10 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumnModel;
 import org.apache.poi.ss.util.CellReference;
 
@@ -35,10 +33,11 @@ import org.apache.poi.ss.util.CellReference;
  */
 public class RatingPanel extends JPanel implements RowListener {
     
-    public static final int NAME_CELL_WIDTH = 545;
+    public static final int ID_CELL_WIDTH = 25;
+    public static final int NAME_CELL_WIDTH = 510;
     public static final int VALUE_CELL_WIDTH = 70;
     public static final int MAX_CELL_WIDTH = 70;
-    public static final int TYPE_CELL_WIDTH = 60;
+    public static final int TYPE_CELL_WIDTH = 70;
     public static final int FORMULA_CELL_WIDTH = 30;
     public static final int DELETE_CELL_WIDTH = 30;
     
@@ -46,7 +45,6 @@ public class RatingPanel extends JPanel implements RowListener {
     SwitchStageListener listener;
     private final CriterionsTableModel critCooperateTM;
     private final CriterionsTableModel critRatingTM;
-//    private Project curProject = null;
     private Carrier selectedCarrier;
     
     ////////////////////////////////////////////////////////////////////////////
@@ -65,20 +63,18 @@ public class RatingPanel extends JPanel implements RowListener {
     
     ////////////////////////////////////////////////////////////////////////////
     public void init(Carrier selectedCarrier, String fileName) {
-//        if (proj == null) return;
-//        this.curProject = proj;
         this.selectedCarrier = selectedCarrier;
         
         nameLabel.setText("ОЦЕНКА СОТРУДНИЧЕСТВА С ПЕРЕВОЗЧИКОМ '" + selectedCarrier.getName() + "'");
         
         // create temp file
-        XLSParser.createXLSFile(MainFrame.TEMP_FILE_NAME);
+        ExcelParser.createXLSFile(MainFrame.TEMPORARY_FILE_NAME);
                 
         // define marks based on criterions
         selectedCarrier.defineMarks();
 
         // save project in temp file
-        XLSParser.saveXLSCarrierProject(MainFrame.TEMP_FILE_NAME, null, selectedCarrier);
+        ExcelParser.saveXLSCarrierProject(MainFrame.TEMPORARY_FILE_NAME, null, selectedCarrier);
 
         // init controls
         initControls(selectedCarrier);
@@ -93,43 +89,26 @@ public class RatingPanel extends JPanel implements RowListener {
         // Assign the editor
         TableColumnModel tcm = table.getColumnModel();
         // type
-        tcm.getColumn(3).setCellEditor(
+        tcm.getColumn(4).setCellEditor(
                 new DefaultCellEditor(comboBox));
         // formula
-        tcm.getColumn(4).setCellEditor(
-            new ButtonEditor(new JCheckBox(), this, 4, 5));
-        tcm.getColumn(4).setCellRenderer(new ButtonRenderer(
+        tcm.getColumn(5).setCellEditor(
+            new ButtonEditor(new JCheckBox(), this, 5, 6));
+        tcm.getColumn(5).setCellRenderer(new ButtonRenderer(
             new ImageIcon(MainFrame.class.getResource("/images/edit.jpg"))));
         // delete
-        tcm.getColumn(5).setCellEditor(
-            new ButtonEditor(new JCheckBox(), this, 4, 5));
-        tcm.getColumn(5).setCellRenderer(new ButtonRenderer(
+        tcm.getColumn(6).setCellEditor(
+            new ButtonEditor(new JCheckBox(), this, 5, 6));
+        tcm.getColumn(6).setCellRenderer(new ButtonRenderer(
             new ImageIcon(MainFrame.class.getResource("/images/delete.jpg"))));
         
-        table.getColumnModel().getColumn(0).setPreferredWidth(NAME_CELL_WIDTH);
-        table.getColumnModel().getColumn(1).setPreferredWidth(VALUE_CELL_WIDTH);
-        table.getColumnModel().getColumn(2).setPreferredWidth(MAX_CELL_WIDTH);
-        table.getColumnModel().getColumn(3).setPreferredWidth(TYPE_CELL_WIDTH);
-        table.getColumnModel().getColumn(4).setPreferredWidth(FORMULA_CELL_WIDTH);
-        table.getColumnModel().getColumn(5).setPreferredWidth(DELETE_CELL_WIDTH);
-        
-//        // for row selection
-//        ListSelectionModel rowSM = table.getSelectionModel();
-//        rowSM.addListSelectionListener(new ListSelectionListener() {
-//            public void valueChanged(ListSelectionEvent e) {
-//                // ignore extra messages.
-//                if (e.getValueIsAdjusting()) {
-//                    return;
-//                }
-//                ListSelectionModel lsm = (ListSelectionModel) e.getSource();
-//                if (!lsm.isSelectionEmpty()) {
-//                    int index = lsm.getMinSelectionIndex();
-//                    
-//                    selectedCarrier.defineMarks();
-//                    initMarksTextFields(selectedCarrier);
-//                }
-//            }
-//        });
+        table.getColumnModel().getColumn(0).setPreferredWidth(ID_CELL_WIDTH);
+        table.getColumnModel().getColumn(1).setPreferredWidth(NAME_CELL_WIDTH);
+        table.getColumnModel().getColumn(2).setPreferredWidth(VALUE_CELL_WIDTH);
+        table.getColumnModel().getColumn(3).setPreferredWidth(MAX_CELL_WIDTH);
+        table.getColumnModel().getColumn(4).setPreferredWidth(TYPE_CELL_WIDTH);
+        table.getColumnModel().getColumn(5).setPreferredWidth(FORMULA_CELL_WIDTH);
+        table.getColumnModel().getColumn(6).setPreferredWidth(DELETE_CELL_WIDTH);
     }
     
     ////////////////////////////////////////////////////////////////////////////
@@ -142,10 +121,10 @@ public class RatingPanel extends JPanel implements RowListener {
     }
     
     ////////////////////////////////////////////////////////////////////////////
-    public void initTable(List <Criterion> dataFields, CriterionsTableModel tableModel) {
+    public void initTable(List <Criterion> crits, CriterionsTableModel tableModel) {
         // for rows sort
-        dataFields.sort(Criterion.COMPARATOR);
-        tableModel.setData(dataFields);
+        Collections.sort(crits);
+        tableModel.setData(crits);
     }
     
     ////////////////////////////////////////////////////////////////////////////
@@ -168,10 +147,12 @@ public class RatingPanel extends JPanel implements RowListener {
         critCooperateScrollPane = new javax.swing.JScrollPane(critCooperateTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         critCooperateTable = new javax.swing.JTable();
         addCritCooperateButton = new javax.swing.JButton();
+        importCritCooperateButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         critRatingScrollPane = new javax.swing.JScrollPane(critCooperateTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         critRatingTable = new javax.swing.JTable();
         addCritRatingButton = new javax.swing.JButton();
+        importCritRatingButton = new javax.swing.JButton();
         prevButton = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         genMarkTextField = new javax.swing.JTextField();
@@ -223,6 +204,16 @@ public class RatingPanel extends JPanel implements RowListener {
             }
         });
 
+        importCritCooperateButton.setIcon(new ImageIcon(MainFrame.class.getResource("/images/import.jpg")));
+        importCritCooperateButton.setFocusable(false);
+        importCritCooperateButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        importCritCooperateButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        importCritCooperateButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importCritCooperateButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -230,13 +221,17 @@ public class RatingPanel extends JPanel implements RowListener {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(critCooperateScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 831, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(addCritCooperateButton))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(addCritCooperateButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(importCritCooperateButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(addCritCooperateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 152, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(importCritCooperateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 119, Short.MAX_VALUE))
             .addComponent(critCooperateScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
 
@@ -263,6 +258,16 @@ public class RatingPanel extends JPanel implements RowListener {
             }
         });
 
+        importCritRatingButton.setIcon(new ImageIcon(MainFrame.class.getResource("/images/import.jpg")));
+        importCritRatingButton.setFocusable(false);
+        importCritRatingButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        importCritRatingButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        importCritRatingButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importCritRatingButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -270,13 +275,17 @@ public class RatingPanel extends JPanel implements RowListener {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(critRatingScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 831, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(addCritRatingButton))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(addCritRatingButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(importCritRatingButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(addCritRatingButton)
-                .addContainerGap(142, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(importCritRatingButton, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(109, Short.MAX_VALUE))
             .addComponent(critRatingScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
 
@@ -379,9 +388,6 @@ public class RatingPanel extends JPanel implements RowListener {
                 selectedCarrier.getStage(stage).getCriterions(), 
                 res.getType());
         // переходим на след.строку
-//        int nextRow = lastRef.getRow() + 1;
-//        CellReference ref = (res.getType() == Criterion.Types.BASE)
-//                ? XLSParser.baseDataFieldsRef : XLSParser.otherDataFieldsRef;
         res.setNameRef(new CellReference(lastRef.getRow() + 1, lastRef.getCol()));
         
         return res;
@@ -402,28 +408,25 @@ public class RatingPanel extends JPanel implements RowListener {
     ////////////////////////////////////////////////////////////////////////////
     @Override
     public Object editRow(JTable table, int row) {
-        if (table == null) return null;
+        if (table == null || row == -1) return null;
         
         // get selected criterion
         Stages stage = (table.equals(critCooperateTable)) ? Stages.STAGE2_COOPERATION :
                 (table.equals(critRatingTable)) ? Stages.STAGE3_RATING : Stages.STAGE0_START;
-        Criterion crit = (row == -1) ? null : 
-                ((CriterionsTableModel)table.getModel()).getData().get(table.convertRowIndexToModel(row));
+        Criterion crit = ((CriterionsTableModel)table.getModel()).getData().get(table.convertRowIndexToModel(row));
         // create dialog
         CriterionDialog critDialog = new CriterionDialog(selectedCarrier, crit, stage);
         if (critDialog.showDialog()) {
             // get updated criterion
             Criterion updatedCrit = critDialog.getCriterion();
-            ((CriterionsTableModel)table.getModel()).setValueAt(updatedCrit.getValue(), row, 1);
-            ((CriterionsTableModel)table.getModel()).setValueAt(updatedCrit.getFormula(), row, 4);
-            // update criterion in project
-//            curProject.getStage(stage).getCriterions().get(row)
+            ((CriterionsTableModel)table.getModel()).setValueAt(updatedCrit.getValue(), row, 2);
+            ((CriterionsTableModel)table.getModel()).setValueAt(updatedCrit.getFormula(), row, 5);
             // update marks
             selectedCarrier.defineMarks();
             initMarksTextFields(selectedCarrier);
             return updatedCrit.getFormula();
         }
-        return null;
+        return crit.getFormula();
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -455,6 +458,20 @@ public class RatingPanel extends JPanel implements RowListener {
         initMarksTextFields(selectedCarrier);
     }//GEN-LAST:event_critTableKeyReleased
 
+    private void importCritCooperateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importCritCooperateButtonActionPerformed
+        List<Criterion> crits = selectedCarrier.getStage(Project.Stages.STAGE2_COOPERATION).getCriterions();
+        crits.addAll(MainFrame.getTemplate().getStage(Stages.STAGE2_COOPERATION).getCriterions());
+        initTable(crits, critCooperateTM);
+        selectedCarrier.defineMarks();
+    }//GEN-LAST:event_importCritCooperateButtonActionPerformed
+
+    private void importCritRatingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importCritRatingButtonActionPerformed
+        List<Criterion> crits = selectedCarrier.getStage(Project.Stages.STAGE3_RATING).getCriterions();
+        crits.addAll(MainFrame.getTemplate().getStage(Stages.STAGE3_RATING).getCriterions());
+        initTable(crits, critRatingTM);
+        selectedCarrier.defineMarks();
+    }//GEN-LAST:event_importCritRatingButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addCritCooperateButton;
@@ -465,6 +482,8 @@ public class RatingPanel extends JPanel implements RowListener {
     private javax.swing.JTable critRatingTable;
     private javax.swing.JTextField deviationTextField;
     private javax.swing.JTextField genMarkTextField;
+    private javax.swing.JButton importCritCooperateButton;
+    private javax.swing.JButton importCritRatingButton;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

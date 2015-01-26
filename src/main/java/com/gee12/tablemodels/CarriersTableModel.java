@@ -7,6 +7,7 @@ package com.gee12.tablemodels;
 import com.gee12.structures.Carrier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import javax.swing.table.AbstractTableModel;
 
 public class CarriersTableModel extends AbstractTableModel {

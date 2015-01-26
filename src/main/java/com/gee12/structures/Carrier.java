@@ -7,17 +7,7 @@ import java.util.List;
  * Перевозчик
  * @author Иван
  */
-public class Carrier {
-    
-    public static Comparator<Carrier> COMPARATOR = new Comparator<Carrier>() {
-	@Override
-	public int compare(Carrier car1, Carrier car2) {
-            final double num1 = car1.getRepeatNum();
-            final double num2 = car2.getRepeatNum();
-	    return (num1 < num2) ? 1 :
-		    (num1 > num2) ? -1 : 0;
-	}
-    };
+public class Carrier implements Comparator<Carrier>, Comparable<Carrier> {
     
     public static final Double[] CAPACITIES = {10.,15.,20.};
     public static final Double[] VOLUMES = {200.,300.,400.};
@@ -34,9 +24,7 @@ public class Carrier {
     protected int repeatNum;
     protected Matrix matrix;
 //    protected States state;
-//    protected Project project;
     protected Stage[] stages;
-//    protected Carrier carrier;
     
     protected double generalMark;
     protected double maxMark;
@@ -56,20 +44,8 @@ public class Carrier {
         this.capacity = capacity;
         this.repeatNum = repNum;
         this.matrix = matrix;
-//        this.state = States.NORM;
         this.stages = stages;
-//        this.project = new Project();
     }
-
-//    public Carrier(Project proj) {
-//        this.id = 0;
-//        this.name = proj.getCurCarrierName();
-//        this.capacity = 0;
-//        this.repeatNum = 0;
-//        this.matrix = new Matrix();
-//        this.state = States.NORM;
-//        this.project = proj;
-//    }
         
     ////////////////////////////////////////////////////////////////////////////
     //
@@ -99,6 +75,8 @@ public class Carrier {
         deviation = (maxMark - generalMark) / 100.;
     }
     
+    ////////////////////////////////////////////////////////////////////////////
+    //
     public void defineCapacityRepeat(List<MatrixCriterion> crits) {
         if (crits == null) return;
         
@@ -119,6 +97,8 @@ public class Carrier {
         repeatNum = max;
     }
     
+    ////////////////////////////////////////////////////////////////////////////
+    // set
     public void setId(int id) {
         this.id = id;
     }    
@@ -127,14 +107,6 @@ public class Carrier {
         this.capacity = capacity;
     }
 
-    ////////////////////////////////////////////////////////////////////////////
-    // set
-//    public void setProject(Project proj) {
-//        this.project = proj;
-//    }
-//    public void setState(States state) {
-//        this.state = state;
-//    }
     public void setRepeatNum(int repeatNum) {    
         this.repeatNum = repeatNum;
     }
@@ -165,10 +137,6 @@ public class Carrier {
     
     ////////////////////////////////////////////////////////////////////////////
     // get
-//    public Project getProject() {
-//        return project;
-//    }
-
     public Stage[] getStages() {
         return stages;
     }
@@ -195,10 +163,6 @@ public class Carrier {
         return deviation;
     }
     
-//    public States getState() {
-//        return state;
-//    }
-    
     public int getId() {
         return id;
     }
@@ -217,5 +181,15 @@ public class Carrier {
 
     public Matrix getMatrix() {
         return matrix;
+    }
+
+    @Override
+    public int compare(Carrier o1, Carrier o2) {
+        return o2.getRepeatNum() - o1.getRepeatNum();
+    }
+
+    @Override
+    public int compareTo(Carrier o) {
+        return o.getRepeatNum() - repeatNum;
     }
 }

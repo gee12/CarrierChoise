@@ -1,5 +1,6 @@
 package com.gee12.panels;
 
+import com.gee12.other.ExcelParser;
 import java.awt.Component;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -27,7 +28,7 @@ public class JFileChoosers {
     public static int showOpenChooser(Component parent) {
         chooser = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter(
-            "Таблицы MS Office (*.xls)", "xls");
+            "Таблицы MS Office (*.xls, *.xlsx)", ExcelParser.XLS_EXTENSION, ExcelParser.XLSX_EXTENSION);
         chooser.setFileFilter(filter);
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         chooser.setApproveButtonText("Открыть");

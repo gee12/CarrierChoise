@@ -6,12 +6,12 @@ import com.gee12.other.ButtonRenderer;
 import com.gee12.other.RowListener;
 import com.gee12.tablemodels.DataTableModel;
 import com.gee12.other.SwitchStageListener;
-import com.gee12.other.XLSParser;
 import com.gee12.structures.Carrier;
 import com.gee12.structures.DataField;
 import com.gee12.structures.Project;
 import com.gee12.structures.Project.Stages;
 import java.awt.Color;
+import java.util.Collections;
 import java.util.List;
 import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
@@ -30,7 +30,8 @@ import org.apache.poi.ss.util.CellReference;
  */
 public class CooperatePanel extends JPanel implements RowListener {
     
-    public static final int NAME_CELL_WIDTH = 595;
+    public static final int ID_CELL_WIDTH = 25;
+    public static final int NAME_CELL_WIDTH = 565;
     public static final int VALUE_CELL_WIDTH = 100;
     public static final int TYPE_CELL_WIDTH = 70;
     public static final int DELETE_CELL_WIDTH = 30;
@@ -38,9 +39,6 @@ public class CooperatePanel extends JPanel implements RowListener {
     SwitchStageListener listener;
     private final DataTableModel dataCooperateTM;
     private final DataTableModel dataRatingTM;
-//    private String projectFileName = null;            
-//    private Project curProject = null;
-//    private Project srcProject = null;
     private Carrier selectedCarrier = null;
             
     ////////////////////////////////////////////////////////////////////////////
@@ -60,18 +58,11 @@ public class CooperatePanel extends JPanel implements RowListener {
     ////////////////////////////////////////////////////////////////////////////
     public void init(Carrier selectedCarrier, String fileName) {
         if (selectedCarrier == null) return;
-//        this.srcProject = srcProj;
-//        this.curProject = new Project();
+        
         this.selectedCarrier = selectedCarrier;
-//        this.projectFileName = fileName;
         
         nameLabel.setText("СОТРУДНИЧЕСТВО С ПЕРЕВОЗЧИКОМ '" + selectedCarrier.getName() + "'");
         
-//        if (selectedCarrier.getName().equalsIgnoreCase(selectedCarrier.getName())) {
-//            curProject = srcProject;
-//        } else {
-//            curProject = new Project();
-//        }
         initTables(selectedCarrier);
     }
         
@@ -83,17 +74,18 @@ public class CooperatePanel extends JPanel implements RowListener {
         comboBox.setEditable(false);   
         // Assign the editor
         TableColumnModel colModel = table.getColumnModel();
-        colModel.getColumn(2).setCellEditor(
-                new DefaultCellEditor(comboBox));
         colModel.getColumn(3).setCellEditor(
-            new ButtonEditor(new JCheckBox(), this, -1, 3));
-        colModel.getColumn(3).setCellRenderer(new ButtonRenderer(
+                new DefaultCellEditor(comboBox));
+        colModel.getColumn(4).setCellEditor(
+            new ButtonEditor(new JCheckBox(), this, -1, 4));
+        colModel.getColumn(4).setCellRenderer(new ButtonRenderer(
             new ImageIcon(MainFrame.class.getResource("/images/delete.jpg"))));
         
-        table.getColumnModel().getColumn(0).setPreferredWidth(NAME_CELL_WIDTH);
-        table.getColumnModel().getColumn(1).setPreferredWidth(VALUE_CELL_WIDTH);
-        table.getColumnModel().getColumn(2).setPreferredWidth(TYPE_CELL_WIDTH);
-        table.getColumnModel().getColumn(3).setPreferredWidth(DELETE_CELL_WIDTH);
+        table.getColumnModel().getColumn(0).setPreferredWidth(ID_CELL_WIDTH);
+        table.getColumnModel().getColumn(1).setPreferredWidth(NAME_CELL_WIDTH);
+        table.getColumnModel().getColumn(2).setPreferredWidth(VALUE_CELL_WIDTH);
+        table.getColumnModel().getColumn(3).setPreferredWidth(TYPE_CELL_WIDTH);
+        table.getColumnModel().getColumn(4).setPreferredWidth(DELETE_CELL_WIDTH);
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -105,7 +97,7 @@ public class CooperatePanel extends JPanel implements RowListener {
     ////////////////////////////////////////////////////////////////////////////
     public void initTable(List <DataField> dataFields, DataTableModel tm) {
         // for rows sort
-        dataFields.sort(DataField.COMPARATOR);
+        Collections.sort(dataFields);
         tm.setData(dataFields);
     }
 
@@ -120,10 +112,12 @@ public class CooperatePanel extends JPanel implements RowListener {
         dataCooperationScrollPane = new javax.swing.JScrollPane(dataCooperateTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         dataCooperateTable = new javax.swing.JTable();
         addDataCooperateButton = new javax.swing.JButton();
+        importDataCooperateButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         dataRatingScrollPane = new javax.swing.JScrollPane(dataCooperateTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         dataRatingTable = new javax.swing.JTable();
         addDataRatingButton = new javax.swing.JButton();
+        importDataRatingButton = new javax.swing.JButton();
         prevButton = new javax.swing.JButton();
 
         setPreferredSize(new java.awt.Dimension(900, 600));
@@ -164,6 +158,16 @@ public class CooperatePanel extends JPanel implements RowListener {
             }
         });
 
+        importDataCooperateButton.setIcon(new ImageIcon(MainFrame.class.getResource("/images/import.jpg")));
+        importDataCooperateButton.setFocusable(false);
+        importDataCooperateButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        importDataCooperateButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        importDataCooperateButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importDataCooperateButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -171,13 +175,17 @@ public class CooperatePanel extends JPanel implements RowListener {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(dataCooperationScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 831, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(addDataCooperateButton))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(addDataCooperateButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(importDataCooperateButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(addDataCooperateButton)
-                .addGap(0, 167, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(importDataCooperateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 118, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(dataCooperationScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -203,6 +211,16 @@ public class CooperatePanel extends JPanel implements RowListener {
             }
         });
 
+        importDataRatingButton.setIcon(new ImageIcon(MainFrame.class.getResource("/images/import.jpg")));
+        importDataRatingButton.setFocusable(false);
+        importDataRatingButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        importDataRatingButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        importDataRatingButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importDataRatingButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -210,13 +228,17 @@ public class CooperatePanel extends JPanel implements RowListener {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(dataRatingScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 831, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(addDataRatingButton))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(addDataRatingButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(importDataRatingButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(addDataRatingButton)
-                .addGap(0, 189, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(importDataRatingButton, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 172, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(dataRatingScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -270,9 +292,6 @@ public class CooperatePanel extends JPanel implements RowListener {
                 selectedCarrier.getStage(stage).getDataFields(), 
                 res.getType());
         // переходим на след.строку
-//        int nextRow = lastRef.getRow() + 1;
-//        CellReference ref = (res.getType() == DataField.Types.BASE)
-//                ? XLSParser.baseDataFieldsRef : XLSParser.otherDataFieldsRef;
         res.setNameRef(new CellReference(lastRef.getRow() + 1, lastRef.getCol()));
         res.setValueRef(new CellReference(lastRef.getRow() + 1, lastRef.getCol() + 1));
         
@@ -283,14 +302,12 @@ public class CooperatePanel extends JPanel implements RowListener {
     private void addDataRatingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addDataRatingButtonActionPerformed
         DataField newDF = getNewDataField(Stages.STAGE3_RATING);
         dataRatingTM.addRow(newDF);
-//        selectedCarrier.getStage(Stages.STAGE3_RATING).getDataFields().add(newDF);
     }//GEN-LAST:event_addDataRatingButtonActionPerformed
 
     ////////////////////////////////////////////////////////////////////////////
     private void addDataCooperateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addDataCooperateButtonActionPerformed
         DataField newDF = getNewDataField(Stages.STAGE2_COOPERATION);
         dataCooperateTM.addRow(newDF);
-//        selectedCarrier.getStage(Stages.STAGE2_COOPERATION).getDataFields().add(newDF);
     }//GEN-LAST:event_addDataCooperateButtonActionPerformed
 
     ////////////////////////////////////////////////////////////////////////////
@@ -316,18 +333,21 @@ public class CooperatePanel extends JPanel implements RowListener {
 
     ////////////////////////////////////////////////////////////////////////////
     private void toRatingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toRatingButtonActionPerformed
-//        curProject.setCurrentCarrier(curCarrier);
-//        curCarrier = curProject.getCurCarrier();
-//        curCarrier
-//        srcProject = curProject;
-        
         listener.nextStage(Project.Stages.STAGE3_RATING);
     }//GEN-LAST:event_toRatingButtonActionPerformed
 
-    ////////////////////////////////////////////////////////////////////////////
-//    public Project getProject() {
-//        return curProject;
-//    }
+    private void importDataCooperateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importDataCooperateButtonActionPerformed
+        List<DataField> datafields = selectedCarrier.getStage(Project.Stages.STAGE2_COOPERATION).getDataFields();
+        datafields.addAll(MainFrame.getTemplate().getStage(Stages.STAGE2_COOPERATION).getDataFields());
+        initTable(datafields, dataCooperateTM);
+    }//GEN-LAST:event_importDataCooperateButtonActionPerformed
+
+    private void importDataRatingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importDataRatingButtonActionPerformed
+        List<DataField> datafields = selectedCarrier.getStage(Project.Stages.STAGE3_RATING).getDataFields();
+        datafields.addAll(MainFrame.getTemplate().getStage(Stages.STAGE3_RATING).getDataFields());
+        initTable(datafields, dataRatingTM);
+    }//GEN-LAST:event_importDataRatingButtonActionPerformed
+
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addDataCooperateButton;
@@ -336,6 +356,8 @@ public class CooperatePanel extends JPanel implements RowListener {
     private javax.swing.JScrollPane dataCooperationScrollPane;
     private javax.swing.JScrollPane dataRatingScrollPane;
     private javax.swing.JTable dataRatingTable;
+    private javax.swing.JButton importDataCooperateButton;
+    private javax.swing.JButton importDataRatingButton;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel nameLabel;

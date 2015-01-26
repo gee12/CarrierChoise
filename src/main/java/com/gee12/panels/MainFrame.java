@@ -1,7 +1,7 @@
 package com.gee12.panels;
 
 import com.gee12.other.SwitchStageListener;
-import com.gee12.other.XLSParser;
+import com.gee12.other.ExcelParser;
 import com.gee12.structures.Carrier;
 import com.gee12.structures.Project;
 import java.awt.BorderLayout;
@@ -22,7 +22,9 @@ import javax.swing.UIManager;
  */
 public class MainFrame extends JFrame implements SwitchStageListener {
     
-    public static final String TEMP_FILE_NAME = "_temp.xls";
+    public static final String TITLE = "CarrierChoise 1.0";
+    public static final String TEMPORARY_FILE_NAME = "temporary.xls";
+    public static final String TEMPLATE_FILE_NAME = "template.xls";
     
     JPanel cards;
     private ChoisePanel choisePanel;
@@ -38,17 +40,24 @@ public class MainFrame extends JFrame implements SwitchStageListener {
     
     private String projectFileName = null;            
     private Project curProject = null;
+    private static Carrier tempCarrier = null;
     private Carrier curCarrier = null;
     
     ////////////////////////////////////////////////////////////////////////////
     public MainFrame() {
-        
         initComponents();
         
+        // load temporary carrier
+        Project tempProject = ExcelParser.readExcelFile(TEMPLATE_FILE_NAME);
+        tempCarrier = tempProject.getCarrier(TEMPLATE_FILE_NAME);
+        if (tempCarrier == null) {
+            tempCarrier = new Carrier();
+        }
     }
     
     ////////////////////////////////////////////////////////////////////////////
     public void initComponents() {
+        setTitle(null);
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 //        setLocationByPlatform(true);
         setLocation(100, 0);
@@ -178,12 +187,14 @@ public class MainFrame extends JFrame implements SwitchStageListener {
         if (JFileChoosers.showCreateChooser(this) == JFileChooser.APPROVE_OPTION) {
             // get file name
             projectFileName = JFileChoosers.getChooser().getSelectedFile().getAbsolutePath();
-            projectFileName = XLSParser.withXLSExt(projectFileName);
+            projectFileName = ExcelParser.addXLSExtension(projectFileName);
             curProject = new Project();
             // create file
-            XLSParser.createXLSFile(projectFileName);
+            ExcelParser.createXLSFile(projectFileName);
             // switch panel
             nextStage(Project.Stages.STAGE1_CHOISE);
+            // title
+            setTitle(projectFileName);
             // buttons
             closeButton.setEnabled(true);
             saveButton.setEnabled(true);
@@ -197,9 +208,11 @@ public class MainFrame extends JFrame implements SwitchStageListener {
             // get file name
             projectFileName = JFileChoosers.getChooser().getSelectedFile().getAbsolutePath();
             // create current carrier from project
-            curProject = XLSParser.readXLSCarrierProject(projectFileName);
+            curProject = ExcelParser.readExcelFile(projectFileName);
             // switch panel
             nextStage(Project.Stages.STAGE1_CHOISE);
+            // title
+            setTitle(projectFileName);
             // buttons
             closeButton.setEnabled(true);
             saveButton.setEnabled(true);
@@ -212,6 +225,8 @@ public class MainFrame extends JFrame implements SwitchStageListener {
         nextStage(Project.Stages.STAGE0_START);
             projectFileName = null;
             curCarrier = null;
+            // title
+            setTitle(projectFileName);
             // buttons
             closeButton.setEnabled(false);
             saveButton.setEnabled(false);
@@ -221,10 +236,10 @@ public class MainFrame extends JFrame implements SwitchStageListener {
     ////////////////////////////////////////////////////////////////////////////
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {  
         // create file (for overwrite)
-        XLSParser.createXLSFile(projectFileName);
+        ExcelParser.createXLSFile(projectFileName);
         // write project to file
         curCarrier = choisePanel.getCurrentCarrier();
-        XLSParser.saveXLSCarrierProject(projectFileName, curProject, curCarrier);
+        ExcelParser.saveXLSCarrierProject(projectFileName, curProject, curCarrier);
     }      
 
     ////////////////////////////////////////////////////////////////////////////
@@ -232,14 +247,28 @@ public class MainFrame extends JFrame implements SwitchStageListener {
         if (JFileChoosers.showSaveChooser(this) == JFileChooser.APPROVE_OPTION) {
             // get file name
             projectFileName = JFileChoosers.getChooser().getSelectedFile().getAbsolutePath();
-            projectFileName = XLSParser.withXLSExt(projectFileName);
+            projectFileName = ExcelParser.addXLSExtension(projectFileName);
             // create file
-            XLSParser.createXLSFile(projectFileName);
+            ExcelParser.createXLSFile(projectFileName);
+            // title
+            setTitle(projectFileName);
             // write project to file
             curCarrier = choisePanel.getCurrentCarrier();
-            XLSParser.saveXLSCarrierProject(projectFileName, curProject, curCarrier);
+            ExcelParser.saveXLSCarrierProject(projectFileName, curProject, curCarrier);
         } 
     }      
+    
+    ////////////////////////////////////////////////////////////////////////////
+    @Override
+    public void setTitle(String fileName) {
+        String title = (fileName != null) ? TITLE + " - " + fileName : TITLE;
+        super.setTitle(title);
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    public static Carrier getTemplate() {
+        return tempCarrier;
+    }
     
     ////////////////////////////////////////////////////////////////////////////
     public static void main(String args[]) {

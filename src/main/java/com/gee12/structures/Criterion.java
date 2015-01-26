@@ -1,6 +1,7 @@
 package com.gee12.structures;
 
-import com.gee12.other.XLSParser;
+import com.gee12.other.ExcelParser;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import org.apache.poi.ss.usermodel.Cell;
@@ -10,24 +11,36 @@ import org.apache.poi.ss.util.CellReference;
  *
  * @author Иван
  */
-public class Criterion {
-    
+public class Criterion implements Comparable<Criterion> {
+
     public enum Types {
-        BASE,
-        OTHER
+        BASE("Базовый"),
+        OTHER("Дополнительный");
+        
+        private final String name;
+        
+        Types(String name) {
+            this.name = name;
+        }
+        
+        public String getName() {
+            return name;
+        }
+        
+        public static Types getType(String name) {
+            for (Types type : values()) {
+                if (type.getName().equalsIgnoreCase(name)) {
+                    return type;
+                }
+            }
+            return BASE;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
     }
-    
-//    public static final Criterion EMPTY = new Criterion("","","","","A1", Types.BASE);
- 
-    public static Comparator<Criterion> COMPARATOR = new Comparator<Criterion>() {
-	@Override
-	public int compare(Criterion crit1, Criterion crit2) {
-            final Types type1 = crit1.getType();
-            final Types type2 = crit2.getType();
-	    return (type1 == Types.BASE && type2 == Types.OTHER) ? -1 :
-		    (type2 == Criterion.Types.BASE && type1 == Types.OTHER) ? 1 : 0;
-	}
-    };
     
     protected String name;
     protected String formula;
@@ -59,8 +72,8 @@ public class Criterion {
     }
     
     public static CellReference lastCriterionNameRef(List<Criterion> criterions, Types type) {
-        CellReference lastRef = (type == Types.BASE) ? XLSParser.baseCriterionsRef :
-            XLSParser.otherCriterionsRef;//new CellReference(0, 0);
+        CellReference lastRef = (type == Types.BASE) ? ExcelParser.baseCriterionsRef :
+            ExcelParser.otherCriterionsRef;//new CellReference(0, 0);
         for(Criterion crit : criterions) {
             if (crit.getType() == type && lastRef.getRow() < crit.getNameRow()) {
                 lastRef = crit.getNameRef();
@@ -127,5 +140,12 @@ public class Criterion {
         
     public String getNameCellReference() {
         return nameRef.formatAsString();
+    }
+
+    @Override
+    public int compareTo(Criterion o) {
+        final Types type2 = o.getType();
+        return (type == Types.BASE && type2 == Types.OTHER) ? -1 :
+                (type2 == Criterion.Types.BASE && type == Types.OTHER) ? 1 : 0;
     }
 }

@@ -11,7 +11,7 @@ import javax.swing.table.AbstractTableModel;
 
 public class DataSimpleTableModel extends AbstractTableModel {
 
-    private static final String[] columnNames = {"Наименование", "Значение", "Тип", "Ячейка"};
+    private static final String[] columnNames = {"№", "Наименование", "Значение", "Тип", "Ячейка"};
 
     private List<DataField> data = null;
     
@@ -48,11 +48,13 @@ public class DataSimpleTableModel extends AbstractTableModel {
         switch(col) {
             case 0: 
                 return String.class;
-            case 1:
+            case 1: 
                 return String.class;
             case 2:
-                return DataField.Types.class;
+                return String.class;
             case 3:
+                return DataField.Types.class;
+            case 4:
                 return String.class;
             default:
                 return null;
@@ -63,12 +65,14 @@ public class DataSimpleTableModel extends AbstractTableModel {
     public Object getValueAt(int row, int col) {
         switch(col) {
             case 0: 
+                return row + 1;
+            case 1: 
                 return data.get(row).getName();
-            case 1:
-                return data.get(row).getValue();
             case 2:
-                return data.get(row).getType();
+                return data.get(row).getValue();
             case 3:
+                return data.get(row).getType();
+            case 4:
                 return data.get(row).getValueCellReference();
             default:
                 return null;

@@ -5,7 +5,6 @@ import com.gee12.tablemodels.CarriersTableModel;
 import com.gee12.panels.groupTableHeader.MultiLineHeaderRenderer;
 import com.gee12.other.ButtonEditor;
 import com.gee12.other.ButtonRenderer;
-import com.gee12.other.MatrixTableListener;
 import com.gee12.other.RowListener;
 import com.gee12.other.SwitchStageListener;
 import com.gee12.structures.Carrier;
@@ -14,6 +13,9 @@ import com.gee12.structures.Matrix;
 import com.gee12.structures.Project;
 import com.gee12.tablemodels.MatrixCriterionsTableModel;
 import java.awt.Color;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import javax.swing.ImageIcon;
@@ -32,7 +34,7 @@ import javax.swing.table.TableColumnModel;
  *
  * @author Иван
  */
-public class ChoisePanel extends JPanel implements MatrixTableListener, RowListener {
+public class ChoisePanel extends JPanel implements RowListener {
 
     SwitchStageListener listener;
     private final CarriersTableModel carriersTM;
@@ -49,7 +51,17 @@ public class ChoisePanel extends JPanel implements MatrixTableListener, RowListe
         
         initComponents();
         //
-        matrixPanel.addTableModelListener(this);
+        matrixPanel.getMatrixTable().addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if ("tableCellEditor".equals(evt.getPropertyName())) {
+                    matrixTableChanged();
+                    if (!matrixPanel.getMatrixTable().isEditing()) {
+                        initCarriersTable();
+                    }
+                }
+            }
+        });
         
         // for multi line header
         MultiLineHeaderRenderer renderer = new MultiLineHeaderRenderer();
@@ -87,27 +99,28 @@ public class ChoisePanel extends JPanel implements MatrixTableListener, RowListe
         if (proj == null) return;
         
         this.curProject = proj;
-        this.curCarrier = null;
-        
-        initCarriersTable();
-        initFields(new Carrier());
         
         if (curProject.getCarriers().size() > 0) {
-            carriersTable.setRowSelectionInterval(selectedRow, selectedRow);
+//            carriersTable.setRowSelectionInterval(selectedRow, selectedRow);
+            this.curCarrier = curProject.getCarriers().get(0);
         }
+        
+        initCarriersTable();
+//        initFields(curCarrier);
+        
     }
     
     ////////////////////////////////////////////////////////////////////////////
     public void initCarriersTable() {
         // rows sort
         List <Carrier> carriers = curProject.getCarriers();
-        carriers.sort(Carrier.COMPARATOR);
+        Collections.sort(carriers);
         carriersTM.setData(carriers);
 
         if (curCarrier != null) {
             int modelRow = carriers.indexOf(curCarrier);
             int tableRow = carriersTable.convertRowIndexToView(modelRow);
-            if (modelRow == -1 || tableRow == -1) {
+            if (tableRow != -1) {
                 carriersTable.setRowSelectionInterval(tableRow, tableRow);
             }
         }
@@ -119,12 +132,16 @@ public class ChoisePanel extends JPanel implements MatrixTableListener, RowListe
         if (row != -1) {
             curCarrier = curProject.getCarriers()
                     .get(carriersTable.convertRowIndexToModel(row));
-            initFields(curCarrier);
+            
+        } else {
+            curCarrier = new Carrier();
         }
+        initFields(curCarrier);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     public void initFields(Carrier carrier) {
+        if (carrier == null) return;
         // changable fields
         String name = carrier.getName();
         if (name.isEmpty()) {
@@ -170,7 +187,6 @@ public class ChoisePanel extends JPanel implements MatrixTableListener, RowListe
         matrixPanel = new com.gee12.panels.MatrixPanel();
         addCarrierButton = new javax.swing.JButton();
         toCooperateButton = new javax.swing.JButton();
-        refreshCarriersButton = new javax.swing.JButton();
 
         setPreferredSize(new java.awt.Dimension(900, 600));
 
@@ -283,16 +299,6 @@ public class ChoisePanel extends JPanel implements MatrixTableListener, RowListe
             }
         });
 
-        refreshCarriersButton.setText("Обновить");
-        refreshCarriersButton.setFocusable(false);
-        refreshCarriersButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        refreshCarriersButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        refreshCarriersButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                refreshCarriersButtonActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -307,10 +313,8 @@ public class ChoisePanel extends JPanel implements MatrixTableListener, RowListe
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(addCarrierButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(refreshCarriersButton)
-                                .addGap(0, 249, Short.MAX_VALUE))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -323,12 +327,11 @@ public class ChoisePanel extends JPanel implements MatrixTableListener, RowListe
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 476, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE))
                 .addGap(12, 12, 12)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(toCooperateButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(addCarrierButton)
-                    .addComponent(refreshCarriersButton)))
+                    .addComponent(addCarrierButton)))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -359,11 +362,6 @@ public class ChoisePanel extends JPanel implements MatrixTableListener, RowListe
     }//GEN-LAST:event_addCarrierButtonActionPerformed
 
     ////////////////////////////////////////////////////////////////////////////
-    private void refreshCarriersButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshCarriersButtonActionPerformed
-        initCarriersTable();
-    }//GEN-LAST:event_refreshCarriersButtonActionPerformed
-
-    ////////////////////////////////////////////////////////////////////////////
     private void carriersTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_carriersTableMousePressed
         if (evt.getClickCount() == 2) {
             toCooperateStage(carriersTable.getSelectedRow()); 
@@ -377,19 +375,18 @@ public class ChoisePanel extends JPanel implements MatrixTableListener, RowListe
             nameTextField.setBackground(Color.RED);
         } else {
             nameTextField.setBackground(UIManager.getColor("TextField.background"));
-            curCarrier.setName(name);
-            // update names in table
-            int caret = nameTextField.getCaretPosition();
-            initCarriersTable();
-            nameTextField.setCaretPosition(caret);
-            carriersTable.setRowSelectionInterval(selectedRow, selectedRow);
         }
+        curCarrier.setName(name);
+        // update names in table
+        int caret = nameTextField.getCaretPosition();
+        initCarriersTable();
+        nameTextField.setCaretPosition(caret);
+        carriersTable.setRowSelectionInterval(selectedRow, selectedRow);
     }//GEN-LAST:event_nameTextFieldKeyReleased
 
     ////////////////////////////////////////////////////////////////////////////
     // when matrix table changed
-    @Override
-    public void tableChanged() {
+    public void matrixTableChanged() {
         if (curCarrier == null) return;
         
         curCarrier.setMatrix(matrixPanel.getMatrix());
@@ -410,9 +407,16 @@ public class ChoisePanel extends JPanel implements MatrixTableListener, RowListe
         int res = JOptionPane.showConfirmDialog(null, "Удалить перевозчика?", "Удаление",
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (res == JOptionPane.YES_OPTION) {
+            // delete carrier
             ((CarriersTableModel)table.getModel()).deleteRow(row);
-//            selectedRow = table.getSelectedRow();
-            initCarriersTable();
+            
+            // select first carrier and init fields
+            if (curProject.getCarriers().size() > 0) {
+                carriersTable.setRowSelectionInterval(0, 0);
+            } else {
+                curCarrier = new Carrier();
+                initFields(curCarrier);
+            }
         }
     }
    
@@ -430,7 +434,6 @@ public class ChoisePanel extends JPanel implements MatrixTableListener, RowListe
     private javax.swing.JTable matrixCritsTable;
     private com.gee12.panels.MatrixPanel matrixPanel;
     private javax.swing.JTextField nameTextField;
-    private javax.swing.JButton refreshCarriersButton;
     private javax.swing.JTextField repeatTextField;
     private javax.swing.JButton toCooperateButton;
     // End of variables declaration//GEN-END:variables

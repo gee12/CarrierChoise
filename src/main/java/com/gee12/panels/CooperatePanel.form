@@ -103,7 +103,10 @@
               <Group type="102" alignment="0" attributes="0">
                   <Component id="dataCooperationScrollPane" pref="831" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="addDataCooperateButton" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="addDataCooperateButton" max="32767" attributes="0"/>
+                      <Component id="importDataCooperateButton" max="32767" attributes="0"/>
+                  </Group>
               </Group>
           </Group>
         </DimensionLayout>
@@ -111,7 +114,9 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <Component id="addDataCooperateButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="0" pref="167" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="importDataCooperateButton" min="-2" pref="27" max="-2" attributes="0"/>
+                  <EmptySpace min="0" pref="118" max="32767" attributes="0"/>
               </Group>
               <Group type="102" alignment="0" attributes="0">
                   <Component id="dataCooperationScrollPane" max="32767" attributes="0"/>
@@ -159,6 +164,19 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addDataCooperateButtonActionPerformed"/>
           </Events>
         </Component>
+        <Component class="javax.swing.JButton" name="importDataCooperateButton">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="new ImageIcon(MainFrame.class.getResource(&quot;/images/import.jpg&quot;))" type="code"/>
+            </Property>
+            <Property name="focusable" type="boolean" value="false"/>
+            <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="verticalTextPosition" type="int" value="3"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importDataCooperateButtonActionPerformed"/>
+          </Events>
+        </Component>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPanel" name="jPanel1">
@@ -176,7 +194,10 @@
               <Group type="102" alignment="0" attributes="0">
                   <Component id="dataRatingScrollPane" pref="831" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="addDataRatingButton" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="addDataRatingButton" max="32767" attributes="0"/>
+                      <Component id="importDataRatingButton" max="32767" attributes="0"/>
+                  </Group>
               </Group>
           </Group>
         </DimensionLayout>
@@ -184,7 +205,9 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
                   <Component id="addDataRatingButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="0" pref="189" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="importDataRatingButton" min="-2" pref="27" max="-2" attributes="0"/>
+                  <EmptySpace min="0" pref="172" max="32767" attributes="0"/>
               </Group>
               <Group type="102" attributes="0">
                   <Component id="dataRatingScrollPane" max="32767" attributes="0"/>
@@ -230,6 +253,19 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addDataRatingButtonActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="importDataRatingButton">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="new ImageIcon(MainFrame.class.getResource(&quot;/images/import.jpg&quot;))" type="code"/>
+            </Property>
+            <Property name="focusable" type="boolean" value="false"/>
+            <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="verticalTextPosition" type="int" value="3"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importDataRatingButtonActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

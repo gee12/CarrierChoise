@@ -32,11 +32,9 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
                               <Component id="addCarrierButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="refreshCarriersButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="0" pref="249" max="32767" attributes="0"/>
+                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           </Group>
-                          <Component id="jScrollPane1" pref="0" max="32767" attributes="0"/>
+                          <Component id="jScrollPane1" pref="420" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -55,13 +53,12 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="jPanel1" max="32767" attributes="0"/>
-                  <Component id="jScrollPane1" pref="476" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" pref="496" max="32767" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="toCooperateButton" alignment="1" min="-2" pref="45" max="-2" attributes="0"/>
                   <Component id="addCarrierButton" min="-2" max="-2" attributes="0"/>
-                  <Component id="refreshCarriersButton" min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
       </Group>
@@ -262,17 +259,6 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="toCooperateButtonActionPerformed"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JButton" name="refreshCarriersButton">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="&#x41e;&#x431;&#x43d;&#x43e;&#x432;&#x438;&#x442;&#x44c;"/>
-        <Property name="focusable" type="boolean" value="false"/>
-        <Property name="horizontalTextPosition" type="int" value="0"/>
-        <Property name="verticalTextPosition" type="int" value="3"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="refreshCarriersButtonActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

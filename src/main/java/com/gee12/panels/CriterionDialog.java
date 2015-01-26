@@ -1,11 +1,12 @@
 package com.gee12.panels;
 
-import com.gee12.other.XLSParser;
+import com.gee12.other.ExcelParser;
 import com.gee12.structures.Carrier;
 import com.gee12.structures.Criterion;
 import com.gee12.structures.DataField;
 import com.gee12.structures.Project.Stages;
 import com.gee12.tablemodels.DataSimpleTableModel;
+import java.util.Collections;
 import java.util.List;
 import javax.swing.JScrollPane;
 
@@ -15,7 +16,8 @@ import javax.swing.JScrollPane;
  */
 public class CriterionDialog extends ModalDialog {
     
-    public static final int NAME_CELL_WIDTH = 550;
+    public static final int ID_CELL_WIDTH = 25;
+    public static final int NAME_CELL_WIDTH = 525;
     public static final int VALUE_CELL_WIDTH = 100;
     public static final int TYPE_CELL_WIDTH = 80;
     public static final int REF_CELL_WIDTH = 70;
@@ -32,10 +34,11 @@ public class CriterionDialog extends ModalDialog {
         initComponents();
         initDialogComponents();
         
-        dataTable.getColumnModel().getColumn(0).setPreferredWidth(NAME_CELL_WIDTH);
-        dataTable.getColumnModel().getColumn(1).setPreferredWidth(VALUE_CELL_WIDTH);
-        dataTable.getColumnModel().getColumn(2).setPreferredWidth(TYPE_CELL_WIDTH);
-        dataTable.getColumnModel().getColumn(3).setPreferredWidth(REF_CELL_WIDTH);
+        dataTable.getColumnModel().getColumn(0).setPreferredWidth(ID_CELL_WIDTH);
+        dataTable.getColumnModel().getColumn(1).setPreferredWidth(NAME_CELL_WIDTH);
+        dataTable.getColumnModel().getColumn(2).setPreferredWidth(VALUE_CELL_WIDTH);
+        dataTable.getColumnModel().getColumn(3).setPreferredWidth(TYPE_CELL_WIDTH);
+        dataTable.getColumnModel().getColumn(4).setPreferredWidth(REF_CELL_WIDTH);
 
         curCarrier = car;
         curStage = stage;
@@ -55,7 +58,7 @@ public class CriterionDialog extends ModalDialog {
     public void initTable(Stages stage, Carrier car) {
         List <DataField> dataFields = car.getStage(stage).getDataFields();
         // for rows sort
-        dataFields.sort(DataField.COMPARATOR);
+        Collections.sort(dataFields);
         dataTM.setData(dataFields);
     }
     
@@ -247,7 +250,7 @@ public class CriterionDialog extends ModalDialog {
     private void defineValue(String formula) {
         curCriterion.setFormula(formula);
         // update formula in excel
-        String newValue = XLSParser.redefineXLSCriterionValue(MainFrame.TEMP_FILE_NAME, curCriterion, curStage);
+        String newValue = ExcelParser.redefineXLSCriterionValue(MainFrame.TEMPORARY_FILE_NAME, curCriterion, curStage);
         // save updated value
         curCriterion.setValue(newValue);
         valueTextField.setText(newValue);

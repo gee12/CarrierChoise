@@ -59,6 +59,12 @@ public class Utils {
     public static String withExt(String fileName, String ext) {
         return fileName.replaceFirst("[.][^.]+$", "") + ext;
     }
+     
+    // get file extension
+    public static String getExt(String fileName) {
+        int lastIndexOf = fileName.lastIndexOf(".");
+        return (lastIndexOf != -1) ? fileName.substring(lastIndexOf + 1) : "";
+    }
     
     public static void copyFile(String src, String dest) throws IOException {
         Files.copy(Paths.get(src), Paths.get(dest), StandardCopyOption.REPLACE_EXISTING);
