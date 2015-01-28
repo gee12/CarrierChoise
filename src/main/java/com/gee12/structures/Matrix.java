@@ -62,11 +62,11 @@ public class Matrix {
             mins[i] = Double.MAX_VALUE;
             maxes[i] = 0.;
         }
-        defineRowMins();
-        defineRowMaxes();
+        defineMins();
+        defineMaxes();
     }
     
-    public void defineRowMins() {
+    public void defineMins() {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 if (mins[i] > m[i][j]) {
@@ -75,7 +75,7 @@ public class Matrix {
             }
         }
     }
-    public void defineRowMaxes() {
+    public void defineMaxes() {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 if (maxes[i] < m[i][j]) {

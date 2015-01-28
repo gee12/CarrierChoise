@@ -77,12 +77,12 @@ public class Carrier implements Comparator<Carrier>, Comparable<Carrier> {
     
     ////////////////////////////////////////////////////////////////////////////
     //
-    public void defineCapacityRepeat(List<MatrixCriterion> crits) {
-        if (crits == null) return;
+    public void defineCapacityRepeat(List<MatrixCriterion> matrixCrits) {
+        if (matrixCrits == null) return;
         
         int[] repeats = new int[Matrix.DEF_SIZE];
-        for (int i = 0; i < crits.size(); i++) {
-            repeats[crits.get(i).getRow()]++;
+        for (int i = 0; i < matrixCrits.size(); i++) {
+            repeats[matrixCrits.get(i).getRow()]++;
         }
         int repeatRow = 0;
         int max = 0;

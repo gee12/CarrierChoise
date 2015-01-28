@@ -101,13 +101,10 @@ public class ChoisePanel extends JPanel implements RowListener {
         this.curProject = proj;
         
         if (curProject.getCarriers().size() > 0) {
-//            carriersTable.setRowSelectionInterval(selectedRow, selectedRow);
             this.curCarrier = curProject.getCarriers().get(0);
         }
         
         initCarriersTable();
-//        initFields(curCarrier);
-        
     }
     
     ////////////////////////////////////////////////////////////////////////////
@@ -132,7 +129,6 @@ public class ChoisePanel extends JPanel implements RowListener {
         if (row != -1) {
             curCarrier = curProject.getCarriers()
                     .get(carriersTable.convertRowIndexToModel(row));
-            
         } else {
             curCarrier = new Carrier();
         }
@@ -358,7 +354,6 @@ public class ChoisePanel extends JPanel implements RowListener {
         carriersTM.addRow(new Carrier(maxId + 1, "", 0, 0, new Matrix()));
         int row = carriersTM.getRowCount() - 1;
         carriersTable.setRowSelectionInterval(row, row);
-//        nameTextField.setBackground(Color.RED);
     }//GEN-LAST:event_addCarrierButtonActionPerformed
 
     ////////////////////////////////////////////////////////////////////////////
@@ -391,6 +386,8 @@ public class ChoisePanel extends JPanel implements RowListener {
         
         curCarrier.setMatrix(matrixPanel.getMatrix());
         matrixCritsTM.setData(curCarrier.getMatrix(), CAPACITIES);
+        
+        // define capacity and repeat num!
         curCarrier.defineCapacityRepeat(matrixCritsTM.getData());
         initDependentFields(curCarrier);
     }
